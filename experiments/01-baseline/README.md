@@ -1,172 +1,159 @@
-# Experiment 01 — Reproduce and Probe a Gaussian Human Baseline
+# Experiment 01 — HUGS Semantic Locality Probe
 
-## Objective
+## Research question
 
-Establish a working animatable Gaussian-human baseline and test one specific research question:
+> **How local is local control in an existing real-time Gaussian human representation?**
 
-> **How local is local control in an existing avatar representation?**
+The purpose of this experiment is not to claim a new method yet. It is to test whether the representation-side research gap actually exists.
 
-Before introducing a new model, we need to measure how much a targeted body-region change propagates into unrelated parts of the avatar.
+Our first baseline is **HUGS: Human Gaussian Splats (CVPR 2024)**. HUGS initializes its human representation from SMPL and transports canonical Gaussians through pose-dependent skinning. That makes it a useful baseline for asking whether interaction-relevant body regions remain spatially and semantically local.
 
-## Preferred baseline
+Official upstream implementation:
+https://github.com/apple-aiml-research/ml-hugs
 
-Start with **HUGS (Human Gaussian Splats, CVPR 2024)** because the official implementation is available and already includes evaluation for PSNR, SSIM, and LPIPS.
+## Hypothesis under test
 
-Paper:
-https://openaccess.thecvf.com/content/CVPR2024/html/Kocabas_HUGS_Human_Gaussian_Splats_CVPR_2024_paper.html
+A representation designed mainly for reconstruction and pose-driven animation may not provide sufficiently stable local structure for interaction-specific control.
 
-Code:
-https://github.com/apple/ml-hugs
+We test this with deliberately small joint perturbations before introducing any learned interaction module.
 
-Alternative if HUGS installation becomes a blocker:
+## Why the probe is semantic
 
-GaussianAvatar:
-https://github.com/aipixel/GaussianAvatar
+We assign every canonical Gaussian to a coarse semantic region without training a segmentation network.
 
-## Experiment stages
+1. Find the nearest canonical SMPL vertex to each Gaussian.
+2. Read that SMPL vertex's LBS weights.
+3. Take the dominant SMPL joint.
+4. Map the joint to a coarse region.
 
-### E1.1 — Reproduce pretrained output
-
-Goal: verify the software stack and renderer.
-
-Record:
-- GPU
-- CUDA version
-- PyTorch version
-- dataset/sequence
-- checkpoint
-- render resolution
-- FPS
-- VRAM
-- PSNR
-- SSIM
-- LPIPS
-
-Success condition:
-- reproduce visually plausible output,
-- metrics are in the approximate range expected by the original implementation,
-- render/evaluation scripts run without manual intervention.
-
-### E1.2 — Inspect representation structure
-
-For each Gaussian, determine what information is available or derivable:
-
-- canonical position,
-- current posed position,
-- scale,
-- rotation,
-- opacity,
-- appearance coefficients/features,
-- skinning weights,
-- nearest SMPL vertex/face,
-- body-part label.
-
-Output a diagnostic file or visualization where Gaussians are colored by body region.
-
-Suggested coarse labels:
+Current regions:
 
 ```text
+torso
 head
 left_arm
 right_arm
-torso
-left_leg
-right_leg
 left_hand
 right_hand
+left_leg
+right_leg
 ```
 
-If hands cannot be separated reliably from the SMPL representation, document that limitation rather than hiding it.
+This layer is diagnostic instrumentation, not the proposed contribution.
 
-### E1.3 — Semantic selection test
+## First perturbation
 
-Implement functions equivalent to:
-
-```python
-select_gaussians(region="left_hand")
-select_gaussians(region="head")
-```
-
-This is not yet a machine-learning contribution. It is instrumentation needed for the research.
-
-Record:
-- number of Gaussians per region,
-- boundary ambiguity,
-- whether Gaussians move between semantic regions under pose changes.
-
-### E1.4 — Controlled local perturbation
-
-Apply a deliberately small synthetic perturbation to one semantic region, for example left forearm/hand.
-
-Candidate perturbations:
-- translation,
-- rotation,
-- scale,
-- position offset field.
-
-Render before/after from multiple views.
-
-We are not trying to make the perturbation realistic. We are measuring representation coupling.
-
-### E1.5 — Leakage measurement
-
-Define target region `T` and non-target region `N`.
-
-For a representation-space change magnitude `Δg_i`, compute:
+Default probe:
 
 ```text
-TargetChange = sum(Δg_i for i in T)
-OutsideChange = sum(Δg_i for i in N)
+joint: left_wrist
+axis: z
+angle: 10 degrees
+```
+
+We render/compute the avatar once with the original validation pose and once after adding the small wrist rotation. Canonical semantic labels stay fixed. We then measure how much posed Gaussian displacement occurs inside and outside the intended target region.
+
+## Prototype locality metric
+
+For per-Gaussian displacement magnitude `d_i`:
+
+```text
+TargetChange  = sum(d_i for i in target region)
+OutsideChange = sum(d_i for i outside target region)
+
 LeakageRatio = OutsideChange / (TargetChange + OutsideChange)
 ```
 
-Also calculate an image-space version using masks:
+Lower leakage is not automatically better. A representation that fails to execute the target motion could also score low, so target displacement is always reported beside leakage.
 
-```text
-ImageLeakage = changed pixels outside target mask / all changed pixels
-```
+Additional diagnostics:
 
-These metrics are prototypes and may be replaced after inspecting failure modes.
+- mean target displacement,
+- mean outside displacement,
+- maximum target/outside displacement,
+- active fraction inside/outside the target region,
+- dominant-joint confidence for semantic assignment.
 
-### E1.6 — Pose generalization check
-
-Repeat the same local control operation under:
-- one training-like pose,
-- one moderately novel pose,
-- one extreme novel pose.
-
-Question:
-
-Does semantic locality remain stable as articulation changes?
-
-## Why this experiment matters
-
-If current representations already allow robust, clean local control, the proposed research gap becomes weaker and we should move toward social/physical interaction modeling instead.
-
-If local control causes significant leakage, instability, or semantic drift, we have an experimentally grounded problem to work on.
-
-## Files to produce
+## Implemented files
 
 ```text
 experiments/01-baseline/
 ├── README.md
 ├── environment.md
-├── results.md
-├── metrics.json
-├── figures/
-└── notes/
+├── semantic_regions.py
+├── locality_metrics.py
+├── hugs_locality_probe.py
+└── results.md
 ```
 
-Do not commit large pretrained weights or licensed datasets to this repository.
+### `semantic_regions.py`
 
-## First decision gate
+Builds the non-learning Gaussian-to-SMPL semantic assignment using canonical positions and SMPL LBS weights.
 
-Proceed to a new semantically anchored representation only if at least one reproducible limitation appears in:
+### `locality_metrics.py`
 
-- local edit leakage,
-- semantic correspondence across poses,
-- contact-region control,
-- temporal stability,
-- end-to-end response latency.
+Computes representation-space displacement and locality/leakage statistics.
 
-The experiment is allowed to invalidate the proposed research direction. That is a valid research result at this stage.
+### `hugs_locality_probe.py`
+
+Loads an actual HUGS experiment/checkpoint through the upstream `GaussianTrainer`, takes a validation frame, applies a controlled SMPL joint perturbation, and saves JSON + NPZ outputs.
+
+## Run
+
+First reproduce the upstream HUGS evaluation in its own environment. Then:
+
+```bash
+cd experiments/01-baseline
+
+python hugs_locality_probe.py \
+  --hugs-root /path/to/ml-hugs \
+  --output-dir /path/to/HUGS_OUTPUT_DIR \
+  --frame 0 \
+  --joint left_wrist \
+  --axis z \
+  --degrees 10 \
+  --save-dir probe_results
+```
+
+See `environment.md` for setup details.
+
+## Minimum experiment sweep
+
+A single clean example is not evidence. The initial study should include at least:
+
+```text
+joints: left_wrist, right_wrist, head, left_elbow, right_elbow
+axes: x, y, z
+angles: 5°, 10°, 20°
+frames: >= 10 validation poses distributed across the sequence
+```
+
+Then examine:
+
+1. whether leakage rises with articulation magnitude,
+2. whether wrists/shoulders and other semantic boundaries fail more often,
+3. whether low semantic-assignment confidence predicts leakage,
+4. whether the behavior changes across training-like versus difficult poses.
+
+## Decision gate
+
+### If HUGS is already robust
+
+Do **not** invent a new semantic Gaussian representation just because that was the original idea. Move Project 001 toward contact response, interaction behavior, or social/physical coupling.
+
+### If failure is localized to boundaries
+
+Investigate a smaller contribution: interaction anchors, topology-aware semantic boundaries, or local contact fields.
+
+### If semantic/local control degrades broadly
+
+Then a structured interaction-ready 4D human representation becomes a defensible research direction.
+
+## What is not done yet
+
+- no GPU measurements have been run from this repository yet,
+- no benchmark values have been fabricated,
+- no new model is claimed,
+- image-space leakage and rendered before/after figures are still pending.
+
+The next legitimate result is an actual locality sweep on a pretrained HUGS checkpoint.
