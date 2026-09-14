@@ -1,0 +1,53 @@
+{
+  "dataset": "neuman",
+  "sequence": "seattle",
+  "mode": "human_scene",
+  "human_name_saved_config": "hugs_triplane",
+  "use_deformer": true,
+  "disable_posedirs": true,
+  "n_subdivision": 2,
+  "triplane_res": 256,
+  "canon_pose_type": "da_pose",
+  "optim_betas": false,
+  "optim_pose": true,
+  "optim_trans": true,
+  "lbs_loss_weight": 1000.0,
+  "checkpoint_filename": "human_final.pth",
+  "checkpoint_size_mib": 96.59056568145752,
+  "checkpoint_sha256": "e64d0cab44e8f5b0e0ca2fa4a1e45de2c15deee1fe322839d1da36bf3fb8d8f1",
+  "num_gaussians": 472958,
+  "baseline_num_gaussians": 472958,
+  "baseline_count_match": true,
+  "checkpoint_top_level_keys": [
+    "active_sh_degree",
+    "xyz",
+    "triplane",
+    "appearance_dec",
+    "geometry_dec",
+    "deformation_dec",
+    "scaling_multiplier",
+    "max_radii2D",
+    "xyz_gradient_accum",
+    "denom",
+    "optimizer",
+    "spatial_lr_scale"
+  ],
+  "deformation_decoder_parameter_count": 48664,
+  "deformation_decoder_state": {
+    "net.0.weight": [128, 96],
+    "net.0.bias": [128],
+    "net.2.weight": [128, 128],
+    "net.2.bias": [128],
+    "skinning_linear.bias": [128],
+    "skinning_linear.weight_g": [128, 1],
+    "skinning_linear.weight_v": [128, 128],
+    "skinning.weight": [24, 128],
+    "skinning.bias": [24]
+  },
+  "triplane_state": {
+    "plane_xy": [1, 32, 256, 256],
+    "plane_xz": [1, 32, 256, 256],
+    "plane_yz": [1, 32, 256, 256]
+  },
+  "note": "The saved config uses the legacy model name hugs_triplane. The checkpoint state contains the triplane and deformation-decoder tensors needed to reconstruct learned per-Gaussian LBS weights directly, without depending on current trainer name aliases. Large checkpoint files remain in Google Drive and are not committed to GitHub."
+}
