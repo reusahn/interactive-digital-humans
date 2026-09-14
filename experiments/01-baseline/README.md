@@ -1,106 +1,138 @@
-# Experiment 01 — HUGS Semantic Locality Probe
+# Experiment 01 — HUGS Deformation Locality Baseline
 
 ## Research question
 
 > **How local is local control in an existing real-time Gaussian human representation?**
 
-The purpose of this experiment is not to claim a new method yet. It is to test whether the representation-side research gap actually exists.
+This experiment probes whether small, controlled SMPL joint rotations in HUGS remain anatomically local in Gaussian space or produce measurable non-target displacement.
 
-Our first baseline is **HUGS: Human Gaussian Splats (CVPR 2024)**. HUGS initializes its human representation from SMPL and transports canonical Gaussians through pose-dependent skinning. That makes it a useful baseline for asking whether interaction-relevant body regions remain spatially and semantically local.
+The baseline is **HUGS: Human Gaussian Splats (CVPR 2024)** using the pretrained NeuMan **Seattle** sequence.
 
 Official upstream implementation:
 https://github.com/apple-aiml-research/ml-hugs
 
-## Hypothesis under test
+## Status
 
-A representation designed mainly for reconstruction and pose-driven animation may not provide sufficiently stable local structure for interaction-specific control.
+**Baseline v1 completed.**
 
-We test this with deliberately small joint perturbations before introducing any learned interaction module.
+- 36 saved probe measurements
+- 472,958 human Gaussians in the analyzed Seattle frame
+- left wrist magnitude/sign sweep
+- x/y/z axis comparison
+- joint sweep across left wrist, elbow, shoulder, knee, and ankle
+- kinematic-subtree leakage re-analysis
+- joint-assignment confidence sensitivity analysis
+- raw NPZ outputs archived in Google Drive
+- compact tables, figures, and interpretation versioned in this repository
 
-## Why the probe is semantic
+See `results.md` for the measured values and `DATA_MANIFEST.md` for raw-data storage.
 
-We assign every canonical Gaussian to a coarse semantic region without training a segmentation network.
+## Core probe
 
-1. Find the nearest canonical SMPL vertex to each Gaussian.
-2. Read that SMPL vertex's LBS weights.
-3. Take the dominant SMPL joint.
-4. Map the joint to a coarse region.
+For a selected validation frame, the probe:
 
-Current regions:
+1. loads the pretrained HUGS human checkpoint,
+2. evaluates the original pose,
+3. perturbs one SMPL joint by a controlled signed angle around x, y, or z,
+4. recomputes posed Gaussian locations,
+5. stores per-Gaussian before/after positions and semantic/joint metadata,
+6. measures displacement inside and outside an anatomically expected target subtree.
 
-```text
-torso
-head
-left_arm
-right_arm
-left_hand
-right_hand
-left_leg
-right_leg
-```
-
-This layer is diagnostic instrumentation, not the proposed contribution.
-
-## First perturbation
-
-Default probe:
+The raw NPZ record contains:
 
 ```text
-joint: left_wrist
-axis: z
-angle: 10 degrees
+xyz_before
+xyz_after
+xyz_canon
+region_id
+dominant_joint
+joint_confidence
+nearest_vertex
 ```
 
-We render/compute the avatar once with the original validation pose and once after adding the small wrist rotation. Canonical semantic labels stay fixed. We then measure how much posed Gaussian displacement occurs inside and outside the intended target region.
+## Semantic / joint assignment
 
-## Prototype locality metric
+Each canonical Gaussian is associated with the nearest canonical SMPL vertex. The vertex's LBS weights provide a dominant SMPL joint and confidence score.
+
+A coarse semantic mapping is retained for diagnostics, but the main joint comparison uses **kinematic descendants** rather than the original coarse body-region mask.
+
+Examples:
+
+```text
+wrist    -> wrist + hand
+elbow    -> elbow + wrist + hand
+shoulder -> shoulder + elbow + wrist + hand
+ankle    -> ankle + foot
+knee     -> knee + ankle + foot
+```
+
+This prevents expected descendant motion from being misclassified as leakage.
+
+## Leakage metric
 
 For per-Gaussian displacement magnitude `d_i`:
 
 ```text
-TargetChange  = sum(d_i for i in target region)
-OutsideChange = sum(d_i for i outside target region)
+TargetChange  = sum(d_i for i in expected target subtree)
+OutsideChange = sum(d_i for i outside the target subtree)
 
 LeakageRatio = OutsideChange / (TargetChange + OutsideChange)
 ```
 
-Lower leakage is not automatically better. A representation that fails to execute the target motion could also score low, so target displacement is always reported beside leakage.
+Lower leakage is not automatically better, so target displacement is always reported beside leakage.
 
-Additional diagnostics:
+Additional diagnostics include:
 
-- mean target displacement,
-- mean outside displacement,
-- maximum target/outside displacement,
-- active fraction inside/outside the target region,
-- dominant-joint confidence for semantic assignment.
+- mean target and outside displacement,
+- outside P99 and maximum displacement,
+- active fractions,
+- dominant-joint confidence,
+- confidence-threshold sensitivity.
 
-## Implemented files
+## Baseline v1 findings
+
+Within **Seattle / frame 0**, the strongest current pattern is articulation dependence.
+
+- left ankle z: **26.57%** leakage
+- left ankle x: **18.19%**
+- left wrist z: **11.21%**
+- left wrist y: **10.27%**
+- left wrist x: **9.90%**
+- left shoulder x/y/z: only **0.91% / 0.66% / 0.58%**
+
+The distal-versus-proximal pattern remains visible after filtering to joint-assignment confidence ≥ 0.9.
+
+The wrist-specific sweep also shows:
+
+- approximately sign-symmetric behavior,
+- approximately linear displacement growth with perturbation magnitude,
+- nearly constant z-axis leakage ratio around 11.21% across ±5° to ±30°,
+- measurable axis dependence at ±10°.
+
+These are baseline observations, not yet a general claim about HUGS, because the current study covers one sequence and one frame.
+
+## Repository structure
 
 ```text
 experiments/01-baseline/
 ├── README.md
+├── DATA_MANIFEST.md
 ├── environment.md
 ├── semantic_regions.py
 ├── locality_metrics.py
 ├── hugs_locality_probe.py
-└── results.md
+├── results.md
+├── analysis/
+│   ├── joint_axis_leakage.csv
+│   ├── confidence_sensitivity.csv
+│   └── joint_assignment_counts.csv
+└── figures/
+    └── baseline analysis figures
 ```
 
-### `semantic_regions.py`
-
-Builds the non-learning Gaussian-to-SMPL semantic assignment using canonical positions and SMPL LBS weights.
-
-### `locality_metrics.py`
-
-Computes representation-space displacement and locality/leakage statistics.
-
-### `hugs_locality_probe.py`
-
-Loads an actual HUGS experiment/checkpoint through the upstream `GaussianTrainer`, takes a validation frame, applies a controlled SMPL joint perturbation, and saves JSON + NPZ outputs.
+Raw `*.npz` outputs intentionally remain in Google Drive because they are large and are the authoritative source for later re-analysis.
 
 ## Run
-
-First reproduce the upstream HUGS evaluation in its own environment. Then:
 
 ```bash
 cd experiments/01-baseline
@@ -117,43 +149,21 @@ python hugs_locality_probe.py \
 
 See `environment.md` for setup details.
 
-## Minimum experiment sweep
+## Current research hypothesis
 
-A single clean example is not evidence. The initial study should include at least:
+A defensible next question is:
 
-```text
-joints: left_wrist, right_wrist, head, left_elbow, right_elbow
-axes: x, y, z
-angles: 5°, 10°, 20°
-frames: >= 10 validation poses distributed across the sequence
-```
+> **Why do distal articulations in this HUGS baseline produce substantially greater non-local Gaussian displacement than proximal articulations, and can deformation be made more anatomically local without sacrificing rendering or animation quality?**
 
-Then examine:
+Before proposing a new method, the next analysis should spatially localize the highest-leakage Gaussians and compare their observed displacement with expected LBS influence.
 
-1. whether leakage rises with articulation magnitude,
-2. whether wrists/shoulders and other semantic boundaries fail more often,
-3. whether low semantic-assignment confidence predicts leakage,
-4. whether the behavior changes across training-like versus difficult poses.
+## Limitations of Baseline v1
 
-## Decision gate
+- one NeuMan sequence,
+- one validation frame,
+- left-side joints in the main joint comparison,
+- representation-space displacement rather than perceptual/image-space artifacts,
+- hard dominant-joint assignment used for diagnostic grouping,
+- no competing method yet.
 
-### If HUGS is already robust
-
-Do **not** invent a new semantic Gaussian representation just because that was the original idea. Move Project 001 toward contact response, interaction behavior, or social/physical coupling.
-
-### If failure is localized to boundaries
-
-Investigate a smaller contribution: interaction anchors, topology-aware semantic boundaries, or local contact fields.
-
-### If semantic/local control degrades broadly
-
-Then a structured interaction-ready 4D human representation becomes a defensible research direction.
-
-## What is not done yet
-
-- no GPU measurements have been run from this repository yet,
-- no benchmark values have been fabricated,
-- no new model is claimed,
-- image-space leakage and rendered before/after figures are still pending.
-
-The next legitimate result is an actual locality sweep on a pretrained HUGS checkpoint.
+The raw Drive archive should be preserved so all metrics can be recomputed without rerunning the expensive HUGS probe.
