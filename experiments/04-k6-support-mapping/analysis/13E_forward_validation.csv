@@ -1,0 +1,2 @@
+num_gaussians,mean_canonical_xyz_error,p99_canonical_xyz_error,max_canonical_xyz_error,max_lbs_row_sum_error,learned_lbs_nan_count,forward_valid
+472958,2.116444619559843e-08,6.674406449747039e-08,1.3348812899494078e-07,2.980232238769531e-07,0,true
