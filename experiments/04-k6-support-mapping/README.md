@@ -55,21 +55,13 @@ The top 5% highest-displacement high-confidence nonlocal subset is similarly inc
 
 ## Interpretation
 
-The reconstructed K=6 support interpolation does **not** explain the observed contralateral response through direct left-wrist / left-hand LBS influence. The contralateral subset is overwhelmingly supported by right-upper-limb LBS weights while still moving under a left-wrist perturbation.
+The reconstructed K=6 support interpolation does **not** explain the observed contralateral response through direct left-wrist / left-hand LBS influence. The contralateral subset is overwhelmingly supported by right-upper-limb SMPL weights while still moving under a left-wrist perturbation.
 
 This rules out a simple mechanism in which Gaussian K=6 support accidentally assigns substantial left-wrist skinning weight to the right arm.
 
 However, this is not yet a causal explanation of the HUGS response.
 
-A critical implementation distinction must now be checked against the exact checkpoint configuration. The official NeuMan HUGS release configuration uses:
-
-```text
-human.name: hugs_trimlp
-human.use_deformer: true
-human.disable_posedirs: true
-```
-
-Under `use_deformer: true`, HUGS uses learned deformation-decoder LBS weights for the actual Gaussian deformation path. The K=6 SMPL-derived weights are used as a ground-truth/regularization target rather than as the actual deformation weights. Therefore Step 13A should be interpreted as a support-target diagnostic, not automatically as a reconstruction of the model's true deformation path unless the exact saved checkpoint configuration is verified to use the non-deformer path.
+Under `use_deformer: true`, HUGS uses deformation-decoder **learned LBS weights** for the actual Gaussian deformation path. The SMPL-derived K=6 weights are computed as a target for LBS regularization. Step 13A is therefore a support-target diagnostic, not the model's actual learned deformation-weight path.
 
 ## Steps 13B–13C — Exact checkpoint provenance recovered
 
@@ -91,28 +83,56 @@ degrees: 10.0
 num_gaussians: 472958
 ```
 
-The original runtime path no longer existed after the Colab reset, so the official Apple pretrained archive was downloaded once and stored persistently in Google Drive. The Seattle archive contains:
-
-```text
-render_canon.log
-human_final.pth
-config_train.yaml
-scene_final.pth
-```
-
-Persistent copies now live at:
+The original runtime path no longer existed after the Colab reset, so the official Apple pretrained archive was downloaded once and stored persistently in Google Drive. Persistent copies now live at:
 
 ```text
 /content/drive/MyDrive/interactive-digital-humans/assets/hugs/pretrained_models/seattle/human_final.pth
 /content/drive/MyDrive/interactive-digital-humans/assets/hugs/pretrained_models/seattle/config_train.yaml
 ```
 
-The exact `human_final.pth` is **96.59 MiB**. The complete official pretrained ZIP is also retained in Drive for reproducibility but is not committed to GitHub.
+The exact `human_final.pth` is **96.5905657 MiB** and has SHA256:
 
-This resolves checkpoint identity for the next mechanism test.
+```text
+e64d0cab44e8f5b0e0ca2fa4a1e45de2c15deee1fe322839d1da36bf3fb8d8f1
+```
+
+The complete official pretrained ZIP is retained in Drive for reproducibility but is not committed to GitHub.
+
+## Step 13D — Exact saved config and checkpoint structure
+
+Artifact:
+
+- `analysis/13D_checkpoint_manifest_summary.json`
+
+The exact packaged Seattle `config_train.yaml` reports:
+
+```text
+mode: human_scene
+human.name: hugs_triplane
+human.use_deformer: true
+human.disable_posedirs: true
+human.n_subdivision: 2
+human.triplane_res: 256
+human.canon_pose_type: da_pose
+human.optim_betas: false
+human.optim_pose: true
+human.optim_trans: true
+human.loss.lbs_w: 1000.0
+```
+
+This corrects the earlier assumption that the exact saved config used the current source-tree name `hugs_trimlp`. The packaged checkpoint/config uses the legacy name **`hugs_triplane`**.
+
+The current HUGS source tree no longer contains a `hugs_triplane.py` model file, but the checkpoint itself contains the expected triplane and deformation-decoder state:
+
+- `xyz`: **472,958 × 3**, exactly matching the original probe Gaussian count
+- triplane tensors: three **1 × 32 × 256 × 256** planes
+- deformation decoder: **48,664 parameters**
+- output skinning layer: **24 channels**
+
+The deformation-decoder tensor layout matches the current triplane/deformer architecture closely enough that the learned LBS weights can be reconstructed directly from the checkpoint state without relying on current trainer model-name aliases. This direct reconstruction is preferable because feeding the legacy `human.name: hugs_triplane` config to the current trainer may not reproduce the historical name mapping.
 
 ## Next step
 
-Inspect the saved `config_train.yaml` and checkpoint structure, then reconstruct the exact `hugs_trimlp` model and export `canon_forward()['lbs_weights']` for all 472,958 Gaussians.
+Reconstruct the triplane and deformation decoder directly from `human_final.pth` and export the **actual learned per-Gaussian LBS weights** for all 472,958 Gaussians.
 
-The primary comparison is learned LBS versus the Step 13A K=6 target in the high-confidence contralateral residual subset. If those right-arm Gaussians carry anomalous learned left-wrist / left-hand influence despite near-zero K=6 target influence, the learned deformer provides a direct candidate mechanism for the cross-body amplification. If not, proceed to the full learned-transform / pose-corrective path.
+The primary comparison is learned LBS versus the Step 13A K=6 target in the high-confidence contralateral residual subset. If those right-arm Gaussians carry anomalous learned left-wrist / left-hand influence despite near-zero K=6 target influence, the learned deformer provides a direct candidate mechanism for the cross-body amplification. If they do not, proceed to the full learned transform construction.
