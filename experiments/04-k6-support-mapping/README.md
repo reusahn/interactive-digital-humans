@@ -71,8 +71,48 @@ human.disable_posedirs: true
 
 Under `use_deformer: true`, HUGS uses learned deformation-decoder LBS weights for the actual Gaussian deformation path. The K=6 SMPL-derived weights are used as a ground-truth/regularization target rather than as the actual deformation weights. Therefore Step 13A should be interpreted as a support-target diagnostic, not automatically as a reconstruction of the model's true deformation path unless the exact saved checkpoint configuration is verified to use the non-deformer path.
 
+## Steps 13B–13C — Exact checkpoint provenance recovered
+
+The original probe metadata records the checkpoint that produced the baseline NPZ files as:
+
+```text
+/content/ml-hugs/output/pretrained_models/seattle/human_final.pth
+```
+
+with:
+
+```text
+dataset: neuman
+sequence: seattle
+frame_index: 0
+joint: left_wrist
+axis: z
+degrees: 10.0
+num_gaussians: 472958
+```
+
+The original runtime path no longer existed after the Colab reset, so the official Apple pretrained archive was downloaded once and stored persistently in Google Drive. The Seattle archive contains:
+
+```text
+render_canon.log
+human_final.pth
+config_train.yaml
+scene_final.pth
+```
+
+Persistent copies now live at:
+
+```text
+/content/drive/MyDrive/interactive-digital-humans/assets/hugs/pretrained_models/seattle/human_final.pth
+/content/drive/MyDrive/interactive-digital-humans/assets/hugs/pretrained_models/seattle/config_train.yaml
+```
+
+The exact `human_final.pth` is **96.59 MiB**. The complete official pretrained ZIP is also retained in Drive for reproducibility but is not committed to GitHub.
+
+This resolves checkpoint identity for the next mechanism test.
+
 ## Next step
 
-Recover or re-download the exact pretrained Seattle HUGS checkpoint and its `config_train.yaml`, verify `use_deformer` and `disable_posedirs`, then export the **actual learned per-Gaussian LBS weights** from `canon_forward()`.
+Inspect the saved `config_train.yaml` and checkpoint structure, then reconstruct the exact `hugs_trimlp` model and export `canon_forward()['lbs_weights']` for all 472,958 Gaussians.
 
-If the saved baseline uses the release `use_deformer: true` path, directly compare learned LBS weights against the reconstructed K=6 target for the high-confidence contralateral residual subset. The key test is whether those right-arm Gaussians carry anomalous learned left-wrist / left-hand influence even though their K=6 target does not.
+The primary comparison is learned LBS versus the Step 13A K=6 target in the high-confidence contralateral residual subset. If those right-arm Gaussians carry anomalous learned left-wrist / left-hand influence despite near-zero K=6 target influence, the learned deformer provides a direct candidate mechanism for the cross-body amplification. If not, proceed to the full learned-transform / pose-corrective path.
