@@ -91,7 +91,7 @@ max_skinning_joint
 
 If some fields are inaccessible in the implementation, record them as unavailable rather than reconstructing them from assumptions.
 
-## Visualization 01 — semantic colors
+## Visualization 01 - semantic colors
 
 Render the canonical and posed avatar with flat diagnostic colors by semantic region.
 
@@ -101,7 +101,7 @@ The goal is not visual quality. We want to inspect:
 - whether boundary regions flicker or become ambiguous,
 - whether off-body Gaussians remain semantically attached under articulation.
 
-## Visualization 02 — interaction neighborhood
+## Visualization 02 - interaction neighborhood
 
 Select a semantic region and define an interaction anchor.
 
@@ -179,3 +179,91 @@ Investigate an interaction-specific semantic representation
 ```
 
 This decision structure prevents the project from becoming attached to a preferred answer before the baseline is measured.
+
+---
+
+## 2026-09-14 implementation update
+
+The initial non-learning diagnostics have now progressed far enough to identify a concrete mechanism candidate.
+
+### Exact Seattle checkpoint configuration
+
+The original baseline probe used the official Seattle pretrained checkpoint. Its packaged config reports:
+
+```text
+mode: human_scene
+human.name: hugs_triplane
+human.use_deformer: true
+human.disable_posedirs: true
+human.n_subdivision: 2
+human.triplane_res: 256
+human.canon_pose_type: da_pose
+human.loss.lbs_w: 1000.0
+```
+
+The legacy config name `hugs_triplane` should not be confused with the current source-tree class naming. For mechanism analysis, the triplane and deformation decoder were reconstructed directly from the checkpoint tensor state.
+
+### Important deformation-path distinction
+
+Because `use_deformer: true`, the actual Gaussian deformation path uses learned per-Gaussian LBS weights predicted by the deformation decoder. The SMPL-derived K=6 weights are a regularization/support target, not the actual learned weights used by the checkpoint.
+
+This distinction changes the interpretation of the locality experiment.
+
+### K=6 target result
+
+For the high-confidence contralateral right-arm subset under a left-wrist z +10 deg perturbation:
+
+```text
+K6 mean left-wrist + left-hand weight: 4.8793e-7
+K6 displacement-weighted wrist/hand:   5.7222e-7
+mean right-upper-limb K6 weight:       0.995266
+```
+
+Thus the SMPL-derived support target assigns essentially no direct left-wrist influence to those right-arm Gaussians.
+
+### Learned checkpoint result
+
+The reconstructed checkpoint forward path reproduces the original saved canonical Gaussian coordinates with mean error about `2.1e-8` and maximum error about `1.3e-7`.
+
+For the same high-confidence contralateral subset:
+
+```text
+learned mean left-wrist + left-hand weight:        0.000317262
+learned displacement-weighted wrist/hand weight:   0.00425322
+fraction displacement with learned wrist > 1e-3:  72.76%
+learned right-upper-limb aggregate weight:         0.996699
+dominant-joint mismatch vs target:                 0.0
+Spearman learned wrist influence vs displacement:  0.996939
+```
+
+This means the learned model preserves an overwhelmingly right-arm anatomical assignment while introducing a small cross-joint left-wrist component that is almost perfectly rank-correlated with the observed contralateral displacement.
+
+### Current mechanism hypothesis
+
+The leading hypothesis is no longer that K=6 spatial support accidentally crosses the body. Instead:
+
+> The learned deformation field introduces small off-target LBS components that can create amplified nonlocal motion under local joint perturbations, especially when a distant transform acts through a large spatial lever arm.
+
+This is a mechanism candidate, not yet a causal conclusion.
+
+### Required next implementation test
+
+Run a counterfactual weight ablation with all other model quantities fixed:
+
+```text
+A. original learned LBS
+B. reconstructed K6 target LBS
+C. learned LBS with left-wrist + left-hand channels zeroed only for contralateral Gaussians, then renormalized
+```
+
+Apply the same left-wrist z +10 deg perturbation and compare the contralateral displacement.
+
+If B/C collapse toward the SMPL/K6 control while A reproduces the original response, the learned cross-joint LBS component becomes a causal explanation rather than merely a correlated mechanism candidate.
+
+Full numeric details are archived in:
+
+```text
+experiments/04-k6-support-mapping/
+research/logs/2026-09-14.md
+research/handoffs/2026-09-14.md
+```
