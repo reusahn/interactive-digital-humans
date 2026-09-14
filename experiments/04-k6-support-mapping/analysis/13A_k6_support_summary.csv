@@ -1,0 +1,6 @@
+subset,num_gaussians,displacement_sum,mean_effective_wrist_desc_weight,displacement_weighted_wrist_desc_weight,p50_effective_wrist_desc_weight,p95_effective_wrist_desc_weight,p99_effective_wrist_desc_weight,fraction_points_wrist_desc_gt_1e-3,fraction_displacement_from_wrist_desc_gt_1e-3,mean_effective_left_upper_weight,mean_effective_right_upper_weight,effective_dominant_changed_fraction,spearman_wrist_weight_vs_displacement
+high_conf_all,197778,82.781189,0.01692861,0.8695350,0.0,0.005346,0.989400,0.076449,0.929342,0.130833,0.167162,0.0,0.447247
+high_conf_intended,3246,72.626862,0.9805897,0.9892460,0.993348,0.999882,0.999885,1.0,1.0,0.999930,0.000044,0.0,0.926844
+high_conf_nonlocal,171896,4.617672,0.0000042666993,0.00000054439397,0.0,0.0,0.000040,0.000012,0.0,0.000686,0.192329,0.0,-0.036439
+high_conf_contralateral,33072,4.163954,0.0000004879320,0.00000057221735,0.0,0.0,0.0,0.0,0.0,0.000287,0.995266,0.0,0.034169
+high_conf_nonlocal_top5_disp,8596,4.214833,0.0000009572816,0.0000005253663,0.0,0.0,0.0,0.0,0.0,0.000326,0.861697,0.0,-0.032807
