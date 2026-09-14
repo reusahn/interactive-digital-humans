@@ -1,6 +1,22 @@
 # Experiment 02 — Spatial Leakage Localization
 
-This experiment re-analyzes the archived HUGS Baseline v1 NPZ outputs to localize non-target deformation and test whether the observed leakage is dominated by isolated outliers, semantic assignment ambiguity, or structured anatomical coupling.
+This experiment re-analyzes archived HUGS Baseline v1 NPZ outputs to localize non-target deformation and test whether the observed leakage is dominated by isolated outliers, semantic assignment ambiguity, or structured anatomical coupling.
+
+## Methodology correction
+
+Baseline v1 defines `left_ankle` against the coarse semantic region `left_leg`, which contains:
+
+```text
+left_hip + left_knee + left_ankle + left_foot
+```
+
+In the secondary Step 6–10 helper code, the ankle target was accidentally narrowed to only `left_ankle + left_foot`. This caused left-knee and left-hip displacement to be incorrectly counted as ankle outside displacement.
+
+Therefore:
+
+- wrist and shoulder Step 6–10 analyses remain valid,
+- ankle Step 6–10 rows/plots are provisional and must be recomputed,
+- Baseline v1's original ankle leakage ratio remains valid because it used the correct coarse `left_leg` region.
 
 ## Step 7 — Leakage concentration and anatomical source analysis
 
@@ -10,13 +26,11 @@ Artifacts:
 - `analysis/07_leakage_concentration.csv`
 - `figures/07_leakage_concentration.png`
 
-Main observation: outside displacement is strongly heavy-tailed but not reducible to a tiny handful of extreme points. Across ankle, wrist, and shoulder probes, the top 5% of non-target Gaussians account for roughly 83–85% of outside displacement, while the top 0.1% account for only roughly 6–13%.
-
-Anatomically, ankle leakage is dominated by the upstream same-side leg, while wrist and shoulder probes show large same-side upstream components together with notable contralateral upper-limb components.
+For wrist and shoulder, outside displacement is strongly heavy-tailed but not reducible to a tiny handful of extreme points. The top 5% of non-target Gaussians account for roughly 84–85% of outside displacement.
 
 ## Step 8 — Confidence robustness
 
-Dominant-joint confidence filtering reduces the apparent leakage substantially but does not eliminate it. At confidence >= 0.9, a meaningful residual remains, especially for wrist motion. This shows that nearest-vertex / dominant-joint ambiguity contributes to the diagnostic, but cannot explain all of the observed displacement.
+Dominant-joint confidence filtering reduces apparent leakage substantially but does not eliminate the wrist/shoulder signal. At confidence >= 0.9, a meaningful wrist residual remains.
 
 ## Step 9 — High-confidence anatomical residual
 
@@ -24,13 +38,18 @@ Artifact:
 
 - `analysis/09_high_confidence_joint_breakdown.csv`
 
-Key results at dominant-joint confidence >= 0.9:
+Valid wrist result at confidence >= 0.9:
 
-- ankle z: left knee = **86.73%** of high-confidence outside displacement
-- wrist z: left elbow = **39.04%**, with substantial contralateral upper-limb components
-- shoulder z: the outside component is small in absolute terms but is dominated by contralateral upper-limb assignments
+- left elbow = **39.04%** of high-confidence outside displacement
+- right shoulder = 16.10%
+- left shoulder = 15.18%
+- right elbow = 8.79%
+- right hand = 8.53%
+- right wrist = 7.57%
 
-The ankle-to-knee and wrist-to-elbow patterns therefore survive strict confidence filtering and are not explained by low-confidence semantic assignment alone.
+The wrist-to-elbow pattern and contralateral upper-limb structure survive strict confidence filtering.
+
+The ankle rows in this artifact are superseded pending corrected recomputation.
 
 ## Step 10 — Signed and magnitude response
 
@@ -45,12 +64,17 @@ The wrist probe was evaluated at ±5°, ±10°, ±20°, and ±30°. Its high-con
 - 20°: ~20.23
 - 30°: ~30.15
 
-The high-confidence leakage ratio stays effectively constant at ~12.26% across this entire range. The anatomical composition is also extremely stable: upstream same-side share stays near 54.52% and contralateral share near 41.01%.
+The wrist high-confidence leakage ratio stays effectively constant at ~12.26% across this entire range. The anatomical composition is also extremely stable: upstream same-side share stays near 54.52% and contralateral share near 41.01%.
 
-The ankle ±10° and shoulder ±10° probes are similarly sign-symmetric.
+The shoulder ±10° response is similarly sign-symmetric. The ankle Step 10 rows are superseded pending target-mask correction.
 
 ## Current interpretation
 
-The residual deformation behaves like a deterministic, approximately linear coupling rather than random numerical noise or a few isolated outliers. However, this is **not yet evidence of a representation-specific HUGS failure**. HUGS deforms Gaussians using blended SMPL/LBS transformations rather than the single dominant-joint labels used by this diagnostic.
+The valid wrist residual behaves like a deterministic, approximately linear coupling rather than random numerical noise or a few isolated outliers. However, this is **not yet evidence of a representation-specific HUGS failure**. HUGS deforms Gaussians using blended SMPL/LBS transformations rather than the single dominant-joint labels used by this diagnostic.
 
-The next decisive experiment is therefore an **SMPL-only control**: apply the same joint perturbations directly to the underlying body model and compare the resulting vertex displacement structure against the HUGS Gaussian response. This will separate deformation already implied by the body/skinning model from additional representation-specific effects.
+## Next step
+
+1. Recompute the ankle secondary analysis using the full `left_leg` target set.
+2. Then run an **SMPL-only control** with the same perturbations and comparable anatomical groupings.
+
+The SMPL-only control will test whether the cross-body / upstream structure is already implied by the body and skinning model or whether HUGS introduces additional representation-specific residuals.
