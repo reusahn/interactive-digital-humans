@@ -1,0 +1,17 @@
+degrees,mode,group,num_vertices,displacement_sum,share_of_total_displacement_pct
+-10.0,all,intended,778,28.061932,93.772591
+-10.0,all,local_chain,615,0.484844,1.620169
+-10.0,all,nonlocal,5497,1.378737,4.607228
+-10.0,all,contralateral_arm,1393,0.365317,1.220753
+-10.0,high_confidence,intended,543,22.314421,96.564087
+-10.0,high_confidence,local_chain,266,0.210031,0.908893
+-10.0,high_confidence,nonlocal,2717,0.583957,2.527033
+-10.0,high_confidence,contralateral_arm,805,0.205667,0.890009
+10.0,all,intended,778,28.077614,93.929840
+10.0,all,local_chain,615,0.486791,1.628494
+10.0,all,nonlocal,5497,1.327704,4.441655
+10.0,all,contralateral_arm,1393,0.362512,1.212735
+10.0,high_confidence,intended,543,22.325893,96.601738
+10.0,high_confidence,local_chain,266,0.214975,0.930172
+10.0,high_confidence,nonlocal,2717,0.570407,2.468089
+10.0,high_confidence,contralateral_arm,805,0.204676,0.885612
