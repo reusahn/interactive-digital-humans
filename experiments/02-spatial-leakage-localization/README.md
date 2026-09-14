@@ -1,55 +1,62 @@
 # Experiment 02 — Spatial Leakage Localization
 
-This experiment re-analyzes archived HUGS Baseline v1 NPZ outputs to localize non-target deformation and test whether the observed leakage is dominated by isolated outliers, semantic assignment ambiguity, or structured anatomical coupling.
+This experiment re-analyzes archived HUGS probe outputs to localize non-target deformation and distinguish local kinematic propagation from genuinely non-local coupling.
 
-## Methodology correction
+## Metric definitions
 
-Baseline v1 defines `left_ankle` against the coarse semantic region `left_leg`, which contains:
+Two locality scales are now reported separately.
+
+### Fine joint-local target
+
+For the ankle analysis, the strict target is:
+
+```text
+left_ankle + left_foot
+```
+
+Under this definition, knee/hip motion counts as outside displacement. The archived `joint_axis_leakage.csv` reports 26.57% ankle-z leakage with `num_target = 16730`, which matches the semantic-assignment counts `left_ankle = 13369` plus `left_foot = 3361`.
+
+### Coarse regional target
+
+The original probe code maps `left_ankle` to the entire semantic `left_leg` region:
 
 ```text
 left_hip + left_knee + left_ankle + left_foot
 ```
 
-In the secondary Step 6–10 helper code, the ankle target was accidentally narrowed to only `left_ankle + left_foot`. This caused left-knee and left-hip displacement to be incorrectly counted as ankle outside displacement.
+Recomputing the same NPZ with this broader target gives only ~5.38% regional leakage at +10°, and ~3.13% after dominant-joint confidence >= 0.9 filtering.
 
-Therefore:
+These values are not contradictory. They measure different spatial scales of locality.
 
-- wrist and shoulder Step 6–10 analyses remain valid,
-- ankle Step 6–10 rows/plots are provisional and must be recomputed,
-- Baseline v1's original ankle leakage ratio remains valid because it used the correct coarse `left_leg` region.
-
-## Step 7 — Leakage concentration and anatomical source analysis
+## Step 7 — Leakage concentration
 
 Artifacts:
 
 - `analysis/07_anatomical_leakage_groups.csv`
 - `analysis/07_leakage_concentration.csv`
-- `figures/07_leakage_concentration.png`
 
-For wrist and shoulder, outside displacement is strongly heavy-tailed but not reducible to a tiny handful of extreme points. The top 5% of non-target Gaussians account for roughly 84–85% of outside displacement.
+The displacement signal is heavy-tailed but not reducible to a few isolated points. Roughly the top 5% of non-target Gaussians account for about 83–85% of outside displacement.
 
 ## Step 8 — Confidence robustness
 
-Dominant-joint confidence filtering reduces apparent leakage substantially but does not eliminate the wrist/shoulder signal. At confidence >= 0.9, a meaningful wrist residual remains.
+Dominant-joint confidence filtering substantially reduces apparent outside displacement, confirming that semantic boundary ambiguity contributes to the metric. A meaningful residual remains, especially for wrist motion.
 
-## Step 9 — High-confidence anatomical residual
+## Step 9 — High-confidence residual anatomy
 
 Artifact:
 
 - `analysis/09_high_confidence_joint_breakdown.csv`
 
-Valid wrist result at confidence >= 0.9:
+For wrist z at confidence >= 0.9:
 
-- left elbow = **39.04%** of high-confidence outside displacement
+- left elbow = 39.04%
 - right shoulder = 16.10%
 - left shoulder = 15.18%
 - right elbow = 8.79%
 - right hand = 8.53%
 - right wrist = 7.57%
 
-The wrist-to-elbow pattern and contralateral upper-limb structure survive strict confidence filtering.
-
-The ankle rows in this artifact are superseded pending corrected recomputation.
+The same-side upstream elbow remains the largest component and substantial contralateral upper-limb structure survives strict filtering.
 
 ## Step 10 — Signed and magnitude response
 
@@ -57,24 +64,40 @@ Artifact:
 
 - `analysis/10_signed_magnitude_high_confidence_response.csv`
 
-The wrist probe was evaluated at ±5°, ±10°, ±20°, and ±30°. Its high-confidence outside-displacement sum is nearly proportional to perturbation magnitude and almost perfectly symmetric with respect to sign:
+The wrist probe at ±5°, ±10°, ±20°, and ±30° shows an approximately linear and sign-symmetric response. High-confidence outside displacement scales from ~5.08 at 5° to ~30.15 at 30°, while the leakage ratio remains near 12.26% and the contralateral share remains near 41%.
 
-- 5°: ~5.083
-- 10°: ~10.154
-- 20°: ~20.23
-- 30°: ~30.15
+This behavior is consistent with deterministic coupling rather than random numerical noise.
 
-The wrist high-confidence leakage ratio stays effectively constant at ~12.26% across this entire range. The anatomical composition is also extremely stable: upstream same-side share stays near 54.52% and contralateral share near 41.01%.
+## Step 10A — Coarse ankle regional control
 
-The shoulder ±10° response is similarly sign-symmetric. The ankle Step 10 rows are superseded pending target-mask correction.
+Artifacts:
+
+- `analysis/10A_corrected_ankle_summary.csv`
+- `analysis/10A_corrected_ankle_joint_breakdown.csv`
+
+At +10°:
+
+- full-left-leg target displacement = 309.443726
+- outside displacement = 17.596235
+- coarse regional leakage = **5.380455%**
+- high-confidence coarse leakage = **3.126863%**
+
+At -10°, the corresponding values are 5.404658% and 3.135370%, showing strong sign symmetry.
+
+The large difference between the strict 26.57% ankle/foot diagnostic and the ~5.38% full-leg diagnostic shows that much of the apparent ankle leakage is intra-limb coupling rather than cross-region motion.
 
 ## Current interpretation
 
-The valid wrist residual behaves like a deterministic, approximately linear coupling rather than random numerical noise or a few isolated outliers. However, this is **not yet evidence of a representation-specific HUGS failure**. HUGS deforms Gaussians using blended SMPL/LBS transformations rather than the single dominant-joint labels used by this diagnostic.
+The locality problem should be treated hierarchically:
+
+1. intended joint/part,
+2. same-side kinematic neighborhood,
+3. non-local or cross-body remainder.
+
+The wrist remains the strongest candidate for a non-local effect because it retains a stable contralateral component under high-confidence filtering and across perturbation magnitude.
+
+This is not yet evidence of a HUGS-specific representation failure. HUGS uses blended SMPL/LBS transformations, so the next decisive comparison is against an SMPL-only control.
 
 ## Next step
 
-1. Recompute the ankle secondary analysis using the full `left_leg` target set.
-2. Then run an **SMPL-only control** with the same perturbations and comparable anatomical groupings.
-
-The SMPL-only control will test whether the cross-body / upstream structure is already implied by the body and skinning model or whether HUGS introduces additional representation-specific residuals.
+Compute a hierarchical displacement decomposition for ankle, wrist, and shoulder using the existing NPZ arrays, then run an **SMPL-only control vs HUGS Gaussian response**.
