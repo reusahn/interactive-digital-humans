@@ -1,0 +1,16 @@
+probe,group,num_gaussians,displacement_sum,fraction_of_outside_pct
+ankle_z,upstream_same_side,119685,70.462715,81.314949
+ankle_z,contralateral_leg,98845,8.653424,9.986171
+ankle_z,torso_head,140016,6.326789,7.301202
+ankle_z,upper_body_limbs,97682,1.211137,1.397669
+ankle_z,other,0,0.000000,0.000000
+wrist_z,upstream_same_side,37130,12.685038,52.796997
+wrist_z,contralateral_upper_limb,60729,8.887035,36.989151
+wrist_z,torso_head,174229,0.842378,3.506102
+wrist_z,legs,192045,1.611611,6.707763
+wrist_z,other,0,0.000000,0.000000
+shoulder_z,upstream_torso_attachment,131593,9.653547,47.202026
+shoulder_z,contralateral_upper_limb,60729,7.915229,38.702335
+shoulder_z,legs,192045,2.809401,13.736857
+shoulder_z,head,45996,0.073372,0.358761
+shoulder_z,other,0,0.000000,0.000000
