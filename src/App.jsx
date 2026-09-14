@@ -47,6 +47,18 @@ const focusAreas = [
   ['EMB', 'EMBODIED INTELLIGENCE'],
 ]
 
+const baselineMetrics = [
+  ['36', 'SAVED PROBE RUNS'],
+  ['472,958', 'HUMAN GAUSSIANS'],
+  ['26.6%', 'ANKLE Z LEAKAGE'],
+  ['11.2%', 'WRIST Z LEAKAGE'],
+]
+
+const heatmapUrl = 'https://raw.githubusercontent.com/reusahn/interactive-digital-humans/main/experiments/01-baseline/figures/01_joint_axis_leakage.svg'
+const confidenceUrl = 'https://raw.githubusercontent.com/reusahn/interactive-digital-humans/main/experiments/01-baseline/figures/02_high_confidence_leakage.svg'
+const resultsUrl = 'https://github.com/reusahn/interactive-digital-humans/blob/main/experiments/01-baseline/results.md'
+const dataManifestUrl = 'https://github.com/reusahn/interactive-digital-humans/blob/main/experiments/01-baseline/DATA_MANIFEST.md'
+
 function HumanFigure({ playing }) {
   return (
     <div
@@ -102,6 +114,31 @@ export default function App() {
 
   return (
     <main>
+      <style>{`
+        .baseline{padding:120px 6vw 130px;background:#0d100e;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+        .baseline-head{display:grid;grid-template-columns:1.35fr .8fr;gap:70px;align-items:end;margin-bottom:52px}
+        .baseline-kicker{font:500 9px DM Mono;letter-spacing:.15em;color:var(--lime);margin-bottom:16px}
+        .baseline h2{font:600 clamp(42px,5.4vw,74px)/.96 Space Grotesk;letter-spacing:-.055em;margin:0}
+        .baseline h2 em{font-style:normal;color:transparent;-webkit-text-stroke:1px #717771}
+        .baseline-head>p{font:12px/1.8 DM Mono;color:#858b84;margin:0}
+        .baseline-head>p b{color:#f1f3ee}
+        .baseline-stats{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #2a302a;margin-bottom:36px}
+        .baseline-stat{padding:26px 22px;border-right:1px solid #2a302a;min-height:118px;display:flex;flex-direction:column;justify-content:space-between}
+        .baseline-stat:last-child{border-right:0}.baseline-stat strong{font:600 clamp(26px,3vw,43px) Space Grotesk;color:#f1f4ed;letter-spacing:-.045em}.baseline-stat span{font:8px DM Mono;letter-spacing:.12em;color:#737a72}
+        .baseline-figures{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}
+        .baseline-figure{border:1px solid #2b312b;background:#111411;padding:16px;min-width:0}
+        .baseline-figure img{width:100%;height:auto;display:block;background:white}
+        .baseline-figure figcaption{padding:15px 4px 2px;font:9px/1.6 DM Mono;color:#747b73;letter-spacing:.03em}
+        .baseline-figure figcaption b{color:#dfe4dc;font-weight:500}
+        .baseline-insight{margin-top:18px;border:1px solid #2b312b;display:grid;grid-template-columns:1.2fr .8fr}
+        .baseline-question{padding:34px}.baseline-question span{font:8px DM Mono;letter-spacing:.15em;color:var(--lime)}
+        .baseline-question p{font:500 clamp(20px,2.4vw,31px)/1.32 Space Grotesk;letter-spacing:-.025em;margin:16px 0 0;color:#e9ede6}
+        .baseline-notes{padding:34px;border-left:1px solid #2b312b;font:11px/1.75 Inter;color:#838a82}.baseline-notes b{color:#e8ece5}.baseline-notes p{margin:0 0 15px}
+        .baseline-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}.baseline-actions a{display:inline-flex;align-items:center;gap:9px;border:1px solid #3a4239;padding:11px 13px;font:500 8px DM Mono;letter-spacing:.1em;color:#bdc4ba}.baseline-actions a:first-child{border-color:var(--lime);color:var(--lime)}
+        @media(max-width:900px){.baseline{padding:85px 25px}.baseline-head,.baseline-figures,.baseline-insight{grid-template-columns:1fr}.baseline-stats{grid-template-columns:1fr 1fr}.baseline-stat:nth-child(2){border-right:0}.baseline-stat{border-bottom:1px solid #2a302a}.baseline-notes{border-left:0;border-top:1px solid #2b312b}.baseline-head{gap:25px}}
+        @media(max-width:540px){.baseline-stats{grid-template-columns:1fr}.baseline-stat{border-right:0}.baseline-figure{padding:8px}}
+      `}</style>
+
       <nav>
         <a className="brand" href="#top">
           <span>4D</span>
@@ -110,13 +147,14 @@ export default function App() {
         </a>
         <div className={`navlinks ${menu ? 'open' : ''}`}>
           <a href="#research" onClick={() => setMenu(false)}>RESEARCH</a>
+          <a href="#baseline" onClick={() => setMenu(false)}>BASELINE 01</a>
           <a href="#framework" onClick={() => setMenu(false)}>FRAMEWORK</a>
           <a href="#manifesto" onClick={() => setMenu(false)}>QUESTION</a>
           <button
             className="access"
-            onClick={() => document.getElementById('research').scrollIntoView({ behavior: 'smooth' })}
+            onClick={() => document.getElementById('baseline').scrollIntoView({ behavior: 'smooth' })}
           >
-            EXPLORE RESEARCH <ArrowUpRight size={15} />
+            VIEW RESULTS <ArrowUpRight size={15} />
           </button>
         </div>
         <button className="menu" onClick={() => setMenu(!menu)} aria-label="Toggle navigation">
@@ -198,6 +236,54 @@ export default function App() {
         </div>
       </section>
 
+      <section className="baseline" id="baseline">
+        <div className="baseline-head">
+          <div>
+            <div className="baseline-kicker">BASELINE 01 · HUGS / HUMAN GAUSSIAN SPLATS</div>
+            <h2>WHERE DOES<br />DEFORMATION <em>LEAK?</em></h2>
+          </div>
+          <p>
+            A controlled deformation-locality probe on the pretrained NeuMan <b>Seattle</b> sequence. Small SMPL joint rotations are used to measure how much Gaussian motion remains inside an expected kinematic subtree and how much propagates outside it.
+          </p>
+        </div>
+
+        <div className="baseline-stats">
+          {baselineMetrics.map(([value, label]) => (
+            <div className="baseline-stat" key={label}>
+              <strong>{value}</strong>
+              <span>{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="baseline-figures">
+          <figure className="baseline-figure">
+            <img src={heatmapUrl} alt="HuGS deformation leakage heatmap by joint and rotation axis" />
+            <figcaption><b>FIG. 01</b> · Joint × axis leakage at ±10°, sign-averaged. Distal ankle and wrist articulations show substantially higher apparent non-target displacement than the shoulder in Seattle frame 0.</figcaption>
+          </figure>
+          <figure className="baseline-figure">
+            <img src={confidenceUrl} alt="HuGS deformation leakage after high-confidence joint assignment filtering" />
+            <figcaption><b>FIG. 02</b> · The principal distal-versus-proximal pattern remains visible after retaining only Gaussians with joint-assignment confidence ≥ 0.9.</figcaption>
+          </figure>
+        </div>
+
+        <div className="baseline-insight">
+          <div className="baseline-question">
+            <span>CURRENT RESEARCH QUESTION</span>
+            <p>Why do distal articulations produce greater non-local Gaussian deformation, and can control be made more anatomically local without sacrificing rendering or animation quality?</p>
+          </div>
+          <div className="baseline-notes">
+            <p><b>Wrist behavior.</b> The z-axis wrist sweep is approximately sign-symmetric and magnitude-linear from ±5° to ±30°, while the leakage proportion stays near 11.21%.</p>
+            <p><b>Scope.</b> These are Baseline v1 observations from one NeuMan sequence and one validation frame. They are not yet a general claim about HUGS.</p>
+            <p><b>Data policy.</b> Large per-Gaussian NPZ arrays remain in Google Drive as the authoritative raw archive. Compact tables, figures, code, and provenance are versioned on GitHub.</p>
+            <div className="baseline-actions">
+              <a href={resultsUrl} target="_blank" rel="noreferrer">FULL RESULTS <ArrowUpRight size={13} /></a>
+              <a href={dataManifestUrl} target="_blank" rel="noreferrer">DATA MANIFEST <ArrowUpRight size={13} /></a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="framework" id="framework">
         <div className="framework-copy">
           <span className="green-label"><Sparkles size={14} /> INTERACTIVE 4D FRAMEWORK</span>
@@ -241,7 +327,7 @@ export default function App() {
         <a className="brand" href="#top"><span>4D</span>INTERACTIVE DIGITAL HUMANS</a>
         <p>REAL-TIME 4D REPRESENTATION, GENERATION,<br />CONTROL, AND EMBODIED INTERACTION.</p>
         <div>
-          <a href="https://github.com/reusahn" target="_blank" rel="noreferrer">GITHUB / REUSAHN</a>
+          <a href="https://github.com/reusahn/interactive-digital-humans" target="_blank" rel="noreferrer">GITHUB / RESEARCH REPOSITORY</a>
           <span>JONGHOON AHN · 2026</span>
         </div>
       </footer>
