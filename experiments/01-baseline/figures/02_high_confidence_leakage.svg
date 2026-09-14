@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#111}.title{font-size:26px;font-weight:600}.axis{font-size:18px}.lab{font-size:17px}.val{font-size:17px;font-weight:600}</style>
+<text x="450" y="38" text-anchor="middle" class="title">HUGS Leakage, Joint Confidence ≥ 0.9</text>
+<text x="365" y="82" text-anchor="middle" class="axis">x</text><text x="515" y="82" text-anchor="middle" class="axis">y</text><text x="665" y="82" text-anchor="middle" class="axis">z</text>
+<text x="185" y="137" text-anchor="end" class="lab">left_ankle</text><text x="185" y="207" text-anchor="end" class="lab">left_elbow</text><text x="185" y="277" text-anchor="end" class="lab">left_knee</text><text x="185" y="347" text-anchor="end" class="lab">left_shoulder</text><text x="185" y="417" text-anchor="end" class="lab">left_wrist</text>
+<rect x="290" y="100" width="150" height="70" fill="#64bb6a"/><rect x="440" y="100" width="150" height="70" fill="#3f7590"/><rect x="590" y="100" width="150" height="70" fill="#f1e331"/>
+<text x="365" y="143" text-anchor="middle" class="val">19.2%</text><text x="515" y="143" text-anchor="middle" class="val">9.2%</text><text x="665" y="143" text-anchor="middle" class="val">25.5%</text>
+<rect x="290" y="170" width="150" height="70" fill="#4d256f"/><rect x="440" y="170" width="150" height="70" fill="#4f2872"/><rect x="590" y="170" width="150" height="70" fill="#542f77"/>
+<text x="365" y="213" text-anchor="middle" class="val" fill="white">1.8%</text><text x="515" y="213" text-anchor="middle" class="val" fill="white">2.0%</text><text x="665" y="213" text-anchor="middle" class="val" fill="white">2.4%</text>
+<rect x="290" y="240" width="150" height="70" fill="#4d256f"/><rect x="440" y="240" width="150" height="70" fill="#62417e"/><rect x="590" y="240" width="150" height="70" fill="#4f2871"/>
+<text x="365" y="283" text-anchor="middle" class="val" fill="white">1.8%</text><text x="515" y="283" text-anchor="middle" class="val" fill="white">4.1%</text><text x="665" y="283" text-anchor="middle" class="val" fill="white">1.9%</text>
+<rect x="290" y="310" width="150" height="70" fill="#43175f"/><rect x="440" y="310" width="150" height="70" fill="#42165e"/><rect x="590" y="310" width="150" height="70" fill="#41155d"/>
+<text x="365" y="353" text-anchor="middle" class="val" fill="white">0.4%</text><text x="515" y="353" text-anchor="middle" class="val" fill="white">0.3%</text><text x="665" y="353" text-anchor="middle" class="val" fill="white">0.3%</text>
+<rect x="290" y="380" width="150" height="70" fill="#5d477f"/><rect x="440" y="380" width="150" height="70" fill="#3b8390"/><rect x="590" y="380" width="150" height="70" fill="#3a8a8d"/>
+<text x="365" y="423" text-anchor="middle" class="val" fill="white">6.1%</text><text x="515" y="423" text-anchor="middle" class="val">11.2%</text><text x="665" y="423" text-anchor="middle" class="val">12.3%</text>
+<text x="515" y="500" text-anchor="middle" class="axis">Rotation axis</text><text x="55" y="275" text-anchor="middle" class="axis" transform="rotate(-90 55 275)">Joint</text>
+<text x="450" y="535" text-anchor="middle" class="lab">Sensitivity check using only Gaussians with joint-assignment confidence ≥ 0.9</text>
+</svg>
