@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="620" viewBox="0 0 1000 620">
+  <rect width="1000" height="620" fill="white"/>
+  <style>
+    text { font-family: Arial, Helvetica, sans-serif; fill: #111; }
+    .title { font-size: 28px; font-weight: 700; }
+    .subtitle { font-size: 16px; fill: #444; }
+    .axis { stroke: #222; stroke-width: 1.5; }
+    .grid { stroke: #d9d9d9; stroke-width: 1; }
+    .tick { font-size: 14px; fill: #555; }
+    .label { font-size: 15px; }
+    .value { font-size: 13px; }
+    .a { fill: #333; }
+    .b { fill: #b8b8b8; }
+  </style>
+
+  <text x="70" y="48" class="title">Step 13E: Displacement associated with learned wrist influence</text>
+  <text x="70" y="76" class="subtitle">Fraction of subset displacement carried by Gaussians above learned left-wrist + hand weight thresholds</text>
+
+  <!-- plot area -->
+  <line x1="120" y1="500" x2="930" y2="500" class="axis"/>
+  <line x1="120" y1="120" x2="120" y2="500" class="axis"/>
+
+  <line x1="120" y1="500" x2="930" y2="500" class="grid"/><text x="70" y="505" class="tick">0%</text>
+  <line x1="120" y1="405" x2="930" y2="405" class="grid"/><text x="62" y="410" class="tick">25%</text>
+  <line x1="120" y1="310" x2="930" y2="310" class="grid"/><text x="62" y="315" class="tick">50%</text>
+  <line x1="120" y1="215" x2="930" y2="215" class="grid"/><text x="62" y="220" class="tick">75%</text>
+  <line x1="120" y1="120" x2="930" y2="120" class="grid"/><text x="54" y="125" class="tick">100%</text>
+
+  <!-- group 1: 70.9018%, 5.8570% -->
+  <rect x="205" y="230.6" width="48" height="269.4" class="a"/>
+  <rect x="263" y="477.7" width="48" height="22.3" class="b"/>
+  <text x="229" y="220" text-anchor="middle" class="value">70.90%</text>
+  <text x="287" y="468" text-anchor="middle" class="value">5.86%</text>
+  <text x="258" y="532" text-anchor="middle" class="label">HC nonlocal</text>
+  <text x="258" y="556" text-anchor="middle" class="tick">Spearman ρ = 0.830</text>
+
+  <!-- group 2: 72.7600%, 5.7714% -->
+  <rect x="455" y="223.5" width="48" height="276.5" class="a"/>
+  <rect x="513" y="478.1" width="48" height="21.9" class="b"/>
+  <text x="479" y="213" text-anchor="middle" class="value">72.76%</text>
+  <text x="537" y="468" text-anchor="middle" class="value">5.77%</text>
+  <text x="508" y="532" text-anchor="middle" class="label">HC contralateral</text>
+  <text x="508" y="556" text-anchor="middle" class="tick">Spearman ρ = 0.997</text>
+
+  <!-- group 3: 77.6784%, 6.4168% -->
+  <rect x="705" y="204.8" width="48" height="295.2" class="a"/>
+  <rect x="763" y="475.6" width="48" height="24.4" class="b"/>
+  <text x="729" y="194" text-anchor="middle" class="value">77.68%</text>
+  <text x="787" y="466" text-anchor="middle" class="value">6.42%</text>
+  <text x="758" y="532" text-anchor="middle" class="label">Top 5% HC nonlocal</text>
+  <text x="758" y="556" text-anchor="middle" class="tick">Spearman ρ = 0.973</text>
+
+  <!-- legend -->
+  <rect x="715" y="42" width="18" height="18" class="a"/><text x="740" y="56" class="tick">learned wrist weight &gt; 1e-3</text>
+  <rect x="715" y="70" width="18" height="18" class="b"/><text x="740" y="84" class="tick">learned wrist weight &gt; 1e-2</text>
+</svg>
