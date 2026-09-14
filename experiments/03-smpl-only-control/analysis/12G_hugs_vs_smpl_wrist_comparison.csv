@@ -1,0 +1,5 @@
+degrees,representation,intended_pct,local_chain_pct,nonlocal_pct,contralateral_arm_pct,derivation
+-10.0,HUGS_Gaussians,87.734726,6.686949,5.578325,5.029912,"Derived from Step 10 target/outside totals and upstream/contralateral shares"
+-10.0,SMPL_vertices,96.564087,0.908893,2.527033,0.890009,"Direct Step 12G measurement"
+10.0,HUGS_Gaussians,87.733527,6.688306,5.578167,5.030072,"Derived from Step 10 target/outside totals and upstream/contralateral shares"
+10.0,SMPL_vertices,96.601738,0.930172,2.468089,0.885612,"Direct Step 12G measurement"
