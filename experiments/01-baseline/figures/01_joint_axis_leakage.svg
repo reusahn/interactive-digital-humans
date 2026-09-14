@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560">
+<rect width="100%" height="100%" fill="white"/>
+<style>text{font-family:Arial,sans-serif;fill:#111}.title{font-size:26px;font-weight:600}.axis{font-size:18px}.lab{font-size:17px}.val{font-size:17px;font-weight:600}</style>
+<text x="450" y="38" text-anchor="middle" class="title">HUGS Deformation Leakage by Joint and Rotation Axis</text>
+<text x="365" y="82" text-anchor="middle" class="axis">x</text><text x="515" y="82" text-anchor="middle" class="axis">y</text><text x="665" y="82" text-anchor="middle" class="axis">z</text>
+<text x="185" y="137" text-anchor="end" class="lab">left_ankle</text><text x="185" y="207" text-anchor="end" class="lab">left_elbow</text><text x="185" y="277" text-anchor="end" class="lab">left_knee</text><text x="185" y="347" text-anchor="end" class="lab">left_shoulder</text><text x="185" y="417" text-anchor="end" class="lab">left_wrist</text>
+<!-- ankle -->
+<rect x="290" y="100" width="150" height="70" fill="#55b878"/><rect x="440" y="100" width="150" height="70" fill="#3d7f8f"/><rect x="590" y="100" width="150" height="70" fill="#f3e530"/>
+<text x="365" y="143" text-anchor="middle" class="val">18.2%</text><text x="515" y="143" text-anchor="middle" class="val">10.7%</text><text x="665" y="143" text-anchor="middle" class="val">26.6%</text>
+<!-- elbow -->
+<rect x="290" y="170" width="150" height="70" fill="#563079"/><rect x="440" y="170" width="150" height="70" fill="#543078"/><rect x="590" y="170" width="150" height="70" fill="#59337c"/>
+<text x="365" y="213" text-anchor="middle" class="val" fill="white">2.6%</text><text x="515" y="213" text-anchor="middle" class="val" fill="white">2.5%</text><text x="665" y="213" text-anchor="middle" class="val" fill="white">3.1%</text>
+<!-- knee -->
+<rect x="290" y="240" width="150" height="70" fill="#513078"/><rect x="440" y="240" width="150" height="70" fill="#416d91"/><rect x="590" y="240" width="150" height="70" fill="#543078"/>
+<text x="365" y="283" text-anchor="middle" class="val" fill="white">2.3%</text><text x="515" y="283" text-anchor="middle" class="val">8.4%</text><text x="665" y="283" text-anchor="middle" class="val" fill="white">2.5%</text>
+<!-- shoulder -->
+<rect x="290" y="310" width="150" height="70" fill="#471d68"/><rect x="440" y="310" width="150" height="70" fill="#451a65"/><rect x="590" y="310" width="150" height="70" fill="#441963"/>
+<text x="365" y="353" text-anchor="middle" class="val" fill="white">0.9%</text><text x="515" y="353" text-anchor="middle" class="val" fill="white">0.7%</text><text x="665" y="353" text-anchor="middle" class="val" fill="white">0.6%</text>
+<!-- wrist -->
+<rect x="290" y="380" width="150" height="70" fill="#3f7990"/><rect x="440" y="380" width="150" height="70" fill="#3e7c90"/><rect x="590" y="380" width="150" height="70" fill="#3b8490"/>
+<text x="365" y="423" text-anchor="middle" class="val">9.9%</text><text x="515" y="423" text-anchor="middle" class="val">10.3%</text><text x="665" y="423" text-anchor="middle" class="val">11.2%</text>
+<text x="515" y="500" text-anchor="middle" class="axis">Rotation axis</text><text x="55" y="275" text-anchor="middle" class="axis" transform="rotate(-90 55 275)">Joint</text>
+<text x="450" y="535" text-anchor="middle" class="lab">Seattle, frame 0 · kinematic-subtree leakage · ±10° sign-averaged</text>
+</svg>
