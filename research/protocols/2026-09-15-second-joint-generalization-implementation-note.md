@@ -33,3 +33,26 @@ For Jogging:
 - K6 deformation weights: stored `effective_lbs`
 
 The confidence rule remains `>= 0.9` for all three checkpoints. The Seattle source distinction is a provenance correction required to preserve the already-frozen benchmark anatomy, not a post-hoc threshold or endpoint change.
+
+## Step 17A2 verification
+
+Step 17A2 froze these sources into one cross-checkpoint mask artifact before any elbow perturbation and reproduced the expected counts exactly:
+
+| Checkpoint | HC | Contralateral |
+|---|---:|---:|
+| Seattle | 197778 | 33072 |
+| Parkinglot | 292095 | 77622 |
+| Jogging | 148392 | 20887 |
+
+Seattle's recomputed mask had only two additional contralateral rows, indices `239232` and `269473`. Both have dominant joint 21 under both saved and recomputed anatomy, but their saved confidence is below 0.9 while recomputed confidence is above 0.9. Excluding those rows changes the Seattle precursor negligibly:
+
+- K6 branch mean: `5.82640155e-7` -> `5.82675398e-7`
+- learned branch mean: `4.13053611e-4` -> `4.13076516e-4`
+
+The qualitative precursor ordering remains learned > K6 in Seattle and in all three checkpoints.
+
+Canonical mask artifact:
+
+`experiments/08-second-joint-generalization/17A2_frozen_canonical_anatomy_masks.npz`
+
+The exact historical reason `saved_confidence` differs from `max(effective_lbs)` for a few Seattle rows remains unresolved. This does not alter the implementation rule above, which is now frozen before the causal elbow test.
