@@ -1,0 +1,21 @@
+{
+  "date": "2026-09-15",
+  "step": "16D2",
+  "sequence": "jogging",
+  "hugs_source_commit": "86ebe5522a384fc553f07f090b63a76dd4af8d33",
+  "checkpoint_sha256": "7a056fd6ba8ee9f5cc640eac43666e9ab57de33db2062a8ca379d1daa3afa769",
+  "num_gaussians": 311723,
+  "xyz_canon_shape": [311723, 3],
+  "learned_lbs_shape": [311723, 24],
+  "full_lbs_max_row_sum_error": 3.5762786865234375e-07,
+  "full_lbs_mean_row_sum_error": 4.903568751046805e-08,
+  "full_high_confidence_count": 140755,
+  "full_high_confidence_fraction": 0.4515387058381961,
+  "full_vs_chunk_xyz_max_abs": 0.0,
+  "full_vs_chunk_lbs_max_abs": 0.0,
+  "dominant_joint_mismatch_count": 0,
+  "hc_mask_mismatch_count": 0,
+  "full_forward_valid": true,
+  "chunk_semantic_stability": true,
+  "audit_pass": true
+}
