@@ -96,13 +96,9 @@ Use **parkinglot** for the first independent pretrained-model replication.
 
 Reason: it provides 42 pose frames and the same four effective evaluation raw-frame indices `[2, 7, 12, 17]` used in the Seattle frame-replication experiment. This gives the cleanest first cross-sequence comparison while changing the pretrained HUGS checkpoint, learned deformation field, shape parameters, canonical Gaussian set, and source sequence.
 
-This is a pragmatic first replication choice, not evidence that parkinglot is intrinsically more representative than the other NeuMan sequences.
-
 ## Step 16B3 - Parkinglot checkpoint provenance
 
 The official Parkinglot checkpoint and packaged config were selectively extracted from the persisted official pretrained-model ZIP.
-
-Key facts:
 
 ```text
 checkpoint SHA256: f864f0fc3f4a9e6248fcd3ed0964b02967d7552825d6ff9993a149823204d76c
@@ -110,7 +106,7 @@ Gaussian count: 614157
 pose frames: 42
 ```
 
-The checkpoint is different from the Seattle checkpoint but uses the same core triplane/deformation architecture and 24-channel learned skinning output.
+The checkpoint is different from Seattle but uses the same core triplane/deformation architecture and 24-channel learned skinning output.
 
 Compact manifest: [16B3 checkpoint manifest](analysis/16B3_parkinglot_checkpoint_manifest.json).
 
@@ -122,13 +118,11 @@ The official Apple HUGS source was restored at commit:
 86ebe5522a384fc553f07f090b63a76dd4af8d33
 ```
 
-A lightweight source loader was used so the exact `activation.py`, `triplane.py`, and `decoders.py` modules could be loaded without renderer-specific dependencies.
+A lightweight loader imported the exact HUGS `activation.py`, `triplane.py`, and `decoders.py` modules without renderer-specific dependencies.
 
 Parkinglot checkpoint states strict-loaded successfully. Canonical Gaussian positions and learned 24-channel LBS weights were reconstructed through the checkpoint forward path.
 
-A temporary numerical audit failure occurred only when the first 4,096 Gaussians were rerun with a different CUDA batch shape. Step 16C1B then ran the actual all-Gaussian forward shape used by HUGS and compared it to the earlier 65,536-chunk pass.
-
-Final result:
+Step 16C1B matched the HUGS all-Gaussian forward shape and compared it to the 65,536-chunk pass.
 
 ```text
 FULL-BATCH FORWARD VALID: True
@@ -141,7 +135,7 @@ high-confidence-mask mismatch: 0
 high-confidence learned-LBS count: 290822
 ```
 
-Authoritative large arrays remain in Drive:
+Authoritative large arrays:
 
 ```text
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C1_parkinglot_learned_lbs.npz
@@ -150,7 +144,7 @@ Authoritative large arrays remain in Drive:
 
 ## Step 16C2 - Parkinglot-specific K=6 target
 
-A subject-specific SMPL Vitruvian template was reconstructed from the Parkinglot betas. The exact HUGS-style top-K target rule was then applied to all 614,157 canonical Gaussians:
+A subject-specific SMPL Vitruvian template was reconstructed from Parkinglot betas and the HUGS top-K target rule was applied to all 614,157 canonical Gaussians.
 
 ```text
 K = 6
@@ -158,7 +152,7 @@ LBS consistency gate: exp(-L1 / 0.02) > 0.9
 spatial weighting: exp(-squared_distance)
 ```
 
-The K=6 target passed all numerical and independent-search checks:
+Validation:
 
 ```text
 K6 TARGET VALID: True
@@ -185,37 +179,95 @@ overall dominant-joint agreement: 0.9888562696509199
 agreement on K6 high-confidence subset: 0.9999315291257981
 ```
 
-The key pre-perturbation observation is that the fixed high-confidence contralateral subset has nearly zero SMPL-derived left-wrist/hand support on average, while the learned Parkinglot field introduces substantially more:
+Pre-perturbation precursor on the fixed contralateral subset:
 
 ```text
 K6 contralateral wrist+hand mean:      2.161917080911735e-07
 learned contralateral wrist+hand mean: 8.741816418478265e-05
 learned/K6 mean ratio:                 404.3548430077448x
-K6 max:                                0.00014079449465498328
-learned max:                           0.248804971575737
 ```
 
 Compact summary: [16C2 key summary](analysis/16C2_parkinglot_k6_key_summary.csv).
 
-Authoritative large K=6 mapping remains in Drive:
+Authoritative K=6 mapping:
 
 ```text
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C2_parkinglot_k6_effective_mapping.npz
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C2_parkinglot_k6_manifest.json
 ```
 
+## Step 16C3 - independent Parkinglot causal replication
+
+The fixed K=6-derived anatomical masks were frozen before displacement. The same Seattle diagnostic was then applied to Parkinglot raw frame 2:
+
+```text
+left_wrist z +10 deg
+```
+
+Kinematic auditing confirmed that only left wrist and descendant left hand transforms changed:
+
+```text
+changed SMPL transforms: [20, 22]
+unexpected changed transforms: []
+```
+
+Three conditions were compared:
+
+1. original learned Parkinglot LBS,
+2. Parkinglot SMPL-derived K=6 target,
+3. learned Parkinglot LBS with left-wrist/left-hand channels removed only on the fixed 77,622-Gaussian high-confidence contralateral subset.
+
+The selective intervention changed no weights outside that subset.
+
+### High-confidence hierarchical result
+
+| Condition | HC total | Intended % | Local-chain % | Nonlocal % | Contralateral sum | Contralateral % |
+|---|---:|---:|---:|---:|---:|---:|
+| learned | 159.458954 | 82.896408 | 12.284736 | 4.818841 | 5.416988 | 3.397105 |
+| K6 target | 155.191818 | 85.765297 | 13.843283 | 0.391409 | 0.015786 | 0.010172 |
+| wrist/hand ablated | 154.041946 | 85.811526 | 12.716738 | 1.471733 | 0.000000 | 0.000000 |
+
+Primary result:
+
+```text
+learned contralateral:             5.416987895965576
+K6 contralateral:                  0.01578645221889019
+selective-ablation contralateral:  0.0
+K6 reduction vs learned:           99.70857508781499%
+selective-ablation reduction:      100.0%
+learned-to-K6 gap closed:          1.0029227667924083
+```
+
+Per-Gaussian association:
+
+```text
+fraction displacement reduced:       0.8418103115096236
+removed-mass vs reduction r:         0.9975359387446432
+removed-mass vs learned displacement r: 0.9975359387446432
+```
+
+Compact result: [16C3 counterfactual summary](analysis/16C3_parkinglot_counterfactual_summary.csv).
+
+Authoritative Drive outputs:
+
+```text
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C3_parkinglot_counterfactual_summary.csv
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C3_parkinglot_counterfactual_displacements.npz
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C3_parkinglot_counterfactual_metadata.json
+```
+
 ## Current interpretation
 
-Parkinglot independently reproduces the **pre-perturbation precursor** found in Seattle: a learned cross-joint left-wrist/hand LBS component appears on Gaussians anatomically assigned to the opposite upper body even though the SMPL-derived K=6 target assigns almost no such support on average.
+The Seattle mechanism has now been causally reproduced in a second independently pretrained HUGS checkpoint.
 
-This is not yet a causal cross-sequence replication. No Parkinglot wrist perturbation has been run yet.
+The strongest defensible claim is:
+
+> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement under a left-wrist z perturbation relative to the corresponding SMPL-derived K=6 target.
+
+The exact zero produced by selective ablation is expected from the LBS structure once the only changed wrist/hand channels are removed. The important result is that HUGS learns cross-joint support largely absent from the target and that this learned support accounts for the amplified contralateral response in both independently trained models.
+
+This result is still bounded to two checkpoints and the tested left-wrist z perturbation. It does not yet establish that all HUGS joints, axes, sequences, or Gaussian-human methods behave this way.
 
 ## Next step
 
-Run the first Parkinglot causal diagnostic at raw frame 2 with the same `left_wrist z +10 deg` perturbation as Seattle. Freeze the K=6-derived anatomical mask before observing displacement and compare:
-
-1. original learned Parkinglot LBS,
-2. Parkinglot K=6 target LBS,
-3. learned Parkinglot LBS with only left-wrist/left-hand channels removed on the fixed 77,622-Gaussian high-confidence contralateral subset.
-
-Do not generalize the Seattle causal result to HUGS as a method until this independent Parkinglot perturbation/counterfactual is completed.
+Repeat the Parkinglot causal diagnostic at raw evaluation frames `[2, 7, 12, 17]` using the same fixed K=6-derived anatomical mask and the same `left_wrist z +10 deg` perturbation. If the mechanism is stable across these poses, then proceed to a third independently pretrained sequence.
