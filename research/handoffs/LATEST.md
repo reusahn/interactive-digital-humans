@@ -15,59 +15,53 @@ Completed today:
 - Step 16C0 / 16C0B HUGS source restoration and lightweight module loading
 - Step 16C1 / 16C1B Parkinglot learned-LBS forward reconstruction and numerical audit
 - Step 16C2 Parkinglot-specific SMPL K=6 target reconstruction
-- Step 16C3 first independent Parkinglot causal counterfactual
+- Step 16C3 Parkinglot independent causal counterfactual
 - Step 16C4 Parkinglot within-checkpoint pose replication
+- Step 16C5 Parkinglot axis/sign robustness control
 
 ## Current strongest result
 
-The learned cross-joint left-wrist/left-hand LBS mechanism has now been causally reproduced and shown to be pose-stable in **two independently pretrained HUGS NeuMan checkpoints: Seattle and Parkinglot**.
+The learned cross-joint left-wrist/left-hand LBS mechanism has been causally reproduced and shown to be pose-stable in **two independently pretrained HUGS NeuMan checkpoints: Seattle and Parkinglot**.
 
-### Seattle
-
-Four tested raw evaluation frames: `[2, 7, 12, 17]`.
+Seattle tested raw frames `[2, 7, 12, 17]` under `left_wrist z +10 deg`:
 
 ```text
-learned contralateral range: 4.096565 to 4.272963
-mean K6 reduction:           99.8184408838516%
-minimum K6 reduction:        99.81753724223914%
-mean selective reduction:    100.0%
-minimum selective reduction: 100.0%
-mean removed-mass correlation: 0.9811488931072522
+mean K6 reduction:              99.8184408838516%
+minimum K6 reduction:           99.81753724223914%
+mean selective reduction:       100.0%
+mean removed-mass correlation:  0.9811488931072522
 ```
 
-### Parkinglot
-
-Independent checkpoint SHA256:
+Parkinglot tested raw frames `[2, 7, 12, 17]` under the same perturbation:
 
 ```text
-f864f0fc3f4a9e6248fcd3ed0964b02967d7552825d6ff9993a149823204d76c
+learned contra % HC range:      3.3925969009792323 to 3.3971048755337407
+mean K6 reduction:              99.70879580221536%
+minimum K6 reduction:           99.70857508781499%
+mean selective reduction:       100.0%
+mean removed-mass correlation:  0.9975337157455157
 ```
 
-Parkinglot has 614,157 Gaussians and a separately reconstructed subject-specific SMPL-derived K=6 target. The fixed high-confidence contralateral upper-body subset contains 77,622 Gaussians.
-
-Four tested raw evaluation frames: `[2, 7, 12, 17]`.
+Step 16C5 additionally tested Parkinglot raw frame 2 across `x/y/z × {-10,+10} deg` while keeping the learned field, K=6 target, anatomical masks, and selective intervention fixed.
 
 ```text
-learned contralateral range:       4.965871334075928 to 5.416987895965576
-learned contralateral % HC range:  3.3925969009792323 to 3.3971048755337407
-mean K6 reduction:                 99.70879580221536%
-minimum K6 reduction:              99.70857508781499%
-mean selective reduction:          100.0%
-minimum selective reduction:       100.0%
-mean removed-mass correlation:     0.9975337157455157
+minimum K6 reduction:                 98.7997086031298%
+minimum selective-ablation reduction: 100.0%
+minimum removed-mass correlation:     0.9664424743486758
+maximum ablated contralateral sum:    0.0
+maximum +/- sign asymmetry:           0.5583232093225667%
+AXIS/SIGN ROBUST:                     True
 ```
 
-At every Parkinglot frame, the kinematic audit showed only SMPL transforms `[20, 22]` changed under the `left_wrist z +10 deg` perturbation, corresponding to left wrist and descendant left hand. No contralateral joint transform changed.
+Important nuance: the causal pathway is direction robust, but response magnitude is not isotropic. The x-axis learned contralateral response is much smaller (`~0.315-0.317`, about `0.33%` of HC displacement) than the y/z responses (`~5.415-5.417`, about `3.4-3.8%` of HC displacement). Do not claim axis-invariant magnitude.
 
-Selective removal of learned left-wrist/left-hand channels only on the pre-defined contralateral subset reduced contralateral displacement to exactly zero at all four Parkinglot frames. Replacing the learned field with the SMPL-derived K=6 target reduced that response by approximately 99.71% at every tested frame.
-
-The `fraction displacement reduced` metric is below 1 in Parkinglot because it uses the strict criterion `delta > 0`; Gaussians that already had exactly zero learned displacement are not counted as reduced. This does not conflict with the ablated contralateral displacement sum being exactly zero.
+At every Parkinglot perturbation tested so far, kinematic auditing shows only SMPL transforms `[20,22]` change, corresponding to left wrist and descendant left hand. No contralateral transform changes.
 
 ## Strongest defensible claim
 
-> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement under a left-wrist z perturbation relative to the corresponding SMPL-derived K=6 target, and the mechanism remains stable across four tested evaluation poses in each checkpoint.
+> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs.
 
-Do not yet describe this as a universal HUGS failure. Evidence remains bounded to two checkpoints, one joint, and the tested perturbation axis/family.
+Do not describe this as a universal HUGS failure, an isotropic effect, or a result generalized to all joints or Gaussian-human methods.
 
 ## Authoritative recent Drive outputs
 
@@ -75,20 +69,20 @@ Do not yet describe this as a universal HUGS failure. Evidence remains bounded t
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C1_parkinglot_learned_lbs.npz
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C2_parkinglot_k6_effective_mapping.npz
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C3_parkinglot_counterfactual_displacements.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication.csv
 /content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication_displacements.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication_metadata.json
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C5_parkinglot_axis_sign_displacements.npz
 ```
 
 ## Immediate next experiment
 
-Run a Parkinglot perturbation-direction robustness test at raw frame 2 with the same fixed learned field, K=6 target, anatomical mask, and selective ablation. Compare `left_wrist +10 deg` around x, y, and z.
+Proceed to a third independently pretrained sequence: **Jogging**.
 
-Reason: two independent checkpoints already support the z-axis mechanism. The highest-value next control is to rule out that the causal result is a peculiarity of the originally chosen z rotation before spending time reconstructing a third full checkpoint. If the mechanism is preserved across x/y/z, proceed to a third independent sequence such as `jogging`.
+Reason: the 102-frame dynamic sequence provides more sequence/pose diversity than Citron while using a distinct pretrained HUGS model. First extract and verify only Jogging's official `human_final.pth` and `config_train.yaml`, checkpoint SHA256, Gaussian count, packaged config, and architecture. Stop before learned-LBS reconstruction if any provenance or architecture mismatch appears.
 
 For continuity, read:
 
-- [Step 16C3 independent causal replication](../sessions/2026-09-15-step16c3.md)
 - [Step 16C4 Parkinglot pose replication](../sessions/2026-09-15-step16c4.md)
+- [Step 16C5 Parkinglot axis/sign robustness](../sessions/2026-09-15-step16c5.md)
 - [Experiment 07 README](../../experiments/07-cross-sequence-replication/README.md)
+- [16C5 compact CSV](../../experiments/07-cross-sequence-replication/analysis/16C5_parkinglot_axis_sign_robustness.csv)
 - [daily research log](../logs/2026-09-15.md)
