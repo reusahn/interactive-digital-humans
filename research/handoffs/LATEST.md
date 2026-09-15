@@ -18,31 +18,32 @@ Completed today:
 - Step 16C3 Parkinglot independent causal counterfactual
 - Step 16C4 Parkinglot within-checkpoint pose replication
 - Step 16C5 Parkinglot axis/sign robustness control
+- Step 16D1 Jogging checkpoint/config provenance and architecture validation
 
 ## Current strongest result
 
 The learned cross-joint left-wrist/left-hand LBS mechanism has been causally reproduced and shown to be pose-stable in **two independently pretrained HUGS NeuMan checkpoints: Seattle and Parkinglot**.
 
-Seattle tested raw frames `[2, 7, 12, 17]` under `left_wrist z +10 deg`:
+Seattle raw frames `[2,7,12,17]`, `left_wrist z +10 deg`:
 
 ```text
-mean K6 reduction:              99.8184408838516%
-minimum K6 reduction:           99.81753724223914%
-mean selective reduction:       100.0%
-mean removed-mass correlation:  0.9811488931072522
+mean K6 reduction:             99.8184408838516%
+minimum K6 reduction:          99.81753724223914%
+mean selective reduction:      100.0%
+mean removed-mass correlation: 0.9811488931072522
 ```
 
-Parkinglot tested raw frames `[2, 7, 12, 17]` under the same perturbation:
+Parkinglot raw frames `[2,7,12,17]`, same perturbation:
 
 ```text
-learned contra % HC range:      3.3925969009792323 to 3.3971048755337407
-mean K6 reduction:              99.70879580221536%
-minimum K6 reduction:           99.70857508781499%
-mean selective reduction:       100.0%
-mean removed-mass correlation:  0.9975337157455157
+learned contra % HC range:     3.3925969009792323 to 3.3971048755337407
+mean K6 reduction:             99.70879580221536%
+minimum K6 reduction:          99.70857508781499%
+mean selective reduction:      100.0%
+mean removed-mass correlation: 0.9975337157455157
 ```
 
-Step 16C5 additionally tested Parkinglot raw frame 2 across `x/y/z × {-10,+10} deg` while keeping the learned field, K=6 target, anatomical masks, and selective intervention fixed.
+Parkinglot raw frame 2 additionally passed `x/y/z × {-10,+10} deg` direction/sign control:
 
 ```text
 minimum K6 reduction:                 98.7997086031298%
@@ -53,9 +54,34 @@ maximum +/- sign asymmetry:           0.5583232093225667%
 AXIS/SIGN ROBUST:                     True
 ```
 
-Important nuance: the causal pathway is direction robust, but response magnitude is not isotropic. The x-axis learned contralateral response is much smaller (`~0.315-0.317`, about `0.33%` of HC displacement) than the y/z responses (`~5.415-5.417`, about `3.4-3.8%` of HC displacement). Do not claim axis-invariant magnitude.
+Important nuance: the causal pathway is direction robust, but effect magnitude is anisotropic. The x-axis response is much smaller than y/z. Do not claim axis-invariant magnitude.
 
-At every Parkinglot perturbation tested so far, kinematic auditing shows only SMPL transforms `[20,22]` change, corresponding to left wrist and descendant left hand. No contralateral transform changes.
+## Step 16D1 - third candidate readiness
+
+Third independent candidate: **Jogging**.
+
+Official checkpoint/config and pose asset were verified:
+
+```text
+Jogging checkpoint SHA256: 7a056fd6ba8ee9f5cc640eac43666e9ab57de33db2062a8ca379d1daa3afa769
+Jogging config SHA256:     7e854af5d7d0dd564f863de4aca2465b8268c1eb3c3b06a0618c66cea8a25e53
+Gaussian count:            311723
+pose frames:               102
+beta drift:                0.0
+eval raw frames:           [2,7,12,17,22,27,32,37,42,47]
+```
+
+The Jogging checkpoint is distinct from Parkinglot. Triplane, geometry-decoder, and deformation-decoder tensor signatures match Parkinglot exactly. Packaged architecture-related config fields also match, including `hugs_triplane`, `use_deformer=True`, `disable_posedirs=True`, `n_subdivision=2`, and `triplane_res=256`.
+
+```text
+independent checkpoint: True
+core architecture match: True
+config identity valid: True
+pose asset valid: True
+THIRD CHECKPOINT READY: True
+```
+
+Do **not** count Jogging as a third replication yet. No Jogging learned-LBS or causal result exists at this point.
 
 ## Strongest defensible claim
 
@@ -63,26 +89,26 @@ At every Parkinglot perturbation tested so far, kinematic auditing shows only SM
 
 Do not describe this as a universal HUGS failure, an isotropic effect, or a result generalized to all joints or Gaussian-human methods.
 
-## Authoritative recent Drive outputs
-
-```text
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C1_parkinglot_learned_lbs.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C2_parkinglot_k6_effective_mapping.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C3_parkinglot_counterfactual_displacements.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication_displacements.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C5_parkinglot_axis_sign_displacements.npz
-```
-
 ## Immediate next experiment
 
-Proceed to a third independently pretrained sequence: **Jogging**.
+Run **Step 16D2: Jogging learned-LBS reconstruction**.
 
-Reason: the 102-frame dynamic sequence provides more sequence/pose diversity than Citron while using a distinct pretrained HUGS model. First extract and verify only Jogging's official `human_final.pth` and `config_train.yaml`, checkpoint SHA256, Gaussian count, packaged config, and architecture. Stop before learned-LBS reconstruction if any provenance or architecture mismatch appears.
+Use the already validated HUGS source commit and exact Parkinglot forward path:
+
+```text
+checkpoint xyz
+ -> TriPlane
+ -> GeometryDecoder -> canonical xyz
+ -> DeformationDecoder
+ -> softmax(lbs_logits / 0.1)
+ -> learned 24-channel LBS
+```
+
+Validate strict state loading, finite outputs, row sums, and full-batch/chunk numerical consistency before building the Jogging K=6 target.
 
 For continuity, read:
 
-- [Step 16C4 Parkinglot pose replication](../sessions/2026-09-15-step16c4.md)
 - [Step 16C5 Parkinglot axis/sign robustness](../sessions/2026-09-15-step16c5.md)
+- [Step 16D1 Jogging checkpoint readiness](../sessions/2026-09-15-step16d1.md)
 - [Experiment 07 README](../../experiments/07-cross-sequence-replication/README.md)
-- [16C5 compact CSV](../../experiments/07-cross-sequence-replication/analysis/16C5_parkinglot_axis_sign_robustness.csv)
-- [daily research log](../logs/2026-09-15.md)
+- [16D1 compact manifest](../../experiments/07-cross-sequence-replication/analysis/16D1_jogging_checkpoint_manifest.json)
