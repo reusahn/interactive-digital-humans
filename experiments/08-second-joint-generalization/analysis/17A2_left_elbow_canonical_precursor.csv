@@ -1,0 +1,4 @@
+checkpoint,anatomy_source,high_confidence_count,contralateral_count,contra_dominant_joint_agreement,k6_branch_mean,learned_branch_mean,learned_k6_mean_ratio,fraction_learned_branch_gt_1e3,fraction_k6_branch_gt_1e3,learned_mean_gt_k6_mean
+seattle,saved_dominant + saved_confidence,197778,33072,1.0,5.826753977089538e-07,0.00041307651554234326,708.9307651679414,0.09539791969037252,0.0,True
+parkinglot,dominant_joint + joint_confidence,292095,77622,0.9999484682,2.163266970001132e-07,0.0002398379729129374,1108.6841163798285,0.05020483883435108,0.0,True
+jogging,dominant_joint + joint_confidence,148392,20887,0.9999521233,2.763716224762902e-07,0.0003745635331142694,1355.2894098105278,0.07803897160913487,0.0,True
