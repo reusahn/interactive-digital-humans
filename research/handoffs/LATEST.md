@@ -9,9 +9,12 @@ Completed today:
 - Step 14 corrected counterfactual LBS ablation
 - Step 15 Seattle within-sequence pose replication
 - Step 16A cross-sequence asset inventory
+- Step 16B1 official NeuMan archive probe
 
-Current blocker: official pretrained HUGS checkpoints/configs exist for `citron`, `parkinglot`, `jogging`, `lab`, and `bike`, but the matching persistent NeuMan sequence data/SMPL pose assets are not yet stored in the project Drive.
+Step 16B1 confirmed that the official `neuman_data.zip` is `4.204 GiB` and supports HTTP byte-range requests (`206`, `Accept-Ranges: bytes`). The full archive has **not** been downloaded.
 
-Next experiment: **Step 16B - acquire and persist one official NeuMan candidate sequence dataset, verify its pose asset and matching checkpoint/config, then proceed to independent-model cross-sequence replication.**
+Current strategy: avoid storing the full 4.2 GiB archive. Use a range-backed remote ZIP reader to selectively extract only the per-sequence `4d_humans/smpl_optimized_aligned_scale.npz` pose assets for the independent HUGS candidates, inspect their frame counts, then choose the first cross-sequence replication model.
 
-For full chat-session continuity, also read [the structured 2026-09-15 session record](../sessions/2026-09-15.md) together with [the daily research log](../logs/2026-09-15.md).
+Next experiment: **Step 16B2 - selectively extract and inspect candidate NeuMan SMPL pose NPZ files from the official remote ZIP.**
+
+For full chat-session continuity, read [the structured 2026-09-15 session record](../sessions/2026-09-15.md), [the Step 16B1 session checkpoint](../sessions/2026-09-15-step16b1.md), and [the daily research log](../logs/2026-09-15.md).
