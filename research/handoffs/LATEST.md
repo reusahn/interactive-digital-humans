@@ -10,22 +10,12 @@ Independent unit: pretrained checkpoint, `n = 3`.
 
 Within-checkpoint pose diagnostics: `18` total, nested within those three checkpoints and not to be counted as 18 independent replications.
 
-| Checkpoint | Poses | Learned contra % HC mean | Learned contra % HC range | Mean K6 reduction | Minimum K6 reduction | Minimum selective reduction | Mean removed-mass correlation | Minimum correlation | Max ablated contra | Causal pass |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| Seattle | 4 | 4.993387 | 4.930677-5.034862 | 99.818441% | 99.817537% | 100.0% | 0.981149 | 0.980829 | 0.0 | True |
-| Parkinglot | 4 | 3.394478 | 3.392597-3.397105 | 99.708796% | 99.708575% | 100.0% | 0.997534 | 0.997517 | 0.0 | True |
-| Jogging | 10 | 8.453632 | 8.343905-8.673447 | 99.819317% | 99.817791% | 100.0% | 0.990030 | 0.989911 | 0.0 | True |
-
 ```text
-ALL FRAME-2 REGRESSIONS PASS: True
-independent pretrained checkpoints: 3
-within-checkpoint pose diagnostics: 18
 checkpoint causal passes: 3 / 3
 global minimum K6 reduction: 99.708575087815%
 global minimum selective-ablation reduction: 100.0%
 global minimum removed-mass correlation: 0.9808287038512752
 global maximum ablated contralateral sum: 0.0
-ALL THREE CHECKPOINTS CAUSALLY REPLICATE: True
 LEFT-WRIST CROSS-CHECKPOINT BENCHMARK FROZEN: True
 ```
 
@@ -61,72 +51,78 @@ changed transforms exactly [18,20,22]
 
 Failures remain results. Do not change joint, axis, angle, mask, or thresholds in response to outcome.
 
-## Step 17A precursor
-
-Before perturbation, aggregate learned branch support `{18,20,22}` exceeds K6 support on the contralateral subset in all three checkpoints. This is descriptive precursor evidence only.
-
-Original Step-17A Seattle recomputation used `argmax/max(effective_lbs)` and returned `197781` HC / `33074` contralateral, creating a small mismatch with the frozen Seattle benchmark.
-
-## Step 17A1 Seattle reconciliation
-
-The Seattle mismatch is an anatomy-source provenance issue, not a threshold comparator issue.
-
-```text
-recomputed effective_lbs anatomy: HC 197781, contra 33074
-saved Step-13A anatomy:           HC 197778, contra 33072
-frozen corrected benchmark:       HC 197778, contra 33072
-```
-
-Only `saved_dominant` / `saved_confidence` reproduce the reviewed Step-13A / Step-14E Seattle benchmark. The two extra recomputed contralateral rows are indices `239232` and `269473`.
-
-## Step 17A2 canonical anatomy freeze
-
-Canonical anatomy sources are now frozen before causal elbow testing:
+## Canonical anatomy sources frozen at Step 17A2
 
 - Seattle masks: `saved_dominant` + `saved_confidence` from Step 13A
 - Parkinglot masks: stored `dominant_joint` + `joint_confidence` from Step 16C2
 - Jogging masks: stored `dominant_joint` + `joint_confidence` from Step 16D3
-- K6 deformation condition for all checkpoints: checkpoint-specific `effective_lbs`
+- K6 deformation condition: checkpoint-specific `effective_lbs`
 
-Expected anatomy counts are reproduced exactly:
-
-| Checkpoint | HC | Contra | K6 branch mean | Learned branch mean | Learned/K6 ratio |
-|---|---:|---:|---:|---:|---:|
-| Seattle | 197778 | 33072 | 5.826754e-7 | 4.130765e-4 | 708.9308x |
-| Parkinglot | 292095 | 77622 | 2.163267e-7 | 2.398380e-4 | 1108.6841x |
-| Jogging | 148392 | 20887 | 2.763716e-7 | 3.745635e-4 | 1355.2894x |
-
-Seattle's two-row correction is negligible for the precursor:
+Counts:
 
 ```text
-K6 mean delta:      +3.52429e-11
-learned mean delta: +2.29047e-8
-precursor ordering preserved: True
+Seattle    HC 197778  contra 33072
+Parkinglot HC 292095  contra 77622
+Jogging    HC 148392  contra 20887
 CANONICAL ANATOMY SOURCES FROZEN: True
 ```
 
-The deeper historical reason Seattle `saved_confidence` differs from `max(effective_lbs)` for a few rows remains unresolved, but the implementation source mapping is now fixed and benchmark-consistent.
+Seattle's saved/recomputed anatomy discrepancy is a provenance issue. The deeper historical reason `saved_confidence` differs from `max(effective_lbs)` for a few rows remains unresolved, but the benchmark-consistent anatomy source is frozen.
+
+## Step 17B1 - left-elbow raw-frame-2 causal result
+
+The predeclared left-elbow `z +10 deg` causal test passed in all three independently pretrained checkpoints on the common raw frame 2.
+
+| Checkpoint | Learned contra | K6 contra | Ablated contra | Learned contra % HC | K6 reduction | Ablation reduction | Removed-mass corr | Changed transforms | Pass |
+|---|---:|---:|---:|---:|---:|---:|---:|---|---|
+| Seattle | 2.6505639553 | 0.0048044017 | 0.0 | 0.5360253% | 99.8187404% | 100.0% | 0.9708237 | `[18,20,22]` | True |
+| Parkinglot | 11.0941810608 | 0.0116030509 | 0.0 | 0.5745978% | 99.8954132% | 100.0% | 0.9958911 | `[18,20,22]` | True |
+| Jogging | 1.2263532877 | 0.0009509723 | 0.0 | 0.6924628% | 99.9224553% | 100.0% | 0.9863545 | `[18,20,22]` | True |
+
+```text
+checkpoint frame-2 passes: 3 / 3
+minimum K6 reduction: 99.81874039866663%
+minimum selective-ablation reduction: 100.0%
+minimum removed-mass correlation: 0.9708236964422226
+maximum ablated contralateral displacement: 0.0
+ALL THREE FRAME-2 ELBOW CAUSAL PASSES: True
+```
+
+Interpretation: this is strong second-joint causal evidence at one common base pose per checkpoint. It is **not yet** elbow pose-robustness evidence over the full predeclared schedules.
+
+## Foundational source-semantics caveat now prioritized
+
+Before running and interpreting the full elbow pose schedules, perform the exact official-source semantics audit that has remained unresolved since Parkinglot learned-LBS reconstruction.
+
+Reason:
+
+- exact source commit is fixed at `86ebe5522a384fc553f07f090b63a76dd4af8d33`
+- checkpoints/configs use `hugs_triplane`
+- packaged configs include `human.activation` (Parkinglot observed `relu`; audit all relevant configs)
+- learned-LBS reconstructions instantiated the official decoder classes with strict state loading
+- **activation functions are not encoded in the state dict**, so strict loading alone cannot prove that the reconstruction used the exact activation semantics of official `hugs_triplane`
+
+The audit must establish from the exact source:
+
+1. how `hugs_triplane` constructs `GeometryDecoder` and `DeformationDecoder`,
+2. whether `human.activation` is passed or ignored,
+3. decoder default activation values,
+4. exact canonical forward equations including `softmax(lbs_weights / 0.1)`,
+5. exact canonical xyz formula,
+6. `disable_posedirs` behavior and `A_vitruvian2pose` convention,
+7. whether the Step-16C1 / Step-16D2 reconstruction matches official semantics.
+
+If semantics match, all current Parkinglot/Jogging results stand. If they do not, reconstruction-dependent results must be rerun before further interpretation.
 
 ## Immediate next action
 
-Run **Step 17B1: predeclared left-elbow causal diagnostic on raw frame 2 across Seattle, Parkinglot, and Jogging** using the frozen Step-17A2 masks.
-
-For every checkpoint:
-
-1. perturb `left_elbow z +10 deg`,
-2. require changed transforms exactly `[18,20,22]`,
-3. compare learned, K6 target, and selective `{18,20,22}` ablation on the fixed contralateral subset,
-4. evaluate the already-frozen causal thresholds independently per checkpoint,
-5. do not pool raw displacement magnitudes across checkpoints.
-
-Only after frame-2 results are reviewed should the full nested pose schedules be run.
+Run **Step 17B1A / source-semantics audit** only. Do not run the full elbow pose schedules until it is reviewed.
 
 ## Continuity files
 
+- `research/sessions/2026-09-15-step17b1.md`
+- `experiments/08-second-joint-generalization/analysis/17B1_left_elbow_frame2_cross_checkpoint.csv`
 - `research/sessions/2026-09-15-step17a2.md`
 - `experiments/08-second-joint-generalization/analysis/17A2_left_elbow_canonical_precursor.csv`
 - `research/protocols/2026-09-15-second-joint-generalization.md`
 - `research/protocols/2026-09-15-second-joint-generalization-implementation-note.md`
-- `research/sessions/2026-09-15-step17a1.md`
-- `experiments/08-second-joint-generalization/analysis/17A1_seattle_mask_reconciliation.json`
-- `research/sessions/2026-09-15-step17a.md`
