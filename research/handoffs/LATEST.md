@@ -2,113 +2,79 @@
 
 Current continuation date: **2026-09-15**.
 
-## Completed state
+## Frozen left-wrist benchmark
 
-The learned cross-joint left-wrist/left-hand LBS mechanism has now been causally reproduced in **three independently pretrained HUGS NeuMan checkpoints: Seattle, Parkinglot, and Jogging**.
+The completed left-wrist causal finding is now frozen across **three independently pretrained HUGS NeuMan checkpoints**.
 
-All three use the same bounded diagnostic: subject-specific K6-derived anatomy, `left_wrist z +10 deg`, comparison of original learned LBS vs subject-specific SMPL-derived K6 target, plus selective removal of only learned left-wrist/left-hand channels on the fixed high-confidence contralateral subset.
+Independent unit: pretrained checkpoint, `n = 3`.
 
-### Seattle
+Within-checkpoint pose diagnostics: `18` total, nested within those three checkpoints and not to be counted as 18 independent replications.
 
-Raw evaluation frames `[2,7,12,17]`:
+| Checkpoint | Poses | Learned contra % HC mean | Learned contra % HC range | Mean K6 reduction | Minimum K6 reduction | Minimum selective reduction | Mean removed-mass correlation | Minimum correlation | Max ablated contra | Causal pass |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Seattle | 4 | 4.993387 | 4.930677-5.034862 | 99.818441% | 99.817537% | 100.0% | 0.981149 | 0.980829 | 0.0 | True |
+| Parkinglot | 4 | 3.394478 | 3.392597-3.397105 | 99.708796% | 99.708575% | 100.0% | 0.997534 | 0.997517 | 0.0 | True |
+| Jogging | 10 | 8.453632 | 8.343905-8.673447 | 99.819317% | 99.817791% | 100.0% | 0.990030 | 0.989911 | 0.0 | True |
 
-```text
-mean K6 reduction:             99.8184408838516%
-minimum K6 reduction:          99.81753724223914%
-mean selective reduction:      100.0%
-mean removed-mass correlation: 0.9811488931072522
-learned contra % HC range:     4.930677% to 5.034862%
-```
-
-### Parkinglot
-
-Raw evaluation frames `[2,7,12,17]`:
+Checkpoint-level synthesis:
 
 ```text
-mean K6 reduction:             99.70879580221536%
-minimum K6 reduction:          99.70857508781499%
-mean selective reduction:      100.0%
-mean removed-mass correlation: 0.9975337157455157
-learned contra % HC range:     3.3925969009792323 to 3.3971048755337407
+ALL FRAME-2 REGRESSIONS PASS: True
+independent pretrained checkpoints: 3
+within-checkpoint pose diagnostics: 18
+checkpoint causal passes: 3 / 3
+global minimum K6 reduction: 99.708575087815%
+global minimum selective-ablation reduction: 100.0%
+global minimum removed-mass correlation: 0.9808287038512752
+global maximum ablated contralateral sum: 0.0
+ALL THREE CHECKPOINTS CAUSALLY REPLICATE: True
+LEFT-WRIST CROSS-CHECKPOINT BENCHMARK FROZEN: True
 ```
 
-Parkinglot raw frame 2 also passed the tested `x/y/z × {-10,+10} deg` direction/sign robustness control:
+## Frozen primary claim
+
+> In three independently pretrained HUGS NeuMan checkpoints, Seattle, Parkinglot, and Jogging, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding subject-specific SMPL-derived K=6 target under the tested left-wrist perturbation. The causal pattern is stable across the tested base poses within each checkpoint.
+
+Do not pool raw displacement across sequences because sequence scale differs. Prefer normalized contralateral `% HC`, reduction ratios, and causal correlations for cross-checkpoint comparison.
+
+Do not describe the 18 frame tests as independent replications.
+
+## Second-joint protocol is predeclared
+
+The next generalization target was frozen before inspecting any second-joint result:
+
+- joint: `left_elbow` (`SMPL 18`)
+- axis: `z`
+- perturbation: `+10 deg`
+- independent checkpoints: Seattle, Parkinglot, Jogging
+- same predeclared pose schedules as the wrist benchmark
+- K6 confidence threshold: `>=0.9`
+- fixed contralateral upper-body anatomy: `{right_collar 14, right_shoulder 17, right_elbow 19, right_wrist 21, right_hand 23}`
+- perturbed branch channels: `{left_elbow 18, left_wrist 20, left_hand 22}`
+- expected changed SMPL transforms for every pose: exactly `[18,20,22]`
+- selective intervention: zero only channels `{18,20,22}` on the fixed HC contralateral subset, then renormalize
+
+Frozen diagnostic thresholds, unchanged after observing wrist results:
 
 ```text
-minimum K6 reduction:                 98.7997086031298%
-minimum selective-ablation reduction: 100.0%
-minimum removed-mass correlation:     0.9664424743486758
-maximum ablated contralateral sum:    0.0
-maximum +/- sign asymmetry:           0.5583232093225667%
-AXIS/SIGN ROBUST:                     True
+K6 reduction vs learned >= 95%
+selective-ablation reduction >= 99.999%
+removed-mass vs displacement-reduction correlation >= 0.90
+maximum ablated contralateral displacement <= 1e-8
+changed transforms exactly [18,20,22]
 ```
 
-The pathway is direction robust in Parkinglot, but effect magnitude is anisotropic. Do not claim axis-invariant magnitude.
-
-### Jogging
-
-Checkpoint provenance:
-
-```text
-checkpoint SHA256: 7a056fd6ba8ee9f5cc640eac43666e9ab57de33db2062a8ca379d1daa3afa769
-Gaussian count:    311723
-pose frames:       102
-```
-
-Step 16D3 precursor on the fixed K6-derived contralateral subset (`20887` Gaussians):
-
-```text
-K6 left-wrist+hand mean:      2.763716224762902e-07
-learned left-wrist+hand mean: 0.00020052377658430487
-learned/K6 mean ratio:        725.5584881964779x
-```
-
-Step 16D4 raw-frame-2 causal replication:
-
-```text
-learned contralateral:            1.2177642583847046
-K6 contralateral:                 0.0021828871686011553
-selective-ablation contralateral: 0.0
-K6 reduction vs learned:          99.82074632642802%
-selective-ablation reduction:     100.0%
-removed-mass vs reduction r:      0.9901018350101268
-```
-
-Step 16D5 then repeated the same frozen causal test across all 10 effective Jogging evaluation poses `[2,7,12,17,22,27,32,37,42,47]`.
-
-```text
-FRAME2 REGRESSION PASS:                 True
-learned contralateral range:            1.1079813241958618 to 1.2177642583847046
-learned contra % HC range:              8.343904716882907 to 8.673447072624047
-mean K6 reduction:                      99.8193166019593%
-minimum K6 reduction:                   99.817790981312%
-mean selective-ablation reduction:      100.0%
-minimum selective-ablation reduction:   100.0%
-mean removed-mass correlation:          0.9900301470766584
-minimum removed-mass correlation:       0.9899109845297344
-maximum ablated contralateral sum:      0.0
-JOGGING 10-FRAME POSE ROBUST:           True
-```
-
-At every tested Jogging frame, only SMPL transforms `[20,22]` changed. The selective intervention changed no weights outside the fixed contralateral subset.
-
-## Strongest defensible claim
-
-> In three independently pretrained HUGS NeuMan checkpoints, Seattle, Parkinglot, and Jogging, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding subject-specific SMPL-derived K6 target under the tested left-wrist perturbation. Selectively removing only those learned wrist/hand channels on the fixed contralateral subset eliminates the tested contralateral response. The mechanism is stable across four tested evaluation poses in Seattle, four in Parkinglot, and all ten effective evaluation poses in Jogging. Parkinglot additionally shows robustness to the tested rotation axis and sign, with anisotropic response magnitude.
-
-These are **three independent checkpoint-level replications**, not 18 independent replications. Within-sequence frame tests share checkpoint, learned field, Gaussian population, K6 target, and mask.
-
-Do not yet generalize to other joints, all HUGS checkpoints, all perturbation magnitudes, or other Gaussian-human methods.
-
-## Authoritative recent artifacts
-
-- `research/sessions/2026-09-15-step16d5.md`
-- `experiments/07-cross-sequence-replication/analysis/16D5_jogging_frame_replication.csv`
-- Drive: `experiments/07-cross-sequence-replication/16D5_jogging_frame_replication_displacements.npz`
-- Drive: `experiments/07-cross-sequence-replication/16D5_jogging_frame_replication_metadata.json`
+Failures are to be retained as scientific results. Do not change joint, axis, angle, mask, or thresholds in response to outcome.
 
 ## Immediate next action
 
-Before starting a second joint, freeze the completed left-wrist finding into one cross-checkpoint synthesis artifact. Read the already-saved Seattle, Parkinglot, and Jogging frame-replication CSVs, keep checkpoint as the independent unit, and produce a compact checkpoint-level table with normalized contralateral fraction, minimum/mean K6 suppression, selective-ablation suppression, removed-mass correlation, and number of tested poses. Do not pool individual frames as independent samples.
+Run a **pre-perturbation second-joint precursor audit** only. For Seattle, Parkinglot, and Jogging, use the already-authoritative learned LBS and subject-specific K6 targets, define the same fixed K6-HC contralateral upper-body subset, and compare aggregate learned-vs-K6 support on the predeclared left-elbow branch channels `{18,20,22}`.
 
-After that synthesis is reviewed, choose the second-joint generalization test with an explicitly pre-declared causal channel set and anatomical endpoint.
+Do not apply the elbow perturbation until this precursor audit is reviewed.
+
+## Continuity files
+
+- `research/sessions/2026-09-15-step16e0.md`
+- `experiments/07-cross-sequence-replication/analysis/16E0_left_wrist_cross_checkpoint_summary.csv`
+- `research/protocols/2026-09-15-second-joint-generalization.md`
+- `research/sessions/2026-09-15-step16d5.md`
