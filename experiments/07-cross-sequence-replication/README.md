@@ -2,7 +2,7 @@
 
 ## Goal
 
-Test whether the learned cross-joint LBS mechanism identified in the pretrained HUGS NeuMan Seattle model also appears in an independently pretrained HUGS sequence.
+Test whether the learned cross-joint LBS mechanism identified in the pretrained HUGS NeuMan Seattle model also appears in independently pretrained HUGS sequences and remains robust across base pose and perturbation direction.
 
 ## Step 16A - persistent asset inventory
 
@@ -60,8 +60,6 @@ STEP 16C1B AUDIT PASS: True
 full vs chunk canonical xyz difference: 0
 full vs chunk learned LBS difference: 0
 ```
-
-Authoritative arrays remain in Drive.
 
 ## Step 16C2 - Parkinglot-specific K=6 target
 
@@ -128,8 +126,6 @@ This causally reproduced the Seattle mechanism in a second independently pretrai
 
 The same causal test was repeated at Parkinglot raw frames `[2, 7, 12, 17]` with the learned field, K=6 target, masks, selective-ablation definition, and `left_wrist z +10 deg` perturbation fixed.
 
-At all four frames, only SMPL transforms `[20, 22]` changed.
-
 | Raw frame | Learned contra | K6 contra | Ablated contra | Learned contra % HC | K6 reduction | Ablation reduction | Removed-mass vs reduction r |
 |---:|---:|---:|---:|---:|---:|---:|---:|
 | 2 | 5.416988 | 0.015786 | 0.0 | 3.397105 | 99.708575% | 100.0% | 0.997536 |
@@ -150,24 +146,48 @@ mean removed-mass correlation:     0.9975337157455157
 
 Compact artifact: [16C4 frame replication CSV](analysis/16C4_parkinglot_frame_replication.csv).
 
-Authoritative large outputs:
+## Step 16C5 - Parkinglot axis/sign robustness
+
+At raw frame 2, the fixed Parkinglot learned field, K=6 target, anatomical mask, and selective ablation were tested with `left_wrist` rotations around x, y, and z at both `-10 deg` and `+10 deg`.
+
+Every perturbation changed only SMPL transforms `[20, 22]`, left wrist and descendant left hand.
+
+| Axis | Deg | Learned contra | K6 contra | Ablated contra | Learned contra % HC | K6 reduction | Ablation reduction | Removed-mass vs reduction r |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| x | -10 | 0.317063 | 0.003806 | 0.0 | 0.331653 | 98.799709% | 100.0% | 0.966442 |
+| x | +10 | 0.315298 | 0.003772 | 0.0 | 0.330131 | 98.803607% | 100.0% | 0.967749 |
+| y | -10 | 5.416648 | 0.015552 | 0.0 | 3.800179 | 99.712887% | 100.0% | 0.997633 |
+| y | +10 | 5.416755 | 0.015529 | 0.0 | 3.805536 | 99.713318% | 100.0% | 0.997628 |
+| z | -10 | 5.415346 | 0.015779 | 0.0 | 3.396430 | 99.708633% | 100.0% | 0.997528 |
+| z | +10 | 5.416988 | 0.015786 | 0.0 | 3.397105 | 99.708575% | 100.0% | 0.997536 |
+
+Aggregate:
 
 ```text
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication.csv
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication_displacements.npz
-/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16C4_parkinglot_frame_replication_metadata.json
+minimum K6 reduction:                 98.7997086031298%
+minimum selective-ablation reduction: 100.0%
+minimum removed-mass correlation:     0.9664424743486758
+maximum ablated contralateral sum:    0.0
+maximum +/- sign asymmetry:           0.5583232093225667%
+AXIS/SIGN ROBUST:                     True
 ```
+
+The mechanism is therefore robust to the tested rotation axis and sign in Parkinglot, but the effect magnitude is anisotropic. The x-axis response is roughly an order of magnitude smaller than the y/z response. The correct claim is causal pathway robustness, not axis-invariant magnitude.
+
+Compact artifact: [16C5 axis/sign robustness CSV](analysis/16C5_parkinglot_axis_sign_robustness.csv).
+
+Authoritative large outputs remain in Drive under `experiments/07-cross-sequence-replication/`.
 
 ## Current interpretation
 
-The same learned cross-joint left-wrist/hand LBS mechanism is now causally observed and pose-stable in two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, across four tested evaluation poses per checkpoint.
+The same learned cross-joint left-wrist/hand LBS mechanism is causally observed and pose-stable in two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot. In Parkinglot, the pathway is also robust across x/y/z left-wrist rotations and both signs, although its magnitude is strongly axis-dependent.
 
 Strongest defensible claim:
 
-> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement under a left-wrist z perturbation relative to the corresponding SMPL-derived K=6 target, and the mechanism remains stable across four tested evaluation poses in each checkpoint.
+> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs.
 
-This is not yet a universal claim about HUGS. Evidence remains bounded to two checkpoints, one joint, and the tested perturbation axis/family.
+Do not describe the effect as isotropic and do not yet generalize to all HUGS checkpoints, joints, axes, or Gaussian-human methods.
 
 ## Next step
 
-Before reconstructing a third full checkpoint, run a perturbation-direction robustness control on Parkinglot raw frame 2 using the same fixed learned field, K=6 target, anatomical mask, and selective ablation. Compare left-wrist rotations about x, y, and z, ideally with both signs at the same magnitude. If the mechanism is direction/sign robust, proceed to a third independent sequence such as `jogging`.
+Proceed to a third independent checkpoint. Use **jogging** as the next candidate because its 102-frame dynamic sequence provides stronger sequence/pose diversity than the short Citron sequence. First extract and verify only the official Jogging `human_final.pth` and `config_train.yaml`, checkpoint SHA256, Gaussian count, and architecture before reconstructing learned LBS or K=6 targets.
