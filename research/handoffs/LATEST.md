@@ -58,8 +58,6 @@ Failures remain results. Do not change joint, axis, angle, mask, or thresholds i
 - Jogging masks: stored `dominant_joint` + `joint_confidence` from Step 16D3
 - K6 deformation condition: checkpoint-specific `effective_lbs`
 
-Counts:
-
 ```text
 Seattle    HC 197778  contra 33072
 Parkinglot HC 292095  contra 77622
@@ -67,11 +65,11 @@ Jogging    HC 148392  contra 20887
 CANONICAL ANATOMY SOURCES FROZEN: True
 ```
 
-Seattle's saved/recomputed anatomy discrepancy is a provenance issue. The deeper historical reason `saved_confidence` differs from `max(effective_lbs)` for a few rows remains unresolved, but the benchmark-consistent anatomy source is frozen.
+Seattle's saved/recomputed anatomy discrepancy remains a historical provenance issue, but the benchmark-consistent mask source was frozen before elbow causal testing.
 
 ## Step 17B1 - left-elbow raw-frame-2 causal result
 
-The predeclared left-elbow `z +10 deg` causal test passed in all three independently pretrained checkpoints on the common raw frame 2.
+The predeclared left-elbow `z +10 deg` causal test passed in all three independently pretrained checkpoints on common raw frame 2.
 
 | Checkpoint | Learned contra | K6 contra | Ablated contra | Learned contra % HC | K6 reduction | Ablation reduction | Removed-mass corr | Changed transforms | Pass |
 |---|---:|---:|---:|---:|---:|---:|---:|---|---|
@@ -88,38 +86,52 @@ maximum ablated contralateral displacement: 0.0
 ALL THREE FRAME-2 ELBOW CAUSAL PASSES: True
 ```
 
-Interpretation: this is strong second-joint causal evidence at one common base pose per checkpoint. It is **not yet** elbow pose-robustness evidence over the full predeclared schedules.
+Interpretation: strong second-joint causal evidence at one common base pose per checkpoint. Full elbow pose robustness is not yet established.
 
-## Foundational source-semantics caveat now prioritized
+## Step 17B1A - exact source-semantics audit
 
-Before running and interpreting the full elbow pose schedules, perform the exact official-source semantics audit that has remained unresolved since Parkinglot learned-LBS reconstruction.
+Exact HUGS source commit:
 
-Reason:
+`86ebe5522a384fc553f07f090b63a76dd4af8d33`
 
-- exact source commit is fixed at `86ebe5522a384fc553f07f090b63a76dd4af8d33`
-- checkpoints/configs use `hugs_triplane`
-- packaged configs include `human.activation` (Parkinglot observed `relu`; audit all relevant configs)
-- learned-LBS reconstructions instantiated the official decoder classes with strict state loading
-- **activation functions are not encoded in the state dict**, so strict loading alone cannot prove that the reconstruction used the exact activation semantics of official `hugs_triplane`
+All three packaged configs report `human.name: hugs_triplane` and `human.activation: relu`.
 
-The audit must establish from the exact source:
+The located implementation is `hugs/models/hugs_trimlp.py`, class `HUGS_TRIMLP`. Its constructor does **not** pass activation to `GeometryDecoder` or `DeformationDecoder`; both decoder classes default to `act='gelu'`. Therefore the packaged `relu` value is not routed into these decoders in the located implementation.
 
-1. how `hugs_triplane` constructs `GeometryDecoder` and `DeformationDecoder`,
-2. whether `human.activation` is passed or ignored,
-3. decoder default activation values,
-4. exact canonical forward equations including `softmax(lbs_weights / 0.1)`,
-5. exact canonical xyz formula,
-6. `disable_posedirs` behavior and `A_vitruvian2pose` convention,
-7. whether the Step-16C1 / Step-16D2 reconstruction matches official semantics.
+The exact source also confirms:
 
-If semantics match, all current Parkinglot/Jogging results stand. If they do not, reconstruction-dependent results must be rerun before further interpretation.
+- `softmax(lbs_weights / 0.1)`
+- canonical xyz = checkpoint xyz + geometry xyz offset
+- `A_vitruvian2pose = A_t2pose @ inv_A_t2vitruvian`
+- `disable_posedirs=True` zeroes pose offsets and uses `v_posed = v_shaped`
+
+Numeric source-exact reconstruction matches the stored experiment arrays exactly:
+
+```text
+Seattle    LBS all differences 0.0, dominant mismatch 0
+Parkinglot LBS all differences 0.0, XYZ all differences 0.0
+Jogging    LBS all differences 0.0, XYZ all differences 0.0
+source structure resolved: True
+all checkpoint numeric reconstructions match: True
+SOURCE SEMANTICS EXACT: True
+```
+
+### Remaining provenance-link nuance
+
+Step 17B1A found `HUGS_TRIMLP` by source-tree semantics rather than explicitly traversing the official config/model factory. Since the literal config string is `hugs_triplane` while the class/file is `HUGS_TRIMLP`, perform one final lightweight alias/registry check before declaring the full config-to-class provenance chain closed.
+
+This is a provenance check only. It does not change any reconstruction or experimental endpoint.
 
 ## Immediate next action
 
-Run **Step 17B1A / source-semantics audit** only. Do not run the full elbow pose schedules until it is reviewed.
+Run **Step 17B1B: exact config alias / registry mapping audit** only.
+
+Confirm from the exact official source that literal `human.name = hugs_triplane` resolves to the located `HUGS_TRIMLP` implementation. If confirmed, proceed next to the full predeclared elbow pose schedules.
 
 ## Continuity files
 
+- `research/sessions/2026-09-15-step17b1a.md`
+- `experiments/08-second-joint-generalization/analysis/17B1A_exact_hugs_source_semantics_audit.json`
 - `research/sessions/2026-09-15-step17b1.md`
 - `experiments/08-second-joint-generalization/analysis/17B1_left_elbow_frame2_cross_checkpoint.csv`
 - `research/sessions/2026-09-15-step17a2.md`
