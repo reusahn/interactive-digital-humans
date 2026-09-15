@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-15",
+  "step": "17C0",
+  "independent_unit": "pretrained checkpoint",
+  "independent_checkpoints": 3,
+  "tested_joints": ["left_wrist", "left_elbow"],
+  "num_tested_joints": 2,
+  "nested_pose_diagnostics": 36,
+  "joint_checkpoint_diagnostic_cells": 6,
+  "joint_checkpoint_cells_passing": 6,
+  "checkpoints_both_joints_pass": 3,
+  "global_minimum_k6_reduction_pct": 99.708575087815,
+  "global_minimum_ablation_reduction_pct": 100.0,
+  "global_minimum_removed_mass_corr": 0.9688984153761956,
+  "global_maximum_ablated_contralateral": 0.0,
+  "two_joint_cross_checkpoint_benchmark_frozen": true,
+  "guardrails": [
+    "Independent model-level unit is checkpoint n=3.",
+    "Two joints are repeated diagnostics within the same three checkpoints and are not six independent models.",
+    "Thirty-six pose diagnostics are nested robustness tests and are not independent replications.",
+    "Raw displacement magnitudes are not pooled across sequences because sequence scale differs."
+  ]
+}
