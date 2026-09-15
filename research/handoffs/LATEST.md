@@ -20,8 +20,9 @@ Completed today:
 - Step 16C5 Parkinglot axis/sign robustness control
 - Step 16D1 Jogging checkpoint/config provenance and architecture validation
 - Step 16D2 Jogging learned-LBS reconstruction and full-batch/chunk audit
+- Step 16D3 Jogging subject-specific K=6 target reconstruction and precursor test
 
-## Current strongest result
+## Current strongest causal result
 
 The learned cross-joint left-wrist/left-hand LBS mechanism has been causally reproduced and shown to be pose-stable in **two independently pretrained HUGS NeuMan checkpoints: Seattle and Parkinglot**.
 
@@ -44,7 +45,7 @@ mean selective reduction:      100.0%
 mean removed-mass correlation: 0.9975337157455157
 ```
 
-Parkinglot raw frame 2 additionally passed `x/y/z × {-10,+10} deg` direction/sign control:
+Parkinglot raw frame 2 also passed the `x/y/z × {-10,+10} deg` direction/sign control:
 
 ```text
 minimum K6 reduction:                 98.7997086031298%
@@ -69,45 +70,63 @@ beta drift:        0.0
 eval raw frames:   [2,7,12,17,22,27,32,37,42,47]
 ```
 
-Step 16D2 reconstructed the Jogging canonical Gaussian positions and learned 24-channel LBS from the official checkpoint using HUGS source commit `86ebe5522a384fc553f07f090b63a76dd4af8d33`.
+Step 16D2 reconstructed and numerically validated Jogging canonical xyz and learned 24-channel LBS. Full-batch and 65,536-chunk outputs matched exactly.
+
+Step 16D3 reconstructed the Jogging subject-specific HUGS-style K=6 target and passed all numerical and independent-search checks:
 
 ```text
-xyz_canon shape:              (311723, 3)
-learned_lbs shape:            (311723, 24)
-max LBS row-sum error:        3.5762786865234375e-07
-high-confidence >=0.9:       140755
-high-confidence fraction:    0.4515387058381961
-FULL-BATCH FORWARD VALID:     True
-CHUNK SEMANTIC STABILITY:     True
-STEP 16D2 AUDIT PASS:         True
+K6 TARGET VALID:                  True
+max row-sum error:                2.384185791015625e-07
+nearest-neighbor exact fraction:  1.0
+K=6 neighbor-set exact fraction:  1.0
+high-confidence >=0.9:           148392
+contralateral HC subset:          20887
 ```
 
-The 65,536-point chunk reconstruction matched the full-batch result exactly. Dominant-joint mismatch and HC-mask mismatch counts were both zero.
+Learned-vs-K6 anatomy is strongly aligned on K6-HC Gaussians:
 
-Do **not** count Jogging as a third mechanism replication yet. No Jogging K=6 target or causal perturbation exists yet.
+```text
+overall dominant-joint agreement: 0.9710865094972139
+K6-HC dominant-joint agreement:   0.9999258720146639
+```
+
+Most important pre-perturbation Jogging result on the fixed 20,887-Gaussian contralateral subset:
+
+```text
+K6 left-wrist+hand mean:      2.763716224762902e-07
+learned left-wrist+hand mean: 0.00020052377658430487
+learned/K6 mean ratio:        725.5584881964779x
+K6 max:                       0.00014079449465498328
+learned max:                  0.02658037841320038
+fraction learned >1e-3:       0.02848661847081917
+fraction K6 >1e-3:            0.0
+```
+
+This is the same qualitative pre-perturbation cross-joint-support precursor seen in Seattle and Parkinglot. **Jogging is still not a third causal replication** because no Jogging perturbation or selective intervention has been run yet.
 
 ## Strongest defensible claim
 
-> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs.
+> In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs. A third independent checkpoint, Jogging, independently exhibits the same pre-perturbation cross-joint support precursor but has not yet undergone the causal perturbation test.
+
+Do not describe this as a universal HUGS failure, an isotropic effect, or a result generalized to all joints or Gaussian-human methods.
 
 ## Immediate next experiment
 
-Run **Step 16D3: Jogging subject-specific SMPL K=6 target reconstruction**.
+Run **Step 16D4: Jogging raw-frame-2 causal counterfactual**.
 
-Use Jogging's constant betas and the authoritative `16D2_jogging_learned_lbs.npz`. Reconstruct the HUGS top-K target with:
+Freeze the Jogging K=6-derived masks from Step 16D3 and apply the same `left_wrist z +10 deg` diagnostic used for Seattle and Parkinglot. Compare:
 
-```text
-K = 6
-LBS consistency gate = exp(-L1 / 0.02) > 0.9
-spatial weight = exp(-squared_distance)
-```
+1. original Jogging learned LBS,
+2. Jogging subject-specific K=6 target,
+3. learned Jogging LBS with only left-wrist/left-hand channels removed on the fixed 20,887-Gaussian high-confidence contralateral subset.
 
-Validate K=6 row sums and an independent brute-force KNN audit, define the K=6 high-confidence anatomical masks, then inspect learned-vs-K=6 left-wrist/hand support on the fixed contralateral subset before applying any pose perturbation.
+If K6 replacement strongly suppresses the contralateral response and the selective intervention removes it, the mechanism will have a third independent checkpoint-level causal replication.
 
 For continuity, read:
 
 - [Step 16C5 Parkinglot axis/sign robustness](../sessions/2026-09-15-step16c5.md)
 - [Step 16D1 Jogging checkpoint readiness](../sessions/2026-09-15-step16d1.md)
 - [Step 16D2 Jogging learned-LBS validation](../sessions/2026-09-15-step16d2.md)
+- [Step 16D3 Jogging K=6 precursor](../sessions/2026-09-15-step16d3.md)
 - [Experiment 07 README](../../experiments/07-cross-sequence-replication/README.md)
-- [16D2 compact audit](../../experiments/07-cross-sequence-replication/analysis/16D2_jogging_learned_lbs_audit.json)
+- [16D3 compact summary](../../experiments/07-cross-sequence-replication/analysis/16D3_jogging_k6_key_summary.csv)
