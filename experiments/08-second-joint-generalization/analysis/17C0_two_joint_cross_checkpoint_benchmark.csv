@@ -1,0 +1,7 @@
+checkpoint,joint,joint_role,num_tested_poses,learned_contra_pct_hc_min,learned_contra_pct_hc_max,k6_reduction_mean_pct,k6_reduction_min_pct,ablation_reduction_min_pct,removed_mass_corr_mean,removed_mass_corr_min,maximum_ablated_contralateral,checkpoint_joint_pass
+seattle,left_wrist,primary_frozen_probe,4,4.930677,5.034862,99.818441,99.817537,100.0,0.981149,0.980829,0.0,True
+seattle,left_elbow,predeclared_generalization,4,0.515229,0.609622,99.825186,99.818741,100.0,0.973314,0.968898,0.0,True
+parkinglot,left_wrist,primary_frozen_probe,4,3.392597,3.397105,99.708796,99.708575,100.0,0.997534,0.997517,0.0,True
+parkinglot,left_elbow,predeclared_generalization,4,0.574598,0.579239,99.894670,99.891335,100.0,0.996069,0.995891,0.0,True
+jogging,left_wrist,primary_frozen_probe,10,8.343905,8.673447,99.819317,99.817791,100.0,0.990030,0.989911,0.0,True
+jogging,left_elbow,predeclared_generalization,10,0.535945,0.806519,99.907031,99.888116,100.0,0.989380,0.984624,0.0,True
