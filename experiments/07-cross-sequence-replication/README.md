@@ -172,11 +172,51 @@ maximum +/- sign asymmetry:           0.5583232093225667%
 AXIS/SIGN ROBUST:                     True
 ```
 
-The mechanism is therefore robust to the tested rotation axis and sign in Parkinglot, but the effect magnitude is anisotropic. The x-axis response is roughly an order of magnitude smaller than the y/z response. The correct claim is causal pathway robustness, not axis-invariant magnitude.
+The mechanism is robust to the tested rotation axis and sign in Parkinglot, but the effect magnitude is anisotropic. The x-axis response is roughly an order of magnitude smaller than the y/z response. The correct claim is causal pathway robustness, not axis-invariant magnitude.
 
 Compact artifact: [16C5 axis/sign robustness CSV](analysis/16C5_parkinglot_axis_sign_robustness.csv).
 
-Authoritative large outputs remain in Drive under `experiments/07-cross-sequence-replication/`.
+## Step 16D1 - Jogging third-checkpoint provenance
+
+Jogging was selected as the third independently pretrained sequence because its 102-frame dynamic sequence provides substantially more sequence/pose diversity than the short sequences.
+
+Official checkpoint/config provenance:
+
+```text
+checkpoint SHA256: 7a056fd6ba8ee9f5cc640eac43666e9ab57de33db2062a8ca379d1daa3afa769
+config SHA256:     7e854af5d7d0dd564f863de4aca2465b8268c1eb3c3b06a0618c66cea8a25e53
+checkpoint size:   88.648732 MiB
+Gaussian count:    311723
+pose frames:       102
+beta drift:        0.0
+eval raw frames:   [2,7,12,17,22,27,32,37,42,47]
+```
+
+Jogging is distinct from Parkinglot and has a sequence-specific Gaussian population. Its triplane, geometry decoder, and deformation decoder tensor signatures match Parkinglot exactly. The packaged config also matches the same core architecture:
+
+```text
+human.name:             hugs_triplane
+human.use_deformer:     True
+human.disable_posedirs: True
+human.n_subdivision:    2
+human.triplane_res:     256
+human.canon_pose_type:  da_pose
+human.loss.lbs_w:       1000.0
+```
+
+Decision:
+
+```text
+independent checkpoint: True
+core architecture match: True
+config identity valid: True
+pose asset valid: True
+THIRD CHECKPOINT READY: True
+```
+
+Compact manifest: [16D1 Jogging checkpoint manifest](analysis/16D1_jogging_checkpoint_manifest.json).
+
+No Jogging mechanism result exists yet. Step 16D1 is provenance/readiness only.
 
 ## Current interpretation
 
@@ -186,8 +226,8 @@ Strongest defensible claim:
 
 > In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs.
 
-Do not describe the effect as isotropic and do not yet generalize to all HUGS checkpoints, joints, axes, or Gaussian-human methods.
+Jogging is now a verified third independent candidate, but it must not be counted as a third replication until its learned field, K=6 target, and perturbation/counterfactual are completed.
 
 ## Next step
 
-Proceed to a third independent checkpoint. Use **jogging** as the next candidate because its 102-frame dynamic sequence provides stronger sequence/pose diversity than the short Citron sequence. First extract and verify only the official Jogging `human_final.pth` and `config_train.yaml`, checkpoint SHA256, Gaussian count, and architecture before reconstructing learned LBS or K=6 targets.
+Reconstruct Jogging canonical Gaussian xyz and learned 24-channel LBS directly from the official checkpoint using the same validated HUGS source commit and forward path used for Parkinglot. Validate strict state loading, finiteness, LBS row sums, and numerical stability before constructing a Jogging-specific K=6 target.
