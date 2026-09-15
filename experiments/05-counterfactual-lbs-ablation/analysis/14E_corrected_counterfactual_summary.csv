@@ -1,0 +1,4 @@
+condition,hc_total_displacement,intended_pct_of_hc,local_chain_pct_of_hc,nonlocal_pct_of_hc,contralateral_sum,contralateral_pct_of_hc,contralateral_ratio_vs_learned,contralateral_reduction_vs_learned_pct
+learned,82.779138,87.735388,6.688420,5.576191,4.163576534949515,5.029741,1.0,0.0
+k6_target,79.344404,91.804267,7.888879,0.306854,0.007555978789000772,0.009523,0.001815,99.81852191918234
+wrist_hand_ablated_corrected,78.615561,92.381962,7.042647,0.575391,0.0,0.0,0.0,100.0
