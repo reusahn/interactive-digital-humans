@@ -2,6 +2,26 @@
 
 Current continuation date: **2026-09-15**.
 
+## Research-record rule: preserve failed assumptions
+
+Failed assumptions, disproven hypotheses, and implementation misunderstandings are first-class research records. Do not keep only the final successful interpretation.
+
+For each meaningful failure, preserve:
+
+1. assumption before test,
+2. observation that contradicted it,
+3. corrected interpretation,
+4. impact on prior results,
+5. follow-up audit/action.
+
+Cumulative ledger:
+
+`research/methodology/assumption-failure-ledger.md`
+
+The Step-17B1B alias failure is separately archived in:
+
+`research/sessions/2026-09-15-step17b1b-assumption-failure.md`
+
 ## Frozen left-wrist benchmark
 
 The completed left-wrist causal finding is frozen across **three independently pretrained HUGS NeuMan checkpoints**.
@@ -94,42 +114,112 @@ Exact HUGS source commit:
 
 `86ebe5522a384fc553f07f090b63a76dd4af8d33`
 
-All three packaged configs report `human.name: hugs_triplane` and `human.activation: relu`.
+The located released implementation is `hugs/models/hugs_trimlp.py`, class `HUGS_TRIMLP`.
 
-The located implementation is `hugs/models/hugs_trimlp.py`, class `HUGS_TRIMLP`. Its constructor does **not** pass activation to `GeometryDecoder` or `DeformationDecoder`; both decoder classes default to `act='gelu'`. Therefore the packaged `relu` value is not routed into these decoders in the located implementation.
+Its constructor does not pass activation into `GeometryDecoder` or `DeformationDecoder`; both decoder classes default to `act='gelu'`.
 
-The exact source also confirms:
+The audit directly confirmed:
 
 - `softmax(lbs_weights / 0.1)`
 - canonical xyz = checkpoint xyz + geometry xyz offset
 - `A_vitruvian2pose = A_t2pose @ inv_A_t2vitruvian`
 - `disable_posedirs=True` zeroes pose offsets and uses `v_posed = v_shaped`
 
-Numeric source-exact reconstruction matches the stored experiment arrays exactly:
+Numeric source-exact reconstruction matched stored experimental arrays exactly:
 
 ```text
 Seattle    LBS all differences 0.0, dominant mismatch 0
 Parkinglot LBS all differences 0.0, XYZ all differences 0.0
 Jogging    LBS all differences 0.0, XYZ all differences 0.0
-source structure resolved: True
-all checkpoint numeric reconstructions match: True
 SOURCE SEMANTICS EXACT: True
 ```
 
-### Remaining provenance-link nuance
+No reconstruction rerun is indicated by the activation/forward-semantics audit.
 
-Step 17B1A found `HUGS_TRIMLP` by source-tree semantics rather than explicitly traversing the official config/model factory. Since the literal config string is `hugs_triplane` while the class/file is `HUGS_TRIMLP`, perform one final lightweight alias/registry check before declaring the full config-to-class provenance chain closed.
+## Step 17B1B - failed alias assumption
 
-This is a provenance check only. It does not change any reconstruction or experimental endpoint.
+Pre-audit assumption:
+
+> packaged `human.name: hugs_triplane` should resolve through an explicit alias/registry/factory mapping to `HUGS_TRIMLP`.
+
+Observed result:
+
+```text
+HUGS_TRIMLP definition confirmed: True
+literal `hugs_triplane` Python-source hit count: 0
+RuntimeError: No official Python source contains literal hugs_triplane.
+```
+
+This is preserved as a failed provenance assumption, not deleted from the research history.
+
+## Step 17B1C - packaged-config naming drift resolved
+
+Exact commit string audit:
+
+```text
+tracked `hugs_triplane` hits: 0
+tracked `hugs_trimlp` hits: 8
+```
+
+Official release config:
+
+```text
+human.name: hugs_trimlp
+human.activation: relu
+```
+
+Official trainer:
+
+```text
+imports HUGS_TRIMLP: True
+checks human.name == hugs_trimlp: True
+constructs HUGS_TRIMLP: True
+checks human.name == hugs_triplane: False
+RELEASED TRAINER hugs_trimlp -> HUGS_TRIMLP: True
+```
+
+Downloaded pretrained package configs:
+
+```text
+Seattle    human.name = hugs_triplane
+Parkinglot human.name = hugs_triplane
+Jogging    human.name = hugs_triplane
+```
+
+Decision:
+
+```text
+released source contains hugs_trimlp: True
+released source contains hugs_triplane: False
+official release config uses hugs_trimlp: True
+packaged configs all use hugs_triplane: True
+trainer exact hugs_trimlp -> HUGS_TRIMLP: True
+no released hugs_triplane alias: True
+Step 17B1A source semantics exact: True
+Step 17B1A numeric match: True
+PACKAGED CONFIG LABEL DRIFT RESOLVED: True
+```
+
+Correct wording: the pretrained package config naming differs from the released implementation/config naming. Do **not** claim an executable alias exists. The historical cause of the naming mismatch is not established by this audit, so do not call it legacy/stale packaging as a fact without further evidence.
+
+No reconstruction rerun is required because the checkpoint outputs numerically match released HUGS_TRIMLP semantics exactly.
 
 ## Immediate next action
 
-Run **Step 17B1B: exact config alias / registry mapping audit** only.
+Run the **full predeclared left-elbow pose robustness schedule** with frozen masks and unchanged thresholds:
 
-Confirm from the exact official source that literal `human.name = hugs_triplane` resolves to the located `HUGS_TRIMLP` implementation. If confirmed, proceed next to the full predeclared elbow pose schedules.
+- Seattle `[2,7,12,17]`
+- Parkinglot `[2,7,12,17]`
+- Jogging `[2,7,12,17,22,27,32,37,42,47]`
+
+Require raw frame 2 to regress exactly to Step 17B1 before interpreting the remaining frames.
 
 ## Continuity files
 
+- `research/methodology/assumption-failure-ledger.md`
+- `research/sessions/2026-09-15-step17b1b-assumption-failure.md`
+- `research/sessions/2026-09-15-step17b1c.md`
+- `experiments/08-second-joint-generalization/analysis/17B1C_packaged_config_label_drift_audit.json`
 - `research/sessions/2026-09-15-step17b1a.md`
 - `experiments/08-second-joint-generalization/analysis/17B1A_exact_hugs_source_semantics_audit.json`
 - `research/sessions/2026-09-15-step17b1.md`
