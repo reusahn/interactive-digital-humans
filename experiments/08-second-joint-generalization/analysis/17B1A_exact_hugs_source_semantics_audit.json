@@ -1,0 +1,49 @@
+{
+  "date": "2026-09-15",
+  "step": "17B1A",
+  "hugs_commit": "86ebe5522a384fc553f07f090b63a76dd4af8d33",
+  "packaged_human_name": "hugs_triplane",
+  "located_model_source": "hugs/models/hugs_trimlp.py",
+  "located_model_class": "HUGS_TRIMLP",
+  "packaged_activation": "relu",
+  "geometry_decoder_activation_explicit": false,
+  "deformation_decoder_activation_explicit": false,
+  "geometry_decoder_default_act": "gelu",
+  "deformation_decoder_default_act": "gelu",
+  "source_checks": {
+    "softmax_temperature_0_1": true,
+    "canonical_xyz_plus_offset": true,
+    "vitruvian_transform_composition": true,
+    "disable_posedirs_semantics": true
+  },
+  "numeric_exactness": {
+    "seattle": {
+      "lbs_mean_abs": 0.0,
+      "lbs_p99_abs": 0.0,
+      "lbs_max_abs": 0.0,
+      "dominant_mismatch": 0,
+      "xyz_stored": false,
+      "source_exact_numeric_match": true
+    },
+    "parkinglot": {
+      "lbs_mean_abs": 0.0,
+      "lbs_p99_abs": 0.0,
+      "lbs_max_abs": 0.0,
+      "dominant_mismatch": 0,
+      "xyz_max_abs": 0.0,
+      "source_exact_numeric_match": true
+    },
+    "jogging": {
+      "lbs_mean_abs": 0.0,
+      "lbs_p99_abs": 0.0,
+      "lbs_max_abs": 0.0,
+      "dominant_mismatch": 0,
+      "xyz_max_abs": 0.0,
+      "source_exact_numeric_match": true
+    }
+  },
+  "activation_caveat_resolved": true,
+  "cell_source_semantics_exact": true,
+  "remaining_provenance_check": "Explicitly verify the official config/model-factory mapping from literal config value hugs_triplane to HUGS_TRIMLP because Step 17B1A located the implementation heuristically rather than traversing the registry/factory alias.",
+  "interpretation": "Stored learned-LBS reconstructions are numerically identical to the located official decoder and forward semantics. One lightweight config-alias provenance link remains to close the full source chain."
+}
