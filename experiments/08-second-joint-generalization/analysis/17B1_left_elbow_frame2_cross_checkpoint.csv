@@ -1,0 +1,4 @@
+checkpoint,raw_frame,high_confidence_count,contralateral_count,learned_contralateral,k6_contralateral,ablated_contralateral,learned_contralateral_pct_hc,k6_reduction_vs_learned_pct,ablation_reduction_vs_learned_pct,removed_mass_vs_reduction_corr,changed_transforms,kinematic_pass,checkpoint_frame2_causal_pass
+seattle,2,197778,33072,2.650563955307007,0.004804401658475399,0.0,0.5360252635716186,99.81874039866663,100.0,0.9708236964422226,"18,20,22",True,True
+parkinglot,2,292095,77622,11.094181060791016,0.011603050865232944,0.0,0.5745977671598776,99.8954131828059,100.0,0.9958910833916544,"18,20,22",True,True
+jogging,2,148392,20887,1.2263532876968384,0.0009509723167866468,0.0,0.6924628235520259,99.92245527236506,100.0,0.9863544964276989,"18,20,22",True,True
