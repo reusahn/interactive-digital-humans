@@ -192,19 +192,7 @@ beta drift:        0.0
 eval raw frames:   [2,7,12,17,22,27,32,37,42,47]
 ```
 
-Jogging is distinct from Parkinglot and has a sequence-specific Gaussian population. Its triplane, geometry decoder, and deformation decoder tensor signatures match Parkinglot exactly. The packaged config also matches the same core architecture:
-
-```text
-human.name:             hugs_triplane
-human.use_deformer:     True
-human.disable_posedirs: True
-human.n_subdivision:    2
-human.triplane_res:     256
-human.canon_pose_type:  da_pose
-human.loss.lbs_w:       1000.0
-```
-
-Decision:
+Jogging is distinct from Parkinglot and has a sequence-specific Gaussian population. Its triplane, geometry decoder, and deformation decoder tensor signatures match Parkinglot exactly. The packaged config also matches the same core architecture.
 
 ```text
 independent checkpoint: True
@@ -216,7 +204,34 @@ THIRD CHECKPOINT READY: True
 
 Compact manifest: [16D1 Jogging checkpoint manifest](analysis/16D1_jogging_checkpoint_manifest.json).
 
-No Jogging mechanism result exists yet. Step 16D1 is provenance/readiness only.
+## Step 16D2 - Jogging learned-LBS reconstruction
+
+Jogging canonical Gaussian positions and learned 24-channel LBS were reconstructed directly from the official checkpoint using the same validated HUGS source commit and forward definition as Parkinglot.
+
+```text
+Gaussian count:                 311723
+xyz_canon shape:                (311723, 3)
+learned_lbs shape:              (311723, 24)
+max LBS row-sum error:          3.5762786865234375e-07
+high-confidence >=0.9:         140755
+high-confidence fraction:      0.4515387058381961
+FULL-BATCH FORWARD VALID:       True
+CHUNK SEMANTIC STABILITY:       True
+STEP 16D2 AUDIT PASS:           True
+```
+
+The independent 65,536-point chunk pass matched the full-batch result exactly for canonical xyz and learned LBS. Dominant-joint and high-confidence-mask mismatch counts were both zero.
+
+Compact audit: [16D2 Jogging learned-LBS audit](analysis/16D2_jogging_learned_lbs_audit.json).
+
+Authoritative Drive outputs:
+
+```text
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16D2_jogging_learned_lbs.npz
+/content/drive/MyDrive/interactive-digital-humans/experiments/07-cross-sequence-replication/16D2_jogging_learned_lbs_audit.json
+```
+
+No Jogging causal mechanism result exists yet. Step 16D2 validates the learned field only.
 
 ## Current interpretation
 
@@ -226,8 +241,8 @@ Strongest defensible claim:
 
 > In two independently pretrained HUGS NeuMan checkpoints, Seattle and Parkinglot, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding SMPL-derived K=6 target. The mechanism remains stable across four tested evaluation poses in each checkpoint, and in Parkinglot it persists across x/y/z wrist rotations and both perturbation signs.
 
-Jogging is now a verified third independent candidate, but it must not be counted as a third replication until its learned field, K=6 target, and perturbation/counterfactual are completed.
+Jogging is now a verified third independent checkpoint with a numerically validated learned deformation field, but it must not be counted as a third replication until its K=6 target and perturbation/counterfactual are completed.
 
 ## Next step
 
-Reconstruct Jogging canonical Gaussian xyz and learned 24-channel LBS directly from the official checkpoint using the same validated HUGS source commit and forward path used for Parkinglot. Validate strict state loading, finiteness, LBS row sums, and numerical stability before constructing a Jogging-specific K=6 target.
+Construct the Jogging-specific SMPL-derived K=6 target from Jogging's constant betas and canonical Gaussian set using the validated HUGS top-K rule. Validate row sums and an independent KNN audit, define the K=6 high-confidence anatomical masks, and compare learned-vs-K=6 left-wrist/hand support on the fixed contralateral subset before applying any pose perturbation.
