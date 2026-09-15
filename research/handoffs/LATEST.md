@@ -31,24 +31,23 @@ LEFT-WRIST CROSS-CHECKPOINT BENCHMARK FROZEN: True
 
 ## Frozen primary claim
 
-> In three independently pretrained HUGS NeuMan checkpoints, Seattle, Parkinglot, and Jogging, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding subject-specific SMPL-derived K=6 target under the tested left-wrist perturbation. The causal pattern is stable across the tested base poses within each checkpoint.
+> In three independently pretrained HUGS NeuMan checkpoints, Seattle, Parkinglot, and Jogging, small learned cross-joint left-wrist/hand LBS components causally mediate an amplified contralateral upper-body displacement relative to the corresponding subject-specific SMPL-derived K6 target under the tested left-wrist perturbation. The causal pattern is stable across the tested base poses within each checkpoint.
 
-Do not pool raw displacement across sequences because sequence scale differs. Prefer normalized contralateral `% HC`, reduction ratios, and causal correlations for cross-checkpoint comparison. Do not describe the 18 frame tests as independent replications.
+Do not pool raw displacement across sequences because sequence scale differs. Do not describe the 18 frame tests as independent replications.
 
 ## Predeclared second-joint protocol
 
-The second-joint generalization target was frozen before inspecting second-joint results:
+Frozen before any left-elbow displacement was inspected:
 
 - joint: `left_elbow` (`SMPL 18`)
 - axis: `z`
 - perturbation: `+10 deg`
 - checkpoints: Seattle, Parkinglot, Jogging
-- same pose schedules as the wrist benchmark
-- K6 confidence threshold: `>=0.9`
-- fixed contralateral anatomy: `{14,17,19,21,23}`
+- pose schedules: Seattle `[2,7,12,17]`, Parkinglot `[2,7,12,17]`, Jogging `[2,7,12,17,22,27,32,37,42,47]`
+- confidence threshold: `>=0.9`
+- contralateral anatomy: `{14,17,19,21,23}`
 - perturbed branch channels: `{18,20,22}`
-- expected changed SMPL transforms: exactly `[18,20,22]`
-- selective intervention: zero only channels `{18,20,22}` on the fixed HC contralateral subset, then renormalize
+- expected changed transforms: exactly `[18,20,22]`
 
 Frozen diagnostic thresholds:
 
@@ -62,46 +61,59 @@ changed transforms exactly [18,20,22]
 
 Failures remain results. Do not change joint, axis, angle, mask, or thresholds in response to outcome.
 
-## Step 17A - left-elbow pre-perturbation precursor
+## Step 17A precursor
 
-No elbow perturbation has been applied yet.
+Before perturbation, aggregate learned branch support `{18,20,22}` exceeds K6 support on the contralateral subset in all three checkpoints. This is descriptive precursor evidence only.
 
-| Checkpoint | Contra count | K6 branch mean | Learned branch mean | Learned/K6 ratio | Learned >1e-3 | K6 >1e-3 |
-|---|---:|---:|---:|---:|---:|---:|
-| Seattle | 33074 | 5.8264015e-7 | 4.1305361e-4 | 708.9343x | 0.0953922 | 0.0 |
-| Parkinglot | 77622 | 2.1632670e-7 | 2.3983797e-4 | 1108.6841x | 0.0502048 | 0.0 |
-| Jogging | 20887 | 2.7637162e-7 | 3.7456353e-4 | 1355.2894x | 0.0780390 | 0.0 |
+Original Step-17A Seattle recomputation used `argmax/max(effective_lbs)` and returned `197781` HC / `33074` contralateral, creating a small mismatch with the frozen Seattle benchmark.
 
-Learned left-elbow-branch support exceeds K6 support in all three checkpoints while K6-HC dominant-joint agreement remains above `0.99992`. This is descriptive precursor evidence only, not a second-joint causal replication.
+## Step 17A1 Seattle reconciliation
 
-## Active blocker before elbow perturbation
-
-Step 17A exposed a Seattle mask-count mismatch that must be reconciled before causal testing:
+The mismatch is now explained at the **anatomy-source** level.
 
 ```text
-Step 17A recomputed from 13A effective_lbs:
-HC count:     197781
-contra count: 33074
-
-Previously reviewed corrected Seattle benchmark:
-HC count:     197778
-contra count: 33072
+recomputed effective_lbs anatomy: HC 197781, contra 33074
+saved Step-13A anatomy:           HC 197778, contra 33072
+frozen corrected benchmark:       HC 197778, contra 33072
 ```
 
-The Seattle K6 file contains both `effective_lbs` and saved anatomy fields `saved_dominant` / `saved_confidence`. The 3-HC / 2-contralateral difference may be a threshold-boundary or assignment-source issue, but no explanation is accepted until directly audited.
+Only `saved_dominant` / `saved_confidence` reproduce the already-reviewed Seattle Step-13A / Step-14E benchmark. This is not a `>=0.9` versus `>0.9` issue: no exact threshold-boundary rows exist.
 
-**Do not run the left-elbow perturbation yet.**
+Detailed differences:
+
+```text
+dominant mismatch count: 2
+HC decision differences: 5 rows
+contralateral differences: 2 rows
+HC indices: [239232,269473,287191,296137,299167]
+contra indices: [239232,269473]
+```
+
+### Frozen anatomy-source implementation rule
+
+- Seattle anatomy masks: `saved_dominant` + `saved_confidence` from `13A_k6_effective_mapping.npz`
+- Seattle K6 deformation weights: `effective_lbs` from the same file
+- Parkinglot anatomy masks: stored `dominant_joint` + `joint_confidence` from Step 16C2
+- Jogging anatomy masks: stored `dominant_joint` + `joint_confidence` from Step 16D3
+
+The predeclared elbow protocol itself is unchanged. This source mapping was frozen **before any elbow perturbation**.
 
 ## Immediate next action
 
-Run **Step 17A1: Seattle K6 mask reconciliation**. Compare recomputed anatomy from `effective_lbs` against `saved_dominant` / `saved_confidence`, identify the exact discrepant rows and their confidence values around `0.9`, and determine which source reproduces the already-frozen corrected Seattle benchmark counts `197778` HC and `33072` contralateral.
+Run **Step 17A2** before causal testing:
 
-The predeclared elbow protocol remains unchanged.
+1. recompute the Seattle elbow precursor using the canonical saved Seattle mask (`197778` HC / `33072` contralateral),
+2. compare it with the original Step-17A recomputed-mask precursor,
+3. freeze one cross-checkpoint anatomy-source manifest for Seattle/Parkinglot/Jogging,
+4. verify the two-row Seattle correction does not change the qualitative precursor conclusion.
+
+Only after Step 17A2 is reviewed should the predeclared left-elbow `z +10 deg` causal perturbation begin.
 
 ## Continuity files
 
+- `research/sessions/2026-09-15-step17a1.md`
+- `experiments/08-second-joint-generalization/analysis/17A1_seattle_mask_reconciliation.json`
 - `research/protocols/2026-09-15-second-joint-generalization.md`
+- `research/protocols/2026-09-15-second-joint-generalization-implementation-note.md`
 - `research/sessions/2026-09-15-step17a.md`
 - `experiments/08-second-joint-generalization/analysis/17A_left_elbow_cross_checkpoint_precursor.csv`
-- `research/sessions/2026-09-15-step16e0.md`
-- `experiments/07-cross-sequence-replication/analysis/16E0_left_wrist_cross_checkpoint_summary.csv`
