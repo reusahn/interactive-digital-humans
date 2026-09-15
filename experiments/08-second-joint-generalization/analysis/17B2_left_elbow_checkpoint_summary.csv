@@ -1,0 +1,4 @@
+checkpoint,num_tested_poses,learned_contra_pct_hc_min,learned_contra_pct_hc_max,k6_reduction_mean_pct,k6_reduction_min_pct,ablation_reduction_min_pct,removed_mass_corr_mean,removed_mass_corr_min,maximum_ablated_contralateral,frame2_regression_pass,checkpoint_pose_robust_pass
+seattle,4,0.5152285757357212,0.6096218661848827,99.8251855617456,99.81874059431833,100.0,0.9733142809217435,0.9688984153761956,0.0,True,True
+parkinglot,4,0.5745977671598776,0.579238921203814,99.89467022371729,99.89133532876487,100.0,0.996068874605548,0.9958910833916544,0.0,True,True
+jogging,10,0.5359446816983522,0.8065193088601302,99.9070311340268,99.88811618505586,100.0,0.9893795084148016,0.9846242065790359,0.0,True,True
