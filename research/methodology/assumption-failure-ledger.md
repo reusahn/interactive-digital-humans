@@ -120,6 +120,30 @@ Provenance statements must distinguish the packaged config label from the releas
 
 ---
 
+### A005 — Step 17B2 code cell was truncated during transfer
+
+**Assumption before test**
+
+The Step 17B2 full-pose cell was assumed to have been transferred into Colab as a complete executable cell.
+
+**Contradicting observation**
+
+Execution stopped before any scientific computation with `SyntaxError: unterminated string literal (detected at line 200)`. Inspection of the pasted cell showed that the code itself was cut off partway through the Jogging sequence definition, leaving an incomplete string / dictionary literal.
+
+**Corrected interpretation**
+
+This was a code-delivery/truncation failure, not an experimental result and not evidence against the elbow hypothesis.
+
+**Impact**
+
+No Step 17B2 scientific output exists from this run. No thresholds, masks, joint definitions, pose schedules, or prior results are changed.
+
+**Follow-up**
+
+Rerun Step 17B2 from a shorter, self-contained replacement cell. Record the syntax failure separately from the subsequent scientific result.
+
+---
+
 ## Status
 
-This ledger is cumulative. Future failed assumptions should be appended rather than replacing earlier entries.
+This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
