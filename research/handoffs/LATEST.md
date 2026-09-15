@@ -14,17 +14,9 @@ Structured chat continuity:
 
 `research/sessions/2026-09-15-chat-continuity.md`
 
-Recent recorded failures/corrections include:
-
-- Seattle validation-frame mapping correction
-- ankle locality-target correction
-- Seattle `>=0.9` vs `>0.9` hypothesis disproved
-- nonexistent `hugs_triplane -> HUGS_TRIMLP` alias assumption disproved
-- Step 17B2 truncated-cell syntax failure, followed by successful rerun
+Recent recorded failures/corrections include Seattle validation-frame mapping, ankle locality-target interpretation, the disproved Seattle threshold-comparator hypothesis, the disproved `hugs_triplane -> HUGS_TRIMLP` alias assumption, and the Step 17B2 truncated-cell syntax failure followed by a successful rerun.
 
 ## Frozen left-wrist benchmark
-
-Completed across three independently pretrained HUGS NeuMan checkpoints.
 
 ```text
 independent checkpoints: 3
@@ -37,29 +29,36 @@ global maximum ablated contralateral sum: 0.0
 LEFT-WRIST CROSS-CHECKPOINT BENCHMARK FROZEN: True
 ```
 
-## Predeclared left-elbow generalization
+## Frozen left-elbow generalization
 
-Frozen before elbow displacement was inspected:
+Predeclared before elbow displacement was inspected:
 
-- joint: left_elbow, SMPL 18
-- axis: z
-- angle: +10 deg
-- branch channels: `[18,20,22]`
-- expected changed transforms: `[18,20,22]`
-- Seattle poses: `[2,7,12,17]`
-- Parkinglot poses: `[2,7,12,17]`
-- Jogging poses: `[2,7,12,17,22,27,32,37,42,47]`
-- K6 reduction threshold: >=95%
-- selective-ablation reduction threshold: >=99.999%
-- removed-mass/reduction correlation threshold: >=0.90
-- max ablated contralateral displacement: <=1e-8
+- left_elbow, SMPL 18
+- z +10 degrees
+- branch channels `[18,20,22]`
+- expected changed transforms `[18,20,22]`
+- Seattle poses `[2,7,12,17]`
+- Parkinglot poses `[2,7,12,17]`
+- Jogging poses `[2,7,12,17,22,27,32,37,42,47]`
 
-Canonical anatomy sources were frozen before causal testing:
+Canonical anatomy sources were frozen before perturbation:
 
 ```text
 Seattle    saved_dominant + saved_confidence    HC 197778  contra 33072
 Parkinglot dominant_joint + joint_confidence    HC 292095  contra 77622
 Jogging    dominant_joint + joint_confidence    HC 148392  contra 20887
+```
+
+All 18 predeclared elbow pose diagnostics passed:
+
+```text
+ALL FRAME-2 REGRESSIONS PASS: True
+checkpoint pose-robust passes: 3 / 3
+global minimum K6 reduction: 99.81874059431833%
+global minimum ablation reduction: 100.0%
+global minimum removed-mass correlation: 0.9688984153761956
+global maximum ablated contralateral: 0.0
+ALL THREE CHECKPOINTS ELBOW POSE ROBUST: True
 ```
 
 ## Source/provenance status
@@ -72,7 +71,7 @@ Step 17B1A established exact released HUGS_TRIMLP reconstruction semantics and z
 
 Step 17B1B disproved the assumption that an executable `hugs_triplane -> HUGS_TRIMLP` alias exists.
 
-Step 17B1C established the correct provenance statement:
+Step 17B1C established:
 
 - released source/config name: `hugs_trimlp`
 - released trainer directly constructs `HUGS_TRIMLP`
@@ -81,23 +80,7 @@ Step 17B1C established the correct provenance statement:
 - historical cause of the naming mismatch is unknown
 - exact numeric reconstruction means no reconstruction rerun is required
 
-## Frozen left-elbow pose-robust result
-
-All 18 predeclared elbow pose diagnostics passed.
-
-```text
-ALL FRAME-2 REGRESSIONS PASS: True
-checkpoint pose-robust passes: 3 / 3
-global minimum K6 reduction: 99.81874059431833%
-global minimum ablation reduction: 100.0%
-global minimum removed-mass correlation: 0.9688984153761956
-global maximum ablated contralateral: 0.0
-ALL THREE CHECKPOINTS ELBOW POSE ROBUST: True
-```
-
-## Step 17C0 — frozen two-joint cross-checkpoint benchmark
-
-The completed wrist and elbow results were synthesized without changing any endpoint or perturbation.
+## Step 17C0 — frozen two-joint benchmark
 
 ```text
 independent pretrained checkpoints: 3
@@ -123,31 +106,50 @@ Across three independently pretrained HUGS NeuMan checkpoints, the same learned 
 - Thirty-six pose tests are nested robustness diagnostics, not 36 independent replications.
 - Raw displacement magnitudes are sequence-scale dependent and are not pooled.
 
-## Public portfolio action
+## Public Netflix portfolio update completed
 
-Add the completed diagnostic result to the portfolio submitted for Netflix Video Algorithms Intern, Video Coding (Gaussian Splatting), Fall 2026, JR40251:
+The portfolio previously submitted for Netflix Video Algorithms Intern, Video Coding (Gaussian Splatting), Fall 2026, JR40251 has been updated.
+
+Live URL:
 
 `https://jonghoonahn.com/Video_Algorithms.html`
 
-Repository file:
+Portfolio repository:
 
-`reusahn/Portfolio/Video_Algorithms.html`
+`reusahn/Portfolio`
 
-Public wording may report the validated HUGS / 4D-human deformation-locality benchmark and link to the public `interactive-digital-humans` repository. Do not disclose any future novel locality-preserving method/loss/architecture before publication/IP decisions.
+Changes:
+
+- updated `Video_Algorithms.html` from four to five research stages: Representation → Training → Delivery → Execution → Control
+- added 4D Human Deformation Locality to hero metrics, research journey, results table, technical scope, and About section
+- created `Projects29/human-deformation-locality.html`
+- public page includes 3 checkpoints, 2 tested joints, 36 nested pose diagnostics, 6/6 joint × checkpoint cells passed, minimum K6 reduction 99.7086%, 100% selective-ablation reduction, minimum correlation 0.9689
+- public wording explicitly preserves checkpoint `n=3` as the independent model-level unit
+- selected failed assumptions/corrections are included as evidence of failure-aware research practice
+- no future novel locality-preserving method/loss/architecture was disclosed
+
+Portfolio commits:
+
+- detail page: `b25d22d07c7d6f50c6c36f4953a14c7cca62ba2c`
+- main submitted portfolio: `e0f4fb7ceab6d02b134196041f17daa486d4d399`
+
+Disclosure record:
+
+`research/sessions/2026-09-15-portfolio-public-update.md`
+
+GitHub Pages/custom-domain deployment may lag the repository commit briefly.
 
 ## End-of-day decision
 
 The planned research block is complete at Step 17C0.
 
-Do **not** automatically start a third joint today. Next research session should decide whether another joint adds meaningful evidence or whether the evidence is sufficient to move into locality-preserving method/loss design.
+Do **not** automatically start a third joint today. Next research session should decide whether another joint adds meaningful evidence or whether the project should transition into locality-preserving method/loss design.
 
 ## Continuity files
 
 - `research/sessions/2026-09-15-chat-continuity.md`
 - `research/sessions/2026-09-15-step17c0.md`
+- `research/sessions/2026-09-15-portfolio-public-update.md`
 - `experiments/08-second-joint-generalization/analysis/17C0_two_joint_cross_checkpoint_benchmark.csv`
 - `experiments/08-second-joint-generalization/analysis/17C0_two_joint_cross_checkpoint_benchmark.json`
 - `research/methodology/assumption-failure-ledger.md`
-- `research/sessions/2026-09-15-step17b2.md`
-- `research/sessions/2026-09-15-step17b1c.md`
-- `research/sessions/2026-09-15-step17b1b-assumption-failure.md`
