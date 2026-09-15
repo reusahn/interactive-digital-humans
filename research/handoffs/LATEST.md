@@ -9,12 +9,17 @@ Completed today:
 - Step 14 corrected counterfactual LBS ablation
 - Step 15 Seattle within-sequence pose replication
 - Step 16A cross-sequence asset inventory
-- Step 16B1 official NeuMan archive probe
+- Step 16B1 official NeuMan archive range probe
+- Step 16B2 selective extraction of five candidate NeuMan SMPL pose assets
 
-Step 16B1 confirmed that the official `neuman_data.zip` is `4.204 GiB` and supports HTTP byte-range requests (`206`, `Accept-Ranges: bytes`). The full archive has **not** been downloaded.
+Current independent-sequence choice: **parkinglot**.
 
-Current strategy: avoid storing the full 4.2 GiB archive. Use a range-backed remote ZIP reader to selectively extract only the per-sequence `4d_humans/smpl_optimized_aligned_scale.npz` pose assets for the independent HUGS candidates, inspect their frame counts, then choose the first cross-sequence replication model.
+Reason: parkinglot has 42 frames and effective evaluation raw frames `[2, 7, 12, 17]`, matching the Seattle replication frame indices and giving a clean first cross-sequence comparison.
 
-Next experiment: **Step 16B2 - selectively extract and inspect candidate NeuMan SMPL pose NPZ files from the official remote ZIP.**
+Next experiment: **Step 16B3 - extract and validate the official parkinglot `human_final.pth` and `config_train.yaml` from the already-persisted HUGS pretrained ZIP.** Verify checkpoint/config provenance and structure before reconstructing parkinglot learned LBS and K=6 target.
 
-For full chat-session continuity, read [the structured 2026-09-15 session record](../sessions/2026-09-15.md), [the Step 16B1 session checkpoint](../sessions/2026-09-15-step16b1.md), and [the daily research log](../logs/2026-09-15.md).
+For full chat-session continuity, read:
+
+- [main 2026-09-15 session record](../sessions/2026-09-15.md)
+- [Step 16B2 session checkpoint](../sessions/2026-09-15-step16b2.md)
+- [daily research log](../logs/2026-09-15.md)
