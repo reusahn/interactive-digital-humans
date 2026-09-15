@@ -1,0 +1,30 @@
+{
+  "date": "2026-09-15",
+  "step": "17B1C",
+  "hugs_commit": "86ebe5522a384fc553f07f090b63a76dd4af8d33",
+  "released_source_hugs_triplane_hits": 0,
+  "released_source_hugs_trimlp_hits": 8,
+  "official_release_config": "cfg_files/release/neuman/hugs_human_scene.yaml",
+  "official_release_human_name": "hugs_trimlp",
+  "official_release_activation": "relu",
+  "trainer_imports_HUGS_TRIMLP": true,
+  "trainer_checks_hugs_trimlp": true,
+  "trainer_constructs_HUGS_TRIMLP": true,
+  "trainer_checks_hugs_triplane": false,
+  "released_trainer_hugs_trimlp_to_HUGS_TRIMLP": true,
+  "packaged_human_names": {
+    "seattle": "hugs_triplane",
+    "parkinglot": "hugs_triplane",
+    "jogging": "hugs_triplane"
+  },
+  "packaged_activations": {
+    "seattle": "relu",
+    "parkinglot": "relu",
+    "jogging": "relu"
+  },
+  "no_released_hugs_triplane_alias": true,
+  "step17B1A_source_semantics_exact": true,
+  "step17B1A_all_numeric_match": true,
+  "packaged_config_label_drift_resolved": true,
+  "interpretation": "The exact released source uses config model name hugs_trimlp and directly constructs HUGS_TRIMLP. The downloaded pretrained package configs use the different literal hugs_triplane, for which no executable alias exists in the released commit. Step 17B1A numerically reproduces the checkpoint learned LBS exactly under HUGS_TRIMLP semantics, so no reconstruction rerun is indicated. The historical cause of the naming mismatch is not established by this audit."
+}
