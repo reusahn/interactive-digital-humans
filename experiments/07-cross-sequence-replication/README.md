@@ -40,23 +40,48 @@ Only Seattle is currently extracted persistently under:
 
 The blocker is therefore the persistent NeuMan sequence data, not the pretrained HUGS models.
 
-The HUGS project README documents the official NeuMan data archive `neuman_data.zip`, which contains the required NeuMan sequences.
+## Step 16B1 - official NeuMan archive probe
+
+Official archive:
+
+```text
+https://docs-assets.developer.apple.com/ml-research/models/hugs/neuman_data.zip
+```
+
+The archive was probed without downloading it.
+
+```text
+HTTP status: 206
+Content-Range: bytes 0-0/4513980377
+Accept-Ranges: bytes
+Content-Type: application/zip
+Archive size: 4.204 GiB (4304.9 MiB)
+```
+
+Random byte-range access is therefore available. The full archive has not been stored in Drive.
+
+See [the Step 16B1 archive probe record](analysis/16B1_official_neuman_archive_probe.md).
+
+## Current acquisition strategy
+
+Do not download the entire 4.2 GiB NeuMan archive yet. First use a seekable HTTP range-backed ZIP reader to locate and selectively extract only:
+
+```text
+4d_humans/smpl_optimized_aligned_scale.npz
+```
+
+for `citron`, `parkinglot`, `jogging`, `lab`, and `bike`.
+
+These pose files are sufficient to inspect candidate frame counts and shape parameters at negligible storage cost. Once a candidate is chosen, extract only its matching pretrained HUGS checkpoint/config from the already-persisted `hugs_pretrained_models.zip` and reconstruct that model's learned LBS field and K=6 target.
 
 ## Next step
 
-Acquire and persist at least one additional official NeuMan sequence dataset. Then verify:
+Step 16B2:
 
-1. `4d_humans/smpl_optimized_aligned_scale.npz`,
-2. matching official HUGS human checkpoint,
-3. matching packaged HUGS config,
-4. canonical Gaussian count and learned-LBS export,
-5. K=6 target reconstruction.
-
-After validation, repeat the Seattle mechanism diagnostic on the independent model:
-
-- left-wrist z +10 degrees,
-- original learned LBS,
-- reconstructed K=6 target LBS,
-- selective learned left-wrist/hand channel ablation on the high-confidence contralateral upper-body subset.
+1. open the official NeuMan ZIP through byte-range random access,
+2. locate the five candidate `smpl_optimized_aligned_scale.npz` members,
+3. persist only those small pose assets into Drive,
+4. inspect keys, frame counts, betas, and scale arrays,
+5. select the first independent sequence for the causal mechanism replication.
 
 Do not generalize the Seattle result to HUGS as a method until this independent-sequence test is completed.
