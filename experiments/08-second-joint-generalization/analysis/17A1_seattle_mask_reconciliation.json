@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-15",
+  "step": "17A1",
+  "sequence": "seattle",
+  "expected_frozen_hc_count": 197778,
+  "expected_frozen_contralateral_count": 33072,
+  "recomputed_effective_lbs_hc_count": 197781,
+  "recomputed_effective_lbs_contralateral_count": 33074,
+  "saved_anatomy_hc_count": 197778,
+  "saved_anatomy_contralateral_count": 33072,
+  "dominant_mismatch_count": 2,
+  "confidence_mean_abs_error": 1.821307887439616e-05,
+  "confidence_max_abs_error": 0.1323409080505371,
+  "hc_decision_difference_indices": [239232, 269473, 287191, 296137, 299167],
+  "contralateral_difference_indices": [239232, 269473],
+  "exact_threshold_boundary_count_recomputed": 0,
+  "exact_threshold_boundary_count_saved": 0,
+  "matching_frozen_variants": ["saved_>=", "saved_>"],
+  "mask_count_reconciled": true,
+  "canonical_seattle_anatomy_source": "saved_dominant and saved_confidence from 13A_k6_effective_mapping.npz",
+  "k6_deformation_weight_source": "effective_lbs from 13A_k6_effective_mapping.npz",
+  "note": "This is a provenance/implementation reconciliation performed before any left-elbow perturbation. Frozen joint, axis, angle, branch channels, contralateral anatomy IDs, confidence threshold, and diagnostic pass rules are unchanged."
+}
