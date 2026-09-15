@@ -1,0 +1,6 @@
+sequence,checkpoint_available,config_available,pose_available,ready_for_step16b,checkpoint_source,pose_status
+citron,true,true,false,false,official_pretrained_zip,missing_persistent_neuman_dataset
+parkinglot,true,true,false,false,official_pretrained_zip,missing_persistent_neuman_dataset
+jogging,true,true,false,false,official_pretrained_zip,missing_persistent_neuman_dataset
+lab,true,true,false,false,official_pretrained_zip,missing_persistent_neuman_dataset
+bike,true,true,false,false,official_pretrained_zip,missing_persistent_neuman_dataset
