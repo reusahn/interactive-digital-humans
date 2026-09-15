@@ -1,0 +1,4 @@
+sequence,raw_frame,joint,axis,degrees,condition,hc_total_displacement,intended_pct_of_hc,local_chain_pct_of_hc,nonlocal_pct_of_hc,contralateral_sum,contralateral_pct_of_hc,contralateral_ratio_vs_learned,contralateral_reduction_vs_learned_pct
+parkinglot,2,left_wrist,z,10,learned,159.458954,82.896408,12.284736,4.818841,5.416987895965576,3.397105,1.0,0.0
+parkinglot,2,left_wrist,z,10,k6_target,155.191818,85.765297,13.843283,0.391409,0.01578645221889019,0.010172,0.002914,99.70857508781499
+parkinglot,2,left_wrist,z,10,wrist_hand_ablated,154.041946,85.811526,12.716738,1.471733,0.0,0.0,0.0,100.0
