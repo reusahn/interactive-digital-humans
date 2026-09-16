@@ -264,6 +264,30 @@ Compare the newly recomputed elbow per-Gaussian learned/K6/ablated arrays direct
 
 ---
 
+### A011 — Step 18B1A frame-2 key resolver used substring matching and collided with Jogging frames 22/27
+
+**Assumption before test**
+
+The Step-18B1A audit assumed that checking whether a key contained the token `frame2` would uniquely identify the Step-17B2 frame-2 displacement array.
+
+**Contradicting observation**
+
+For Jogging learned displacement, the resolver returned `jogging_frame02_learned`, `jogging_frame22_learned`, and `jogging_frame27_learned` because the substring `frame2` occurs in all three names. The audit raised a `RuntimeError` before completing the Jogging comparison or saving its final JSON.
+
+**Corrected interpretation**
+
+Frame identifiers must be resolved by exact naming, e.g. `f"{sequence}_frame02_{condition}"`, or by an anchored regular expression. Generic substring matching is unsafe for multi-frame experiment keys.
+
+**Impact**
+
+This is an audit implementation failure only. Seattle and Parkinglot per-Gaussian comparisons completed and showed near-perfect agreement with the archived spatial fields. No shoulder causal computation was performed, no research threshold changed, and no archived Step-17 result changed.
+
+**Follow-up**
+
+Rerun Step 18B1A with exact Step-17B2 frame-2 keys and complete the three-checkpoint per-Gaussian audit before repairing or rerunning Step 18B1.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
