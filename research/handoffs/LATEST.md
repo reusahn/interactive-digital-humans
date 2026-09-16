@@ -6,9 +6,7 @@ Current continuation date: **2026-09-16**.
 
 `https://colab.research.google.com/github/reusahn/interactive-digital-humans/blob/main/notebooks/daily/2026-09-16_research.ipynb`
 
-Notebook-link registry:
-
-`research/notebook-links.md`
+Notebook-link registry: `research/notebook-links.md`
 
 ## Frozen prior benchmark
 
@@ -71,62 +69,53 @@ The newly written CPU reconstruction did not reproduce the frozen Step-17B1 elbo
 
 Current versus archived Step-17 elbow fields are spatially nearly identical. Learned Pearson values are `>=0.999999999839`. Full before/after float32 evaluation reduces the learned aggregate mismatch but does not eliminate it. All K6 conditions pass the frozen gate.
 
-## Step 18B1C dependency / namespace blockers
-
-`smplx==0.1.28` was installed successfully. One audit attempt then failed because unaliased SMPLX imports polluted notebook helper names. This was recorded separately. No shoulder computation ran.
-
 ## Step 18B1C-R namespace-isolated source-exact audit COMPLETE
 
 The manual Step-18 transform path is bitwise identical to the official `smplx==0.1.28` transform path for all three checkpoints before and after elbow perturbation.
 
-```text
-Seattle manual A == smplx A: True
-Parkinglot manual A == smplx A: True
-Jogging manual A == smplx A: True
-manual A bitwise exact vs smplx in all checkpoints: True
-```
-
-Chunked versus one-shot CPU evaluation is also not the cause under the current 2-D skinning implementation.
-
-The source-exact transform + current CPU skinning path still yields `3/6` aggregate gate passes. Every K6 condition passes and every dense learned condition remains slightly outside `1e-5`:
-
-| Checkpoint | Learned contra error | K6 contra error |
-|---|---:|---:|
-| Seattle | `-2.92805305548427e-05` | `+4.982352947990876e-07` |
-| Parkinglot | `+4.781559425737214e-05` | `+2.246013536932878e-06` |
-| Jogging | `+1.115696863962512e-05` | `+4.4823536882176995e-08` |
+Chunked versus one-shot CPU evaluation is also not the cause. Source-exact CPU evaluation remains at `3/6` aggregate gate passes. Every K6 condition passes and every dense learned condition remains slightly outside `1e-5`.
 
 Archived: `research/sessions/2026-09-16-step18b1c-r.md`
 
 Drive artifact: `experiments/08-second-joint-generalization/18B1C_R_namespace_isolated_smplx_audit.json`
 
-## Newly identified source-shape audit requirement
+## Step 18B1D exact HUGS batched-rank audit COMPLETE
 
-Inspection of the exact released HUGS `hugs/models/modules/lbs.py` shows that `lbs_extra` does not use the 2-D skinning matmul used by the current audit helper. HUGS constructs:
+The exact released-HUGS `lbs_extra` batch-rank structure was reproduced on CPU with `W=[1,G,24]`, `A=[1,24,16]`, and batched `torch.matmul`.
+
+Result: the exact HUGS batched path is bitwise identical to the previous flat 2-D CPU path for every tested before position, after position, and displacement field.
+
+| Checkpoint | Learned contra error | Learned gate | K6 contra error | K6 gate |
+|---|---:|---|---:|---|
+| Seattle | `-2.92805305548427e-05` | FAIL | `+4.982352947990876e-07` | PASS |
+| Parkinglot | `+4.781559425737214e-05` | FAIL | `+2.246013536932878e-06` | PASS |
+| Jogging | `+1.115696863962512e-05` | FAIL | `+4.4823536882176995e-08` | PASS |
 
 ```text
-W: [1, G, 24]
-A.view: [1, 24, 16]
-T = torch.matmul(W, A.view(...))
-v_posed_homo: [1, G, 4]
-v_homo = torch.matmul(T, v_posed_homo.unsqueeze(-1))
+exact HUGS batched gate passes: 3/6
+previous flat 2-D gate passes: 3/6
+ALL THREE LEARNED CONDITIONS PASS WITH EXACT HUGS RANK: False
 ```
 
-The current Step-18 audit instead used `W: [G,24] @ A: [24,16]`. Although mathematically equivalent, the tensor rank/kernel execution path can change float32 rounding. This source-level difference must be tested before attributing the residual to CPU-versus-CUDA backend provenance.
+Therefore tensor rank / batched-versus-flat CPU matmul is not the source of the historical mismatch.
+
+Archived: `research/sessions/2026-09-16-step18b1d.md`
+
+Drive artifact: `experiments/08-second-joint-generalization/18B1D_exact_hugs_batched_lbs_rank_audit.json`
 
 ## Exact next action
 
-Run **Step 18B1D exact-HUGS batched-LBS rank audit**, elbow frame 2 only, CPU only.
+Run **Step 18B1E backend-provenance audit**, elbow only, before any shoulder computation.
 
-1. keep the already validated source-exact SMPLX `A` transforms
-2. reproduce HUGS `lbs_extra` tensor ranks exactly with batch dimension 1
-3. compute learned/K6 before and after positions with the exact batched `torch.matmul` sequence
-4. compare displacement arrays and frozen contralateral sums to Step-17B1
-5. compare the exact-HUGS batched path to the existing 2-D one-shot path
+1. record the current Python, Torch, CPU/CUDA environment
+2. search persisted Experiment-08 and Step-17 metadata/text artifacts for backend evidence such as `cuda`, `device`, `torch`, GPU model, and version strings
+3. inspect relevant JSON/MD/TXT metadata only, plus NPZ keys/dtypes where useful
+4. conclude historical CPU or CUDA only if persisted evidence supports it
+5. otherwise record backend provenance as unknown
 6. preserve the frozen `1e-5` regression tolerance
 7. do not compute shoulder metrics yet
 
-Only if this exact tensor-rank audit still fails should the next audit move to CPU-versus-CUDA runtime provenance.
+If historical CUDA execution is positively established, reproduce the exact elbow path on CUDA in the next audit. If provenance is unknown, keep that uncertainty explicit rather than assuming CUDA.
 
 ## Research-record rule
 
