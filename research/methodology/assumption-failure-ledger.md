@@ -336,6 +336,30 @@ Run a patched Step 18B1C cell that avoids all shared helper names by defining `m
 
 ---
 
+### A014 — Official HUGS legacy software stack did not fully recover the frozen Step-17 elbow archive on A100
+
+**Assumption before test**
+
+After strict current-CUDA reproduction reached `5/6` frozen elbow conditions, the leading numerical-provenance hypothesis was that recreating the official released HUGS software stack, especially PyTorch `1.13.1` with CUDA `11.7`, would recover the frozen Step-17B1 arrays within the unchanged `1e-5` aggregate gate.
+
+**Contradicting observation**
+
+Step 18B1G3 ran successfully on an A100 under Python `3.8.20`, NumPy `1.24.4`, PyTorch `1.13.1+cu117`, CUDA `11.7`, and SMPLX `0.1.28`, with TF32 disabled. Seattle learned passed at error `+7.21e-06`, Jogging learned passed at `+4.06e-06`, and all K6 conditions passed. Parkinglot learned remained outside the frozen gate at `-2.87e-05`. Total recovery therefore remained `5/6` despite a large improvement from the modern A100 stack's Parkinglot error of about `+1.10e-04`.
+
+**Corrected interpretation**
+
+The software stack materially affects the tiny float32 aggregate mismatch, but software version alone does not explain the historical archive. Source semantics and the scientific field remain stable, with learned-field Pearson correlations effectively `1.0`. The remaining exact-reproduction variable is lower-level runtime provenance, especially GPU architecture / CUDA kernel selection, because the historical Step-17 record confirms CUDA execution but not the GPU model.
+
+**Impact**
+
+No shoulder result is accepted and the `1e-5` gate is not widened. The frozen Step-17 scientific benchmark remains unchanged. The blocker is classified as historical numerical-runtime equivalence rather than a change in the causal mechanism.
+
+**Follow-up**
+
+Run the same pinned legacy G3 regression on a second GPU architecture, beginning with a T4-class Colab GPU if available. Do not claim the historical run used T4 unless direct evidence is recovered. If a second architecture still fails exact `6/6`, stop treating the mismatch as a source-code defect and explicitly separate runtime numerical sensitivity from the stable scientific effect before deciding the Step-18 reproducibility policy.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
