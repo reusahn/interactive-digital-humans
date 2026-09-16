@@ -53,9 +53,9 @@ No joint, branch, mask, threshold, pose schedule, axis, or perturbation angle ma
 
 ## Step 18A descriptive precursor COMPLETE
 
-Step 18A inspected only frozen contralateral branch-support mass. It did not compute shoulder causal displacement.
+Step 18A measured only frozen contralateral shoulder-branch support mass. It did not compute shoulder causal displacement.
 
-Parkinglot reverses the mean learned/K6 branch-support ordering (`0.8379x`) and that reversal remains part of the record.
+Parkinglot reverses the mean support ordering (`learned/K6 = 0.837904818`) while Seattle and Jogging have learned>K6. This reversal remains part of the record and is not grounds for changing the frozen shoulder protocol.
 
 ## Step 18B0 / B0A / B0B provenance block COMPLETE
 
@@ -71,93 +71,89 @@ Authoritative Seattle canonical reference:
 
 ## Step 18B1 historical elbow gate BLOCKED
 
-The newly written CPU/manual SMPL-LBS reconstruction did not reproduce the frozen Step-17B1 elbow contralateral learned sums within the frozen `1e-5` aggregate tolerance, so execution stopped before shoulder causal metrics were accepted.
+The newly written CPU reconstruction did not reproduce the frozen Step-17B1 elbow learned contralateral sums within the frozen `1e-5` aggregate tolerance, so execution stopped before shoulder causal metrics were accepted.
 
-This remains a pipeline/source-equivalence blocker, not a shoulder result.
+This is a pipeline/source-equivalence blocker, not a shoulder result. No threshold was widened.
 
-## Step 18B1A-R completed per-Gaussian audit
+## Step 18B1A-R per-Gaussian audit COMPLETE
 
-Across all three checkpoints, current versus archived Step-17 elbow fields are spatially nearly identical:
+Current versus archived Step-17 elbow displacement fields are spatially nearly identical across all three checkpoints:
 
-- learned Pearson values: `>= 0.999999999839`
-- learned mean per-Gaussian absolute differences: about `7e-8` to `1.1e-7`
-- K6 agreement is even closer
-- Step-17B1 and Step-17B2 frame-2 arrays are exact for Parkinglot/Jogging and near-exact for Seattle
-
-No tolerance was changed.
-
-Archived:
-
-`research/sessions/2026-09-16-step18b1a-r.md`
+- learned Pearson values `>= 0.999999999839`
+- learned mean per-Gaussian absolute differences about `7e-8` to `1.1e-7`
+- K6 agreement even closer
+- Step-17B1 and Step-17B2 frame-2 arrays exact for Parkinglot/Jogging and near-exact for Seattle
 
 ## Step 18B1B evaluation-order audit COMPLETE
 
-The hypothesis that displacement evaluation order alone caused the blocker was disproved.
+Direct delta-A evaluation was not the whole cause. Full before/after float32 position evaluation reduced learned contralateral-sum error to:
 
-Switching from direct `delta-A` displacement to full float32 before/after position evaluation greatly reduces learned-condition contralateral-sum error, but learned still fails the frozen `1e-5` regression gate in all three checkpoints:
+| Checkpoint | best full-position learned error | frozen `1e-5` gate |
+|---|---:|---|
+| Seattle | `-2.927389e-5` | FAIL |
+| Parkinglot | `+4.781559e-5` | FAIL |
+| Jogging | `+1.115697e-5` | FAIL |
 
-| Checkpoint | direct delta-A learned error | best full-position learned error | gate |
-|---|---:|---:|---|
-| Seattle | `-3.667395e-4` | `-2.927389e-5` | FAIL |
-| Parkinglot | `-1.622576e-3` | `+4.781559e-5` | FAIL |
-| Jogging | `-7.595423e-5` | `+1.115697e-5` | FAIL |
+All K6 conditions pass the same gate.
 
-K6 passes the aggregate `1e-5` gate in all three checkpoints.
+## Step 18B1C dependency / namespace blockers
 
-Seattle historical elbow before/after positions are also only slightly different from the current reconstruction at float32 scale:
+`smplx==0.1.28` was installed successfully. A subsequent audit attempt failed because unaliased SMPLX imports polluted notebook helper names. This was recorded separately as an implementation failure. No shoulder computation ran.
 
-- before mean abs: `5.063156e-08`
-- before max abs: `9.536743e-07`
-- after mean abs: `4.979415e-08`
-- after max abs: `9.536743e-07`
+## Step 18B1C-R namespace-isolated source-exact audit COMPLETE
 
-Interpretation: evaluation order contributes but does not fully explain the mismatch. The next likely source is manual versus source-exact SMPL transform construction and/or backend floating-point execution order.
+The manual Step-18 transform path is **bitwise identical** to the official `smplx==0.1.28` transform path for all three checkpoints, both before and after the elbow perturbation.
+
+```text
+Seattle manual A == smplx A: True
+Parkinglot manual A == smplx A: True
+Jogging manual A == smplx A: True
+manual A bitwise exact vs smplx in all checkpoints: True
+```
+
+Chunked versus one-shot CPU LBS evaluation is also not the cause. Parkinglot/Jogging are bitwise exact between chunked and one-shot for learned and K6. Seattle learned differs only at negligible floating-point scale (`mean abs ~1.35e-14`, `max abs ~6.37e-9`).
+
+The source-exact CPU path still yields only `3/6` aggregate gate passes, because every K6 condition passes and every dense learned condition remains slightly outside the frozen `1e-5` tolerance:
+
+| Checkpoint | Learned contra error | K6 contra error |
+|---|---:|---:|
+| Seattle | `-2.92805305548427e-05` | `+4.982352947990876e-07` |
+| Parkinglot | `+4.781559425737214e-05` | `+2.246013536932878e-06` |
+| Jogging | `+1.115696863962512e-05` | `+4.4823536882176995e-08` |
+
+Per-Gaussian learned Pearson remains essentially 1.0 in every checkpoint.
 
 Archived:
 
-- `research/sessions/2026-09-16-step18b1b.md`
-- failure ledger `A012`
+`research/sessions/2026-09-16-step18b1c-r.md`
 
 Drive artifact:
 
-`experiments/08-second-joint-generalization/18B1B_elbow_evaluation_order_audit.json`
+`experiments/08-second-joint-generalization/18B1C_R_namespace_isolated_smplx_audit.json`
 
-## Step 18B1C dependency recovery COMPLETE
+### Current interpretation
 
-The HUGS-pinned dependency `smplx==0.1.28` is installed and importable in the current CPU runtime.
+The remaining historical Step-17 versus current Step-18 discrepancy is **not** explained by:
 
-## Step 18B1C namespace blocker
+1. manual versus official SMPLX transform construction
+2. delta-A versus full-position evaluation alone
+3. chunked versus one-shot CPU skinning
 
-The first post-install rerun of Step 18B1C stopped before any scientific audit result with:
-
-```text
-TypeError: blend_shapes() missing 1 required positional argument: 'shape_disps'
-```
-
-Cause: the dependency-verification cell imported SMPLX helpers into the global notebook namespace without aliases. Step 18B1's pre-existing `compute_A` resolves `blend_shapes` dynamically and therefore began calling `smplx.lbs.blend_shapes` instead of the local one-argument helper.
-
-This is namespace pollution only. No shoulder computation ran and no transform/backend conclusion can be drawn from this failed attempt.
-
-Archived:
-
-- `research/sessions/2026-09-16-step18b1c-namespace-blocker.md`
-- failure ledger `A013`
+The remaining candidate is runtime/backend floating-point provenance, especially CPU versus CUDA execution. The learned LBS field is dense, so it accumulates more floating-point operations than sparse K6 and can expose backend-level rounding differences while retaining nearly perfect spatial agreement.
 
 ## Exact next action
 
-Run a patched **Step 18B1C-R** that is self-contained with isolated names:
+Run **Step 18B1D runtime/backend provenance audit**, elbow only.
 
-1. import SMPLX functions only as `sx_*`
-2. define the manual comparison path under `manual_*` names
-3. do not call the mutated global `compute_A`
-4. compare manual versus SMPLX `A` transforms
-5. test source-exact chunked and one-shot elbow frame-2 displacement against archived Step-17B1 arrays
-6. preserve the frozen `1e-5` regression tolerance
-7. do not compute shoulder metrics yet
+1. report PyTorch version, CUDA build, CUDA availability, device name, CPU thread counts, MKL/OpenMP backend status, and TF32 flags
+2. if CUDA is unavailable, stop after provenance reporting without shoulder computation
+3. if CUDA is available, recompute the same source-exact elbow frame-2 learned/K6 displacement on CUDA and compare CPU versus CUDA against the frozen Step-17B1 arrays
+4. do not widen the frozen `1e-5` tolerance
+5. do not compute shoulder causal metrics yet
 
 ## Research-record rule
 
-Preserve failures, reversals, disproven assumptions, implementation problems, and accidental inspection leakage rather than rewriting history after later success.
+Preserve failures, reversals, disproven assumptions, implementation problems, accidental inspection leakage, and backend provenance uncertainty rather than rewriting history after later success.
 
 Cumulative ledger:
 
