@@ -61,36 +61,54 @@ Step 18A inspected only frozen contralateral branch-support mass. It did **not**
 | Parkinglot | 0.000332070101 | 0.000396310050 | 0.837904818 | 0.763121280 | **learned<K6** |
 | Jogging | 0.000710532339 | 0.000127892362 | 5.555705804 | 0.920668358 | learned>K6 |
 
-### Important observation
+Parkinglot reverses the mean support ordering. This remains part of the record and is not grounds for changing the frozen shoulder protocol.
 
-The descriptive expectation `mean learned branch support > mean K6 branch support` does not hold uniformly. Parkinglot reverses the mean ordering. This must be retained rather than tuned away.
+## Step 18B0 artifact/key inventory COMPLETE
 
-The reversal does **not** itself fail the causal shoulder protocol because support mass is not the causal displacement metric. Notably, 76.31% of Parkinglot contralateral rows still have learned branch mass greater than K6, indicating a distributional/tail effect rather than majority-row reversal.
+Step 18B0 inspected persistent artifacts and array layouts only. **No shoulder perturbed displacement was computed.**
 
-Integrity checks passed:
+Confirmed:
 
-- frozen HC/contralateral counts exactly matched Step 17A2
-- learned and K6 row sums within approximately `3e-7` of 1
-- zero NaNs
+- licensed original and cleaned SMPL assets exist
+- Step 17A2 frozen masks exist
+- Seattle, Parkinglot, and Jogging learned-LBS and K6 arrays exist with expected `(G,24)` shapes
+- all three NeuMan pose assets exist
+- prior Parkinglot/Jogging wrist counterfactual and frame-replication artifacts remain present
+- Step 17B1 elbow frame-2 displacement artifact remains present with learned/K6/ablated/removed-branch arrays for all three sequences
+- Step 17B2 full-pose elbow displacement artifact remains present for all 18 nested poses
 
-Archived artifacts:
+### Important input asymmetry
 
-- `research/sessions/2026-09-16-step18a.md`
-- `experiments/08-second-joint-generalization/analysis/18A_left_shoulder_branch_support_precursor.csv`
-- `experiments/08-second-joint-generalization/analysis/18A_left_shoulder_branch_support_precursor.json`
+Parkinglot and Jogging learned-LBS artifacts contain `xyz_canon` directly.
 
-Drive artifacts also saved by Colab:
+Seattle `13E_learned_lbs_weights.npz` does **not** contain canonical Gaussian XYZ. Seattle canonical positions must therefore be recovered from the earlier Seattle diagnostic/counterfactual artifacts before Step 18B1 is constructed.
 
-- `experiments/08-second-joint-generalization/18A_left_shoulder_branch_support_precursor.csv`
-- `experiments/08-second-joint-generalization/18A_left_shoulder_branch_support_precursor.json`
+### Step 18B0 path correction
+
+The inventory cell guessed two historical Drive directory names incorrectly:
+
+- guessed `experiments/05-causal-counterfactual`, actual `experiments/05-counterfactual-lbs-ablation`
+- guessed `experiments/06-pose-robustness`, actual `experiments/06-frame-replication`
+
+This affected only artifact discovery. It did not alter any scientific result, threshold, mask, pose, or perturbation. The corrected historical names are now fixed for the next inventory step.
+
+Archived records:
+
+- `research/sessions/2026-09-16-step18b0.md`
+- `experiments/08-second-joint-generalization/analysis/18B0_artifact_inventory.json`
 
 ## Exact next action
 
-Do **not** change the predeclared shoulder protocol.
+Run **Step 18B0A** on CPU only.
 
-Next run a CPU-only Step 18B0 artifact/key inventory to recover the exact stored Step-17 deformation inputs and pose/SMPL artifact keys before constructing the shoulder frame-2 causal test. This avoids guessing file names or array keys and does not inspect shoulder causal displacement.
+Purpose:
 
-After that inventory, run Step 18B1 shoulder frame-2 causal diagnostic unchanged across Seattle, Parkinglot, and Jogging.
+1. search the corrected Seattle Experiment 01-06 persistent directories
+2. identify the exact saved Seattle canonical Gaussian XYZ source used by prior causal work
+3. inspect candidate NPZ/NPY keys and shapes only
+4. do not run the shoulder perturbation yet
+
+Only after Seattle canonical-XYZ provenance is recovered should Step 18B1 be constructed. Step 18B1 should include a regression against the frozen Step-17 elbow frame-2 computation before shoulder output is interpreted.
 
 ## Research-record rule
 
