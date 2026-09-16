@@ -169,20 +169,12 @@ row-sum max error: <= 2.384185791015625e-07
 K6 branch-mass match max error: <= 6.984919309616089e-10
 ```
 
-Field MAE-gap reduction after branch-mass matching:
+Field MAE-gap reduction after per-row branch-mass matching:
 
 ```text
 Seattle    min/median/max: 68.341709 / 94.495471 / 96.352339%
 Parkinglot min/median/max: 73.579259 / 83.846952 / 87.244704%
 Jogging    min/median/max: 71.242567 / 93.517130 / 96.921237%
-```
-
-Field RMSE-gap reduction:
-
-```text
-Seattle    min/median/max: 66.823938 / 94.260978 / 95.829274%
-Parkinglot min/median/max: 92.691984 / 95.606291 / 96.571410%
-Jogging    min/median/max: 52.197888 / 88.838528 / 94.903711%
 ```
 
 Counterfactual-vs-K6 field correlations:
@@ -193,37 +185,86 @@ Parkinglot min/median/max: 0.989209 / 0.996750 / 0.998534
 Jogging    min/median/max: 0.789515 / 0.958796 / 0.994655
 ```
 
-Most contralateral Gaussians move closer to K6 after mass matching. The fraction improved is roughly `0.90-0.94` in Seattle, `0.95` in Parkinglot, and `>0.99` in Jogging.
+Interpretation: per-row branch-support magnitude/topology is a dominant exploratory explanatory factor. C2 cannot change the failed confirmatory shoulder outcome.
 
-### C2 interpretation
+Archived: `research/sessions/2026-09-16-step18c2.md`.
 
-Total shoulder-descendant branch mass is a **dominant exploratory explanatory factor** for the shoulder learned-vs-K6 displacement difference. Matching only total branch mass while preserving learned within-branch composition removes most of the original spatial-field gap in most poses.
+## Step 18C3 exploratory within-branch composition counterfactual COMPLETE
 
-This is not a complete mechanism:
+Counterfactual:
 
-- residual error remains
-- some poses have lower RMSE-gap reduction/correlation
-- aggregate displacement sums can overshoot K6 even when field MAE/RMSE improve strongly
-- within-branch composition and pose geometry remain plausible residual determinants
+- preserve learned total branch mass on `[16,18,20,22]`
+- replace only the within-branch allocation with K6 composition where K6 branch mass is positive
+- leave the failed shoulder protocol unchanged
 
-The shoulder confirmatory result remains failed. Step 18C2 does not rescue it and does not establish kinematic depth as causal.
+A key structural observation is that K6 shoulder-branch composition is undefined on most contralateral rows because K6 branch mass is exactly zero there, while learned branch mass is positive on every tested contralateral row.
+
+```text
+Seattle
+composition-defined fraction: 0.217586
+K6-zero shoulder-branch rows: 25876 / 33072 = about 78.24%
+
+Parkinglot
+composition-defined fraction: 0.261524
+K6-zero shoulder-branch rows: 57322 / 77622 = about 73.85%
+
+Jogging
+composition-defined fraction: 0.085460
+K6-zero shoulder-branch rows: 19102 / 20887 = about 91.45%
+```
+
+Full-field MAE-gap reduction from composition matching is essentially zero or negative:
+
+```text
+Seattle    min/median/max: -0.187106 / -0.104023 / 0.157623%
+Parkinglot min/median/max: -3.281558 / -2.195192 / -1.918001%
+Jogging    min/median/max:  0.054189 /  0.203295 / 2.111938%
+```
+
+Even on the rows where both learned and K6 branch composition are defined, composition matching produces little improvement:
+
+```text
+Seattle    defined-row median MAE-gap reduction: -0.239794%
+Parkinglot defined-row median MAE-gap reduction: -3.155762%
+Jogging    defined-row median MAE-gap reduction:  0.951096%
+```
+
+C2 vs C3 median full-field MAE-gap reduction:
+
+```text
+Seattle    mass match 94.495471% vs composition match -0.104023%
+Parkinglot mass match 83.846952% vs composition match -2.195192%
+Jogging    mass match 93.517130% vs composition match  0.203295%
+```
+
+Composition-matched counterfactual-vs-K6 field correlations remain near zero, unlike C2.
+
+### Current exploratory mechanism interpretation
+
+For the tested shoulder perturbation, the learned-vs-K6 cross-body difference is driven primarily by the **presence and magnitude of per-Gaussian shoulder-descendant support**, not by reallocating a fixed amount of shoulder-branch mass among joints 16/18/20/22.
+
+This should be described as support **topology plus per-row magnitude**, not merely aggregate branch mass. K6 has zero shoulder-descendant support on most contralateral rows, whereas learned HUGS assigns positive support to all of them.
+
+Residual pose dependence remains. Kinematic depth is still only a hypothesis.
 
 Archived:
 
-- `research/sessions/2026-09-16-step18c2.md`
-- Drive `experiments/08-second-joint-generalization/18C2_shoulder_support_match_counterfactual.json`
-- Drive `experiments/08-second-joint-generalization/18C2_shoulder_support_match_counterfactual_displacements.npz`
+- `research/sessions/2026-09-16-step18c3.md`
+- Drive `experiments/08-second-joint-generalization/18C3_shoulder_composition_match_counterfactual.json`
+- Drive `experiments/08-second-joint-generalization/18C3_shoulder_composition_match_counterfactual_displacements.npz`
 
 ## Exact next action
 
-Run one reciprocal **Step 18C3 within-branch composition counterfactual** before ending the shoulder decomposition:
+Freeze **Step 18C4 shoulder mechanism synthesis** before any new perturbation or corrective-method design.
 
-- preserve each learned row's total shoulder-descendant branch mass
-- replace only the learned within-branch allocation over `[16,18,20,22]` with the K6 within-branch composition
-- keep the same frozen shoulder perturbation and pose schedules
-- compare learned-vs-K6 field-gap reduction against Step 18C2
+The synthesis should explicitly separate four levels:
 
-Interpretation goal: directly separate the contribution of **total branch mass** from **within-branch joint allocation**. Keep the analysis exploratory/post-hoc. Do not introduce another joint yet.
+1. support existence/topology
+2. per-row total branch mass
+3. within-branch joint composition
+4. residual pose-geometry dependence
+
+No new deformation computation is needed for C4. It should read the completed C1/C2/C3 artifacts, preserve the exploratory label, and freeze bounded mechanism claims without modifying the failed shoulder criterion.
 
 ## Research-record rule
 
