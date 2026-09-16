@@ -312,6 +312,30 @@ Compare the current manual `A` transforms directly against transforms produced w
 
 ---
 
+### A013 — SMPLX dependency recovery polluted notebook helper names
+
+**Assumption before test**
+
+After installing `smplx==0.1.28`, the Step 18B1C source-exact audit was expected to run unchanged in the existing notebook runtime.
+
+**Contradicting observation**
+
+The dependency verification cell imported `batch_rodrigues`, `blend_shapes`, `vertices2joints`, and `batch_rigid_transform` into the global notebook namespace without aliases. Those names collided with helper functions already defined by Step 18B1. When Step 18B1C called the pre-existing `compute_A`, its global `blend_shapes` reference now pointed to `smplx.lbs.blend_shapes`, producing `TypeError: blend_shapes() missing 1 required positional argument: 'shape_disps'` before any audit result was computed.
+
+**Corrected interpretation**
+
+This is a notebook namespace-pollution failure introduced by the dependency-recovery cell, not evidence about HUGS, SMPL transforms, or the shoulder hypothesis. Source-exact SMPLX functions must be imported under explicit `sx_*` aliases, while the manual Step-18B1 helper implementation must use isolated names or be redefined explicitly.
+
+**Impact**
+
+No Step 18B1C scientific audit result exists from this attempt. No shoulder computation ran, no tolerance changed, and all frozen Step-17 results remain unchanged.
+
+**Follow-up**
+
+Run a patched Step 18B1C cell that avoids all shared helper names by defining `manual_*` and `sx_*` functions locally in the audit cell. Do not rely on the mutated global `compute_A` helper.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
