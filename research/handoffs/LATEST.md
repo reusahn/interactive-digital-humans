@@ -161,15 +161,41 @@ The exact released HUGS setup script at commit `86ebe5522a384fc553f07f090b63a76d
 
 This does **not** prove the custom Step-17 diagnostic used that exact package stack, but it gives a concrete source-declared legacy environment to test before changing any frozen regression criterion.
 
+## Step 18B1G3 legacy-environment bootstrap BLOCKED before science
+
+The isolated legacy environment itself successfully initializes:
+
+```text
+Python: 3.8.20
+Torch: 1.13.1+cu117
+Torch CUDA build: 11.7
+CUDA available: True
+GPU: NVIDIA A100-SXM4-40GB
+NumPy: 1.24.4
+SciPy: 1.10.1
+SMPLX import: OK
+```
+
+The regression subprocess then fails before any elbow computation while loading `SMPL_NEUTRAL_clean.pkl`:
+
+```text
+ModuleNotFoundError: No module named 'numpy._core'
+```
+
+This is a pickle serialization compatibility issue. The cleaned SMPL pickle was regenerated under NumPy 2.x and references `numpy._core`, while the legacy NumPy 1.24 runtime exposes the corresponding modules under `numpy.core`.
+
+No elbow displacement, shoulder displacement, or scientific metric was produced by this failed G3 attempt. No tolerance changed.
+
+Archived: `research/sessions/2026-09-16-step18b1g3-diagnostic-blocker.md`
+
 ## Exact next action
 
-Run one isolated legacy-environment elbow regression using PyTorch `1.13.1+cu117` without modifying the current notebook Python/PyTorch installation. Recompute only Step-17B1 elbow frame 2 for learned/K6 across all three checkpoints and compare against the frozen archive.
+Patch only the isolated legacy subprocess loader with temporary NumPy module aliases so the NumPy-2-generated clean SMPL pickle can be loaded under NumPy 1.24.4. Validate the loaded SMPL structure before any regression computation. If the compatibility load succeeds, immediately rerun the same Step 18B1G3 elbow frame-2 regression under PyTorch `1.13.1+cu117`.
 
 - keep TF32 disabled
 - preserve the exact frozen `1e-5` gate
 - do not compute shoulder metrics
-- if the legacy environment restores 6/6, freeze that runtime path for Step 18
-- if it does not, historical package/hardware provenance remains unresolved and must be treated separately from the stable scientific effect
+- do not rewrite or replace the licensed original SMPL file
 
 ## Research-record rule
 
