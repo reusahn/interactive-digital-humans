@@ -122,19 +122,27 @@ Drive artifact:
 
 `experiments/08-second-joint-generalization/18B1B_elbow_evaluation_order_audit.json`
 
+## Step 18B1C dependency blocker
+
+The first Step 18B1C attempt stopped immediately with:
+
+```text
+ModuleNotFoundError: No module named 'smplx'
+```
+
+No source-exact transform audit and no shoulder computation ran. This is an environment/dependency blocker only.
+
+The released HUGS requirements pin `smplx==0.1.28`, so recovery must install that exact version rather than an arbitrary current SMPLX release.
+
+Archived:
+
+`research/sessions/2026-09-16-step18b1c-dependency-blocker.md`
+
 ## Exact next action
 
-Run **Step 18B1C**, elbow only, on CPU:
+Install and verify **`smplx==0.1.28`** in the current CPU Colab runtime. Confirm that `smplx.lbs.batch_rodrigues`, `blend_shapes`, `vertices2joints`, and `batch_rigid_transform` import successfully. Then rerun Step 18B1C unchanged.
 
-1. import the exact `smplx.lbs` functions used by HUGS
-2. construct T-pose-to-pose `A` with source-exact `batch_rodrigues`, `blend_shapes`, `vertices2joints`, and `batch_rigid_transform`
-3. compare source-exact `A` elementwise against the current manual `compute_A`
-4. build source-exact vitruvian inverse transforms
-5. recompute frame-2 learned/K6 displacement
-6. compare chunked and one-shot float32 skinning to the archived Step-17 arrays
-7. do not compute shoulder metrics yet
-
-Do not widen the frozen regression tolerance.
+Do not widen the frozen regression tolerance and do not compute shoulder metrics yet.
 
 ## Research-record rule
 
