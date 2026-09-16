@@ -97,13 +97,13 @@ Drive artifact: `experiments/08-second-joint-generalization/18B1D_exact_hugs_bat
 
 The Experiment-08 persisted metadata itself contained no CPU/CUDA field, so Step 18B1E correctly classified the backend as unknown **from those persisted artifacts alone**.
 
-A prior saved Step-17B1 execution output was subsequently recovered from the user's research record and explicitly states:
+A prior saved Step-17B1 execution output was subsequently recovered and explicitly states:
 
 ```text
 deformation device: cuda
 ```
 
-Therefore historical Step-17B1 execution is now known to have used CUDA. The exact historical GPU, PyTorch, CUDA and cuBLAS versions remain unresolved.
+Therefore historical Step-17B1 execution is known to have used CUDA. The exact historical GPU, PyTorch, CUDA and cuBLAS versions remain unresolved.
 
 ## Step 18B1G1 direct CUDA elbow regression COMPLETE
 
@@ -116,43 +116,60 @@ CUDA: 12.8
 smplx: 0.1.28
 ```
 
-### strict FP32 CUDA
-
-| Checkpoint | Learned error | Learned gate | K6 error | K6 gate |
-|---|---:|---|---:|---|
-| Seattle | `+6.595764716621488e-06` | PASS | `+1.512095877842512e-06` | PASS |
-| Parkinglot | `+1.104918433156854e-04` | FAIL | `+2.3953416530275717e-06` | PASS |
-| Jogging | `-3.9301583569795184e-06` | PASS | `+3.7044446798972785e-07` | PASS |
-
-```text
-learned passes: 2/3
-K6 passes: 3/3
-total gate passes: 5/6
-kinematics: 3/3
-CUDA REGRESSION RECOVERY: FALSE
-```
-
-Strict CUDA FP32 substantially improves Seattle/Jogging aggregate agreement but does not recover Parkinglot learned within `1e-5`. Per-Gaussian fields remain nearly identical to the archive, with Pearson correlations effectively `1.0`.
-
-### TF32 CUDA
-
-TF32 is decisively worse and is ruled out as the historical numerical path. Learned errors rise to approximately `6.63e-4`, `9.57e-3`, and `-4.28e-4` for Seattle, Parkinglot, and Jogging respectively.
+Strict FP32 CUDA produced `5/6` frozen gate passes. Seattle and Jogging learned passed, all K6 conditions passed, but Parkinglot learned remained outside tolerance at `+1.104918433156854e-04`. TF32 was much worse and is ruled out.
 
 Archived: `research/sessions/2026-09-16-step18b1g1.md`
 
 Drive artifact: `experiments/08-second-joint-generalization/18B1G1_cuda_elbow_regression.json`
 
+## Step 18B1G2 CUDA evaluation-placement audit COMPLETE
+
+The same strict-FP32 CUDA before/after positions were evaluated with six norm/subtraction placements:
+
+- CUDA `torch.linalg.vector_norm`
+- CUDA `torch.norm`
+- CUDA `sqrt(sum(delta^2))`
+- CUDA subtraction then NumPy norm
+- CUDA positions then NumPy subtraction + norm
+- CUDA positions then CPU-Torch subtraction + norm
+
+All six produce the same gate outcome:
+
+```text
+Seattle learned: PASS, error about +6.60e-06
+Seattle K6: PASS, error about +1.51e-06
+Parkinglot learned: FAIL, error about +1.1049e-04
+Parkinglot K6: PASS, error about +2.40e-06
+Jogging learned: PASS, error about -3.93e-06
+Jogging K6: PASS, error about +3.70e-07
+
+total gate passes: 5/6
+EVALUATION-PLACEMENT RECOVERY: False
+```
+
+GPU-native norm variants are bitwise identical. CPU/NumPy placement changes fields only at roughly `1e-11` mean absolute scale. Therefore final displacement norm placement is not the source of the Parkinglot mismatch.
+
+A useful consistency check emerged: summing each archived Step-17B1 displacement field with float32 reduction reproduces the historical printed contralateral scalar exactly. The archive and historical printed result are therefore internally consistent, and the remaining mismatch occurs upstream of the final reduction.
+
+Archived: `research/sessions/2026-09-16-step18b1g2.md`
+
+Drive artifact: `experiments/08-second-joint-generalization/18B1G2_cuda_norm_placement_audit.json`
+
+## Official HUGS environment target
+
+The exact released HUGS setup script at commit `86ebe5522a384fc553f07f090b63a76dd4af8d33` specifies Python 3.8, PyTorch `1.13.1`, torchvision `0.14.1`, torchaudio `0.13.1`, and `pytorch-cuda=11.7`. The README states the system was tested on Ubuntu 22.04.3 with a CUDA 11.7-compatible GPU.
+
+This does **not** prove the custom Step-17 diagnostic used that exact package stack, but it gives a concrete source-declared legacy environment to test before changing any frozen regression criterion.
+
 ## Exact next action
 
-Run one CUDA-only **norm/evaluation-placement audit** while preserving strict FP32 transforms and matmul. Reuse the exact same CUDA before/after positions and compare several mathematically equivalent displacement evaluation paths against the frozen Step-17B1 arrays, especially:
+Run one isolated legacy-environment elbow regression using PyTorch `1.13.1+cu117` without modifying the current notebook Python/PyTorch installation. Recompute only Step-17B1 elbow frame 2 for learned/K6 across all three checkpoints and compare against the frozen archive.
 
-1. `torch.linalg.vector_norm` on CUDA before transfer
-2. transfer `delta_xyz` to CPU and run NumPy `linalg.norm`
-3. transfer full before/after positions separately to CPU, subtract there, then run NumPy norm
-4. preserve the frozen `1e-5` gate without changing any scientific protocol
-5. do not compute shoulder metrics yet
-
-If one historical-style placement restores Parkinglot while retaining Seattle/Jogging, freeze that exact numerical path for Step 18. Otherwise the unresolved factor is historical CUDA/PyTorch/cuBLAS version provenance rather than operation placement.
+- keep TF32 disabled
+- preserve the exact frozen `1e-5` gate
+- do not compute shoulder metrics
+- if the legacy environment restores 6/6, freeze that runtime path for Step 18
+- if it does not, historical package/hardware provenance remains unresolved and must be treated separately from the stable scientific effect
 
 ## Research-record rule
 
