@@ -131,39 +131,61 @@ Archived:
 - `research/sessions/2026-09-16-step18b1-regression-blocker.md`
 - failure ledger entry `A010`
 
-## Step 18B1A partial per-Gaussian audit
+## Step 18B1A key-resolution failure recorded
 
-Seattle and Parkinglot completed before a key-resolution implementation error stopped the Jogging comparison.
-
-The current manual fields are spatially almost identical to the archived Step-17 fields:
-
-- Seattle learned Pearson: `0.9999999999284204`
-- Seattle learned mean abs per-Gaussian diff: `7.884706e-08`
-- Seattle learned relative whole-array sum error: `-0.000575924729%`
-- Parkinglot learned Pearson: `0.9999999999793191`
-- Parkinglot learned mean abs per-Gaussian diff: `1.124316e-07`
-- Parkinglot learned relative whole-array sum error: `-0.000344996869%`
-
-K6 agreement is even closer. Step-17B1 and Step-17B2 frame-2 arrays are exactly equal for Parkinglot and effectively identical for Seattle.
-
-Interpretation so far: the Step-18B1 blocker is a tiny distributed numerical/source-path discrepancy, not a different spatial causal pattern. It still exceeds the frozen aggregate tolerance, so the tolerance remains unchanged.
-
-The audit then failed because the generic token `frame2` also matched Jogging keys `frame22` and `frame27`. This is an implementation bug, not a scientific result.
+The first per-Gaussian audit completed Seattle and Parkinglot but the generic token `frame2` also matched Jogging `frame22` and `frame27`, causing a key-resolution error. This is an implementation bug only.
 
 Archived:
 
 - `research/sessions/2026-09-16-step18b1a-key-resolution-blocker.md`
 - failure ledger entry `A011`
 
-No shoulder computation was performed in Step 18B1A.
+## Step 18B1A-R exact-key per-Gaussian audit COMPLETE
+
+Exact Step-17B1 and Step-17B2 frame-02 keys were used across all three checkpoints.
+
+The current manual Step-18B1 reconstruction is spatially almost identical to the historical Step-17 elbow fields:
+
+| Checkpoint | Learned relative whole-array sum error | Learned mean abs per-Gaussian diff | Learned max abs diff | Learned Pearson | Optimal global scale | Scaled residual L2 fraction |
+|---|---:|---:|---:|---:|---:|---:|
+| Seattle | -0.000575924729% | 7.884706e-08 | 7.179369e-07 | 0.999999999928 | 1.000000267806 | 1.178276e-05 |
+| Parkinglot | -0.000344996869% | 1.124316e-07 | 1.308632e-06 | 0.999999999979 | 1.000000288787 | 6.333825e-06 |
+| Jogging | -0.000889985277% | 7.080164e-08 | 6.406544e-07 | 0.999999999839 | 1.000000071249 | 1.776511e-05 |
+
+K6 differences are smaller still. Ablated fields show the same tiny distributed discrepancy pattern as learned fields.
+
+Step-17 internal consistency is strong:
+
+- Parkinglot B1 vs B2 frame-02 arrays: bitwise exact for learned/K6/ablated
+- Jogging B1 vs B2 frame-02 arrays: bitwise exact for learned/K6/ablated
+- Seattle B1 vs B2 frame-02 arrays: not bitwise exact but near-exact with mean abs differences <=1e-9
+
+Interpretation: the Step-17 archive is internally consistent. The mismatch is specific to the new manual Step-18B1 reconstruction path. It is not a different spatial field, but the frozen aggregate tolerance still must not be widened.
+
+Leading untested hypothesis: floating-point evaluation order. Step-18B1 currently computes displacement directly from `delta_A = A_after - A_before`; the historical pipeline may have generated full float32 before/after posed positions and then subtracted/normed them. Algebraic equivalence does not guarantee bitwise equality in float32.
+
+Archived:
+
+- `research/sessions/2026-09-16-step18b1a-r.md`
+
+Drive artifact:
+
+`experiments/08-second-joint-generalization/18B1A_R_elbow_per_gaussian_regression_audit.json`
+
+No shoulder computation has been accepted or interpreted.
 
 ## Exact next action
 
-Rerun the elbow-only per-Gaussian audit as **Step 18B1A-R** with exact Step-17B2 keys:
+Run **Step 18B1B**, elbow only.
 
-`{sequence}_frame02_{condition}`
+1. reconstruct full float32 before and after posed positions with the current A matrices
+2. compute displacement from posed-position subtraction using NumPy float32 and Torch float32 variants
+3. compare those variants directly against archived Step-17B1 per-Gaussian arrays
+4. test whether evaluation order explains the aggregate regression blocker
+5. do not compute shoulder metrics
+6. do not alter the frozen `1e-5` historical regression tolerance
 
-Complete Seattle, Parkinglot, and Jogging comparisons and save the audit JSON. Do not compute shoulder metrics yet. Only after the three-checkpoint audit is complete should the exact source of the tiny numerical mismatch be isolated or the Step-18B1 computation be repaired.
+Only after the historical elbow regression path is reproduced should Step 18B1 be repaired and rerun with the frozen shoulder protocol unchanged.
 
 ## Research-record rule
 
