@@ -65,54 +65,81 @@ Parkinglot reverses the mean support ordering. This remains part of the record a
 
 ## Step 18B0 artifact/key inventory COMPLETE
 
-Step 18B0 inspected persistent artifacts and array layouts only. **No shoulder perturbed displacement was computed.**
+Step 18B0 established the exact learned-LBS, K6, mask, pose, and prior causal artifact locations for Seattle, Parkinglot, and Jogging.
 
-Confirmed:
+Important asymmetry:
 
-- licensed original and cleaned SMPL assets exist
-- Step 17A2 frozen masks exist
-- Seattle, Parkinglot, and Jogging learned-LBS and K6 arrays exist with expected `(G,24)` shapes
-- all three NeuMan pose assets exist
-- prior Parkinglot/Jogging wrist counterfactual and frame-replication artifacts remain present
-- Step 17B1 elbow frame-2 displacement artifact remains present with learned/K6/ablated/removed-branch arrays for all three sequences
-- Step 17B2 full-pose elbow displacement artifact remains present for all 18 nested poses
+- Parkinglot and Jogging learned-LBS artifacts contain `xyz_canon`
+- Seattle `13E_learned_lbs_weights.npz` does not
 
-### Important input asymmetry
+The initial B0 search also guessed two old directory names incorrectly. The corrected names are:
 
-Parkinglot and Jogging learned-LBS artifacts contain `xyz_canon` directly.
+- `experiments/05-counterfactual-lbs-ablation`
+- `experiments/06-frame-replication`
 
-Seattle `13E_learned_lbs_weights.npz` does **not** contain canonical Gaussian XYZ. Seattle canonical positions must therefore be recovered from the earlier Seattle diagnostic/counterfactual artifacts before Step 18B1 is constructed.
+Archived record:
 
-### Step 18B0 path correction
+`research/sessions/2026-09-16-step18b0.md`
 
-The inventory cell guessed two historical Drive directory names incorrectly:
+## Step 18B0A Seattle canonical-XYZ provenance recovery COMPLETE
 
-- guessed `experiments/05-causal-counterfactual`, actual `experiments/05-counterfactual-lbs-ablation`
-- guessed `experiments/06-pose-robustness`, actual `experiments/06-frame-replication`
+The corrected provenance search found the original Seattle baseline probe artifact family under
 
-This affected only artifact discovery. It did not alter any scientific result, threshold, mask, pose, or perturbation. The corrected historical names are now fixed for the next inventory step.
+`experiments/01-baseline/probe_results/`
 
-Archived records:
+with exact `(472958,3)` float32 arrays:
 
-- `research/sessions/2026-09-16-step18b0.md`
-- `experiments/08-second-joint-generalization/analysis/18B0_artifact_inventory.json`
+- `xyz_before`
+- `xyz_after`
+- `xyz_canon`
+
+A historical duplicate also exists under
+
+`experiment-01/20260914_003959/frame000_left_wrist_z_10deg.npz`.
+
+All reported `xyz_canon` candidates shared the same summary statistics:
+
+```text
+min:      -0.8927599191665649
+max:       0.8819881677627563
+mean xyz: [-0.023014819249510765,
+           -0.12770146131515503,
+            0.013593386858701706]
+```
+
+This resolves the source family, but summary equality is not yet elementwise proof. Fix one authoritative Seattle source only after exact equality validation.
+
+### Methodological note
+
+B0A was intended as provenance-only inspection, but the generic candidate printer also emitted aggregate min/max/mean summaries for `xyz_after`, including the already-existing Seattle `left_shoulder z +10°` probe. It did **not** compute or display the frozen Step-18 causal metrics such as contralateral displacement, K6 reduction, selective-ablation reduction, removed-mass correlation, or pass/fail status.
+
+The shoulder protocol remains frozen and unchanged. No tuning is permitted.
+
+Archived record:
+
+`research/sessions/2026-09-16-step18b0a.md`
+
+Drive artifact:
+
+`experiments/08-second-joint-generalization/18B0A_seattle_xyz_source_inventory.json`
 
 ## Exact next action
 
-Run **Step 18B0A** on CPU only.
+Run **Step 18B0B** on CPU only.
 
 Purpose:
 
-1. search the corrected Seattle Experiment 01-06 persistent directories
-2. identify the exact saved Seattle canonical Gaussian XYZ source used by prior causal work
-3. inspect candidate NPZ/NPY keys and shapes only
-4. do not run the shoulder perturbation yet
+1. choose the Seattle baseline wrist-z +10 probe as the provisional canonical-source reference
+2. verify `xyz_canon` elementwise across all baseline probe copies and the historical duplicate
+3. verify the common `xyz_before` base state elementwise across baseline probes
+4. do not read or summarize `xyz_after`
+5. save a compact validation JSON
 
-Only after Seattle canonical-XYZ provenance is recovered should Step 18B1 be constructed. Step 18B1 should include a regression against the frozen Step-17 elbow frame-2 computation before shoulder output is interpreted.
+If exact equality passes, fix the Seattle canonical source path and immediately proceed next to Step 18B1 with the frozen shoulder protocol and an explicit regression against the Step-17 elbow frame-2 computation.
 
 ## Research-record rule
 
-Preserve failures, reversals, disproven assumptions, and implementation problems rather than rewriting history after later success.
+Preserve failures, reversals, disproven assumptions, implementation problems, and accidental inspection leakage rather than rewriting history after later success.
 
 Cumulative ledger:
 
