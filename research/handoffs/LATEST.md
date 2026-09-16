@@ -134,17 +134,7 @@ Archived: `research/sessions/2026-09-16-step18c0.md`.
 
 ## Step 18C1 exploratory shoulder support-mass decomposition COMPLETE
 
-Status: exploratory/post-hoc. No confirmatory claim changed.
-
-Checkpoint-level aggregate shoulder branch support and majority displacement direction agree in `3/3` checkpoints:
-
-```text
-Seattle    learned/K6 support ratio = 1.576428, support favors learned, displacement majority favors learned
-Parkinglot learned/K6 support ratio = 0.837905, support favors K6,      displacement majority favors K6
-Jogging    learned/K6 support ratio = 5.555706, support favors learned, displacement majority favors learned
-```
-
-Per-Gaussian delta-support vs delta-displacement correlations are high overall, approximately `0.802` to `0.982` across poses.
+Checkpoint-level aggregate shoulder branch support and majority displacement direction agree in `3/3` checkpoints. Per-Gaussian delta-support vs delta-displacement correlations are high overall, approximately `0.802` to `0.982` across poses.
 
 Interpretation: branch-support amount and spatial distribution are major explanatory factors, but pose geometry and/or within-branch composition still modulate the final displacement field.
 
@@ -152,24 +142,15 @@ Archived: `research/sessions/2026-09-16-step18c1.md`.
 
 ## Step 18C2 exploratory support-matching counterfactual COMPLETE
 
-Counterfactual on frozen contralateral rows:
-
-- preserve learned within-branch composition on `[16,18,20,22]`
-- replace learned total shoulder-branch mass with the corresponding K6 total branch mass
-- preserve learned non-branch proportions while maintaining row sum
-- fallback to K6 composition only if learned composition is undefined
-
-Validation:
+Per-row shoulder-branch mass matching preserves learned within-branch composition but replaces total branch mass with K6 branch mass.
 
 ```text
 pure learned-composition fraction: 1.0 in all 3 checkpoints
 branch fallback rows: 0
 outside fallback rows: 0
-row-sum max error: <= 2.384185791015625e-07
-K6 branch-mass match max error: <= 6.984919309616089e-10
 ```
 
-Field MAE-gap reduction after per-row branch-mass matching:
+Field MAE-gap reduction:
 
 ```text
 Seattle    min/median/max: 68.341709 / 94.495471 / 96.352339%
@@ -177,95 +158,72 @@ Parkinglot min/median/max: 73.579259 / 83.846952 / 87.244704%
 Jogging    min/median/max: 71.242567 / 93.517130 / 96.921237%
 ```
 
-Counterfactual-vs-K6 field correlations:
-
-```text
-Seattle    min/median/max: 0.993263 / 0.994395 / 0.999783
-Parkinglot min/median/max: 0.989209 / 0.996750 / 0.998534
-Jogging    min/median/max: 0.789515 / 0.958796 / 0.994655
-```
-
-Interpretation: per-row branch-support magnitude/topology is a dominant exploratory explanatory factor. C2 cannot change the failed confirmatory shoulder outcome.
+Interpretation: per-row branch-support magnitude/topology is a dominant exploratory explanatory factor.
 
 Archived: `research/sessions/2026-09-16-step18c2.md`.
 
 ## Step 18C3 exploratory within-branch composition counterfactual COMPLETE
 
-Counterfactual:
-
-- preserve learned total branch mass on `[16,18,20,22]`
-- replace only the within-branch allocation with K6 composition where K6 branch mass is positive
-- leave the failed shoulder protocol unchanged
-
-A key structural observation is that K6 shoulder-branch composition is undefined on most contralateral rows because K6 branch mass is exactly zero there, while learned branch mass is positive on every tested contralateral row.
+K6 shoulder-branch composition is undefined on most contralateral rows because K6 branch mass is zero there, while learned branch mass is positive on every tested contralateral row.
 
 ```text
-Seattle
-composition-defined fraction: 0.217586
-K6-zero shoulder-branch rows: 25876 / 33072 = about 78.24%
-
-Parkinglot
-composition-defined fraction: 0.261524
-K6-zero shoulder-branch rows: 57322 / 77622 = about 73.85%
-
-Jogging
-composition-defined fraction: 0.085460
-K6-zero shoulder-branch rows: 19102 / 20887 = about 91.45%
+Seattle K6-zero fraction: 0.7824141267537494
+Parkinglot K6-zero fraction: 0.7384762051995568
+Jogging K6-zero fraction: 0.9145401445875425
 ```
 
-Full-field MAE-gap reduction from composition matching is essentially zero or negative:
+Full-field composition matching produces essentially zero or negative median MAE-gap reduction:
 
 ```text
-Seattle    min/median/max: -0.187106 / -0.104023 / 0.157623%
-Parkinglot min/median/max: -3.281558 / -2.195192 / -1.918001%
-Jogging    min/median/max:  0.054189 /  0.203295 / 2.111938%
+Seattle: -0.10402258952364463%
+Parkinglot: -2.1951923116722116%
+Jogging: 0.20329469100371367%
 ```
 
-Even on the rows where both learned and K6 branch composition are defined, composition matching produces little improvement:
+Even on rows where both learned and K6 branch composition are defined, the effect remains small.
 
-```text
-Seattle    defined-row median MAE-gap reduction: -0.239794%
-Parkinglot defined-row median MAE-gap reduction: -3.155762%
-Jogging    defined-row median MAE-gap reduction:  0.951096%
-```
+Archived: `research/sessions/2026-09-16-step18c3.md`.
 
-C2 vs C3 median full-field MAE-gap reduction:
+## Step 18C4 shoulder mechanism synthesis FROZEN
 
-```text
-Seattle    mass match 94.495471% vs composition match -0.104023%
-Parkinglot mass match 83.846952% vs composition match -2.195192%
-Jogging    mass match 93.517130% vs composition match  0.203295%
-```
+Drive artifact:
 
-Composition-matched counterfactual-vs-K6 field correlations remain near zero, unlike C2.
+`experiments/08-second-joint-generalization/18C4_shoulder_mechanism_synthesis.json`
 
-### Current exploratory mechanism interpretation
+Archived session:
 
-For the tested shoulder perturbation, the learned-vs-K6 cross-body difference is driven primarily by the **presence and magnitude of per-Gaussian shoulder-descendant support**, not by reallocating a fixed amount of shoulder-branch mass among joints 16/18/20/22.
+`research/sessions/2026-09-16-step18c4.md`
 
-This should be described as support **topology plus per-row magnitude**, not merely aggregate branch mass. K6 has zero shoulder-descendant support on most contralateral rows, whereas learned HUGS assigns positive support to all of them.
+Frozen exploratory mechanism claims:
 
-Residual pose dependence remains. Kinematic depth is still only a hypothesis.
+- confirmatory shoulder status: `FAIL_UNCHANGED`
+- branch-mediated causality: `SUPPORTED_IN_FROZEN_TEST`
+- support topology and magnitude: `DOMINANT_EXPLORATORY_FACTOR`
+- within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
+- pose geometry: `RESIDUAL_MODULATOR_PLAUSIBLE`
+- kinematic depth: `HYPOTHESIS_ONLY`
 
-Archived:
+The strongest bounded shoulder interpretation is that the learned-vs-K6 difference is primarily explained by **whether each contralateral Gaussian receives shoulder-descendant support and how much total support it receives**. Matching that per-Gaussian branch mass removes at least `83.85%` of the median field MAE gap in every checkpoint, while replacing only within-branch composition changes the median field MAE gap by at most about `2.20%` in absolute value.
 
-- `research/sessions/2026-09-16-step18c3.md`
-- Drive `experiments/08-second-joint-generalization/18C3_shoulder_composition_match_counterfactual.json`
-- Drive `experiments/08-second-joint-generalization/18C3_shoulder_composition_match_counterfactual_displacements.npz`
+This mechanism synthesis remains exploratory/post-hoc and does not rescue the failed predeclared shoulder generalization.
 
 ## Exact next action
 
-Freeze **Step 18C4 shoulder mechanism synthesis** before any new perturbation or corrective-method design.
+Before designing a corrective method, run one non-perturbative **arm-chain branch-support topology synthesis** across left wrist, left elbow, and left shoulder using the same frozen learned/K6 weights and contralateral masks.
 
-The synthesis should explicitly separate four levels:
+The goal is to test whether the wrist/elbow/shoulder difference is structurally aligned with how subject-specific K6 support topology expands from the distal wrist branch `[20,22]` to elbow `[18,20,22]` to shoulder `[16,18,20,22]`.
 
-1. support existence/topology
-2. per-row total branch mass
-3. within-branch joint composition
-4. residual pose-geometry dependence
+Do not compute new deformations. Report, per checkpoint and joint:
 
-No new deformation computation is needed for C4. It should read the completed C1/C2/C3 artifacts, preserve the exploratory label, and freeze bounded mechanism claims without modifying the failed shoulder criterion.
+- learned positive-support fraction
+- K6 positive-support fraction
+- learned-positive/K6-zero fraction
+- both-positive fraction
+- aggregate learned/K6 branch-support ratio
+- support-mass summaries on both-positive rows
+
+This is descriptive/exploratory and must not establish kinematic depth as causal.
 
 ## Research-record rule
 
-Preserve the negative shoulder generalization result. Exploratory mechanism decomposition after Step 18C0 cannot change the predeclared pass/fail outcome. Do not tune shoulder thresholds or add joints merely to seek a passing result.
+Preserve the failed shoulder generalization. Exploratory mechanism work after Step 18C0 cannot change predeclared pass/fail outcomes. Do not tune shoulder thresholds or add joints merely to seek a passing result.
