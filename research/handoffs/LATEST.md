@@ -124,37 +124,36 @@ Drive artifact:
 
 ## Step 18B1C dependency recovery COMPLETE
 
-The first Step 18B1C attempt stopped immediately because `smplx` was not installed in the current Colab runtime. No scientific computation ran in that failed attempt.
+The HUGS-pinned dependency `smplx==0.1.28` is installed and importable in the current CPU runtime.
 
-The HUGS-pinned dependency was then installed and verified exactly:
+## Step 18B1C namespace blocker
+
+The first post-install rerun of Step 18B1C stopped before any scientific audit result with:
 
 ```text
-smplx version: 0.1.28
-smplx module: /usr/local/lib/python3.13/dist-packages/smplx/__init__.py
-SMPLX 0.1.28 EXACT DEPENDENCY PASS: True
+TypeError: blend_shapes() missing 1 required positional argument: 'shape_disps'
 ```
 
-The exact `smplx.lbs` functions required for the audit now import successfully:
+Cause: the dependency-verification cell imported SMPLX helpers into the global notebook namespace without aliases. Step 18B1's pre-existing `compute_A` resolves `blend_shapes` dynamically and therefore began calling `smplx.lbs.blend_shapes` instead of the local one-argument helper.
 
-- `batch_rodrigues`
-- `blend_shapes`
-- `vertices2joints`
-- `batch_rigid_transform`
+This is namespace pollution only. No shoulder computation ran and no transform/backend conclusion can be drawn from this failed attempt.
 
 Archived:
 
-`research/sessions/2026-09-16-step18b1c-dependency-recovery.md`
+- `research/sessions/2026-09-16-step18b1c-namespace-blocker.md`
+- failure ledger `A013`
 
 ## Exact next action
 
-Rerun **Step 18B1C** in the same CPU runtime now that `smplx==0.1.28` is available.
+Run a patched **Step 18B1C-R** that is self-contained with isolated names:
 
-The audit remains elbow-only:
-
-1. compare current manual `A` transforms against source-exact SMPLX transforms
-2. test source-exact chunked and one-shot float32 skinning against the archived Step-17B1 arrays
-3. preserve the frozen `1e-5` regression tolerance
-4. do not compute or interpret shoulder causal metrics yet
+1. import SMPLX functions only as `sx_*`
+2. define the manual comparison path under `manual_*` names
+3. do not call the mutated global `compute_A`
+4. compare manual versus SMPLX `A` transforms
+5. test source-exact chunked and one-shot elbow frame-2 displacement against archived Step-17B1 arrays
+6. preserve the frozen `1e-5` regression tolerance
+7. do not compute shoulder metrics yet
 
 ## Research-record rule
 
