@@ -91,59 +91,9 @@ Predeclared before shoulder causal output:
 
 Protocol: `research/protocols/2026-09-16-third-joint-generalization.md`
 
-## Step 18B1H shoulder frame-2 result
-
-All checkpoints had the correct changed branch `[16,18,20,22]`.
-
-| Checkpoint | Learned contra | K6 contra | K6 reduction | Ablation reduction | Corr | Overall |
-|---|---:|---:|---:|---:|---:|---|
-| Seattle | `3.5090098206` | `2.1443378665` | `38.8905%` | `100%` | `0.961674` | FAIL |
-| Parkinglot | `9.6190783830` | `14.3472676853` | `-49.1543%` | `100%` | `0.976920` | FAIL |
-| Jogging | `1.1837988005` | `0.4761869365` | `59.7747%` | `100%` | `0.894603` | FAIL |
-
-`ALL THREE FRAME-2 SHOULDER CELLS PASS: False`
-
 ## Step 18B2 full-pose shoulder characterization
 
-Frame-2 values reproduced Step 18B1H exactly.
-
-Seattle:
-
-```text
-poses: 4
-K6 passes: 0/4
-selective-ablation passes: 4/4
-corr passes: 4/4
-overall passes: 0/4
-negative K6 reductions: 1
-K6 reduction min/median/max: -32.350004 / 29.517251 / 38.890514
-```
-
-Parkinglot:
-
-```text
-poses: 4
-K6 passes: 0/4
-selective-ablation passes: 4/4
-corr passes: 4/4
-overall passes: 0/4
-negative K6 reductions: 4
-K6 reduction min/median/max: -77.671145 / -52.505983 / -44.710301
-```
-
-Jogging:
-
-```text
-poses: 10
-K6 passes: 0/10
-selective-ablation passes: 10/10
-corr passes: 6/10
-overall passes: 0/10
-negative K6 reductions: 0
-K6 reduction min/median/max: 42.273609 / 71.459102 / 76.389818
-```
-
-Global:
+The predeclared universal shoulder generalization failed and remains failed.
 
 ```text
 nested poses: 18
@@ -157,6 +107,8 @@ K6 reduction range: -77.671145% to 76.389818%
 correlation range: 0.798583 to 0.981240
 predeclared third-joint universal pass: False
 ```
+
+Parkinglot has K6 > learned shoulder displacement in all four tested poses. Seattle is mixed. Jogging has learned > K6 in all ten poses but well below the frozen `95%` K6-reduction criterion.
 
 Archived: `research/sessions/2026-09-16-step18b2.md`.
 
@@ -178,38 +130,101 @@ Frozen comparison:
 | left elbow | PASS | supported | supported | `99.818741%` |
 | left shoulder | FAIL | supported | not supported | `-77.671145%` |
 
-### Claim 1: branch-mediated contralateral causality
+Frozen claims:
 
-`SUPPORTED_ACROSS_ALL_THREE_TESTED_JOINTS`
+- branch-mediated contralateral causality: `SUPPORTED_ACROSS_ALL_THREE_TESTED_JOINTS`
+- learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
+- kinematic-depth explanation: `HYPOTHESIS_ONLY`
 
-For the tested perturbations, contralateral response is causally mediated through weights assigned to the changed kinematic descendant branch.
+## Step 18C1 exploratory shoulder support-mass decomposition COMPLETE
 
-### Claim 2: learned-vs-K6 amplification
+Status: exploratory/post-hoc. No new perturbation, threshold change, or confirmatory rescue.
 
-`JOINT_DEPENDENT_NOT_UNIVERSAL`
+Shoulder-descendant branch: `[16,18,20,22]`.
 
-The strong learned-HUGS-versus-SMPL-K6 amplification found for wrist and elbow does not generalize unchanged to the proximal shoulder.
+### Seattle
 
-### Claim 3: kinematic depth
+```text
+learned branch-support sum: 14.713887457148648
+K6 branch-support sum: 9.33368880548187
+learned/K6 support ratio: 1.5764279015288012
+support favors: learned
+majority displacement favors: learned
+support-direction matches: 3/4
+per-Gaussian delta-support/delta-displacement corr range: 0.936228 to 0.967286
+```
 
-`HYPOTHESIS_ONLY`
+Seattle frame 7 is the one aggregate direction reversal: support favors learned but displacement favors K6.
 
-A distal-to-proximal dependence is consistent with the observed pattern, but kinematic depth has not been established as the causal explanation.
+### Parkinglot
+
+```text
+learned branch-support sum: 25.7759453917906
+K6 branch-support sum: 30.762378737473114
+learned/K6 support ratio: 0.8379048191221863
+support favors: K6
+majority displacement favors: K6
+support-direction matches: 4/4
+corr range: 0.949761 to 0.981640
+```
+
+This directly aligns the Parkinglot shoulder reversal with greater K6 shoulder-branch support.
+
+### Jogging
+
+```text
+learned branch-support sum: 14.840888978197778
+K6 branch-support sum: 2.671287769844639
+learned/K6 support ratio: 5.5557058081619255
+support favors: learned
+majority displacement favors: learned
+support-direction matches: 10/10
+corr range: 0.802175 to 0.974340
+```
+
+Checkpoint-level support direction matches majority displacement direction in `3/3` independently pretrained checkpoints.
+
+### C1 interpretation
+
+Branch-support amount and spatial distribution are a major explanatory factor for the shoulder learned-vs-K6 behavior. The per-Gaussian association is strong and the checkpoint-level direction agrees in all three checkpoints.
+
+However, support mass is not the whole explanation:
+
+- Seattle frame 7 reverses the aggregate support direction despite high per-Gaussian correlation.
+- displacement ratios vary by pose while branch weights are pose-independent.
+- Jogging support ratio is about `5.56`, while learned/K6 displacement ratios vary only about `1.73` to `4.24`.
+
+Therefore pose geometry and/or within-branch joint composition still modulate the conversion from branch support to displacement. Kinematic depth remains unproven.
+
+Archived:
+
+- `research/sessions/2026-09-16-step18c1.md`
+- Drive `experiments/08-second-joint-generalization/18C1_shoulder_support_mass_exploratory.json`
+- Drive `experiments/08-second-joint-generalization/18C1_shoulder_support_mass_exploratory.csv`
 
 ## Exact next action
 
-Before introducing another perturbation or a corrective method, run one **exploratory/post-hoc shoulder mechanism decomposition using existing frozen artifacts only**.
+Run **Step 18C2**, an exploratory support-matching counterfactual under the same frozen shoulder perturbation.
 
-Question: can the shoulder learned-vs-K6 reversal/attenuation be substantially explained by the amount and spatial distribution of shoulder-descendant branch support already present in learned versus K6 weights?
+Counterfactual definition:
 
-Use only:
+- use only frozen contralateral rows
+- set each learned row's total shoulder-descendant branch mass to the corresponding K6 branch mass
+- preserve learned within-branch proportions wherever they are defined
+- proportionally rescale learned non-branch weights to preserve row sum
+- explicitly count any rows where learned branch/non-branch composition is undefined and use K6 composition only as a reported fallback there
+- do not alter the shoulder joint, perturbation, masks, pose schedules, or confirmatory criteria
 
-- frozen learned/K6 weights
-- frozen contralateral masks
-- completed Step 18B2 shoulder displacement fields
+Measure how much this support-mass match reduces the original learned-vs-K6 displacement-field MAE/RMSE gap across the already frozen 18 shoulder poses. This separates branch-support magnitude from residual within-branch composition / pose-geometry effects.
 
-No new perturbation, threshold change, or confirmatory claim. Compare branch-support differences against learned-minus-K6 displacement differences per Gaussian and per pose. Treat checkpoint-level `n=3` correctly.
+Pinned script:
+
+`research/scripts/step18c2_shoulder_support_match_counterfactual.py`
+
+Pinned script commit:
+
+`a7d9e93b75a7a96ec9a3f16919458491bc306db0`
 
 ## Research-record rule
 
-Preserve negative generalization results. Do not add joints merely to seek a passing result, do not tune shoulder thresholds, and label all mechanism decomposition after Step 18C0 as exploratory unless separately preregistered.
+Preserve negative generalization results. Step 18C1/C2 are exploratory and cannot rescue the failed predeclared shoulder claim. Do not add joints merely to seek a passing result and do not tune shoulder thresholds.
