@@ -63,7 +63,7 @@ Authoritative Seattle canonical reference:
 
 ## Step 18B1 historical elbow gate BLOCKED
 
-The newly written CPU reconstruction did not reproduce the frozen Step-17B1 elbow learned contralateral sums within the frozen `1e-5` aggregate tolerance, so execution stopped before shoulder causal metrics were accepted. No tolerance was widened.
+The newly written reconstruction does not reproduce the frozen Step-17B1 elbow learned contralateral sums within the frozen `1e-5` aggregate tolerance across all checkpoints, so shoulder causal metrics remain blocked. No tolerance has been widened.
 
 ## Step 18B1A-R / B1B audits
 
@@ -93,50 +93,66 @@ Archived: `research/sessions/2026-09-16-step18b1d.md`
 
 Drive artifact: `experiments/08-second-joint-generalization/18B1D_exact_hugs_batched_lbs_rank_audit.json`
 
-## Step 18B1E backend provenance audit COMPLETE
+## Step 18B1E backend provenance audit COMPLETE, later corrected by recovered prior output
 
-Current runtime is CPU-only:
+The Experiment-08 persisted metadata itself contained no CPU/CUDA field, so Step 18B1E correctly classified the backend as unknown **from those persisted artifacts alone**.
+
+A prior saved Step-17B1 execution output was subsequently recovered from the user's research record and explicitly states:
 
 ```text
-Python 3.13.15
-NumPy 2.1.3
-PyTorch 2.11.0+cpu
-torch.version.cuda: None
-cuda_available: False
+deformation device: cuda
+```
+
+Therefore historical Step-17B1 execution is now known to have used CUDA. The exact historical GPU, PyTorch, CUDA and cuBLAS versions remain unresolved.
+
+## Step 18B1G1 direct CUDA elbow regression COMPLETE
+
+Current CUDA runtime:
+
+```text
+GPU: NVIDIA A100-SXM4-40GB
+PyTorch: 2.11.0+cu128
+CUDA: 12.8
 smplx: 0.1.28
-torch_num_threads: 1
 ```
 
-Persisted historical Step-17 artifacts provide no backend evidence:
+### strict FP32 CUDA
+
+| Checkpoint | Learned error | Learned gate | K6 error | K6 gate |
+|---|---:|---|---:|---|
+| Seattle | `+6.595764716621488e-06` | PASS | `+1.512095877842512e-06` | PASS |
+| Parkinglot | `+1.104918433156854e-04` | FAIL | `+2.3953416530275717e-06` | PASS |
+| Jogging | `-3.9301583569795184e-06` | PASS | `+3.7044446798972785e-07` | PASS |
 
 ```text
-Step-17 text/metadata files inspected: 8
-textual backend hints: 0
-structured device/backend fields: 0
-strong CUDA evidence: 0
-strong CPU evidence: 0
-HISTORICAL BACKEND CONCLUSION: UNKNOWN_FROM_PERSISTED_EVIDENCE
+learned passes: 2/3
+K6 passes: 3/3
+total gate passes: 5/6
+kinematics: 3/3
+CUDA REGRESSION RECOVERY: FALSE
 ```
 
-No CPU/CUDA claim is justified yet. No elbow recomputation, shoulder computation, or tolerance change occurred.
+Strict CUDA FP32 substantially improves Seattle/Jogging aggregate agreement but does not recover Parkinglot learned within `1e-5`. Per-Gaussian fields remain nearly identical to the archive, with Pearson correlations effectively `1.0`.
 
-Archived: `research/sessions/2026-09-16-step18b1e.md`
+### TF32 CUDA
 
-Drive artifact: `experiments/08-second-joint-generalization/18B1E_backend_provenance_audit.json`
+TF32 is decisively worse and is ruled out as the historical numerical path. Learned errors rise to approximately `6.63e-4`, `9.57e-3`, and `-4.28e-4` for Seattle, Parkinglot, and Jogging respectively.
+
+Archived: `research/sessions/2026-09-16-step18b1g1.md`
+
+Drive artifact: `experiments/08-second-joint-generalization/18B1G1_cuda_elbow_regression.json`
 
 ## Exact next action
 
-Run **Step 18B1F historical execution-source recovery audit**, still without shoulder computation.
+Run one CUDA-only **norm/evaluation-placement audit** while preserving strict FP32 transforms and matmul. Reuse the exact same CUDA before/after positions and compare several mathematically equivalent displacement evaluation paths against the frozen Step-17B1 arrays, especially:
 
-1. search persisted notebooks, Python/text files, and JSON under the project root for exact Step-17B1/B2 artifact names and code fragments
-2. inspect current IPython history and `history.sqlite` for the exact Step-17 execution cell if still available
-3. print matched source excerpts with file/session provenance
-4. treat device-selection code as evidence only if it belongs to the exact historical Step-17 execution source
-5. do not infer CUDA from generic HUGS support code
-6. do not change the frozen `1e-5` regression tolerance
-7. do not compute shoulder metrics yet
+1. `torch.linalg.vector_norm` on CUDA before transfer
+2. transfer `delta_xyz` to CPU and run NumPy `linalg.norm`
+3. transfer full before/after positions separately to CPU, subtract there, then run NumPy norm
+4. preserve the frozen `1e-5` gate without changing any scientific protocol
+5. do not compute shoulder metrics yet
 
-If exact historical execution code still cannot be recovered, backend provenance remains unknown and the next decision must distinguish reproducibility policy from scientific effect size rather than silently widening the historical gate.
+If one historical-style placement restores Parkinglot while retaining Seattle/Jogging, freeze that exact numerical path for Step 18. Otherwise the unresolved factor is historical CUDA/PyTorch/cuBLAS version provenance rather than operation placement.
 
 ## Research-record rule
 
