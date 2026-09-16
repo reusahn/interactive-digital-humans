@@ -2,15 +2,9 @@
 
 Current continuation date: **2026-09-16**.
 
-## Active Colab
+## Frozen benchmark before Step 18
 
-`https://colab.research.google.com/github/reusahn/interactive-digital-humans/blob/main/notebooks/daily/2026-09-16_research.ipynb`
-
-Notebook-link registry: `research/notebook-links.md`
-
-## Frozen prior benchmark
-
-Step 17C0 established the same learned cross-joint LBS causal mechanism for two tested joints, left wrist and predeclared left elbow, across three independently pretrained HUGS NeuMan checkpoints.
+Step 17C0 established the learned cross-joint LBS causal mechanism for two tested joints, left wrist and predeclared left elbow, across three independently pretrained HUGS NeuMan checkpoints.
 
 ```text
 independent pretrained checkpoints: 3
@@ -21,14 +15,11 @@ global minimum K6 reduction: 99.708575087815%
 global minimum selective-ablation reduction: 100.0%
 global minimum removed-mass correlation: 0.9688984153761956
 global maximum ablated contralateral response: 0.0
-TWO-JOINT CROSS-CHECKPOINT BENCHMARK FROZEN: True
 ```
 
 Independent model-level unit remains checkpoint, `n=3`.
 
-## Step 18 predeclared third-joint protocol
-
-Frozen before shoulder causal displacement inspection:
+## Step 18 frozen third-joint protocol
 
 - joint: `left_shoulder`, SMPL 16
 - perturbation: `z +10 degrees`
@@ -45,160 +36,112 @@ Frozen before shoulder causal displacement inspection:
 
 Protocol: `research/protocols/2026-09-16-third-joint-generalization.md`
 
-No joint, branch, mask, threshold, pose schedule, axis, or perturbation angle may be tuned after inspecting shoulder-related results.
+No shoulder parameter or threshold may be tuned after inspecting shoulder-related output.
 
-## Step 18A descriptive precursor COMPLETE
+## Step 18A precursor
 
-Step 18A measured only frozen contralateral shoulder-branch support mass. Parkinglot reverses the mean support ordering (`learned/K6 = 0.837904818`). No shoulder causal displacement was computed.
+Descriptive support only. No shoulder displacement. Parkinglot reversed the learned/K6 mean branch-support ordering (`0.837904818`), so support mass alone is not the causal test.
 
-## Step 18B0 / B0A / B0B provenance block COMPLETE
+## Step 18B provenance/regression chain
 
-Seattle canonical source was recovered and exactly validated across 37 persistent copies.
+Seattle canonical xyz was exactly validated across 37 persistent copies. The historical Step-17 elbow archive is internally stable, but newly reconstructed elbow learned displacement fields differ from it at tiny distributed float32 scale.
 
-Authoritative Seattle canonical reference:
+Audits ruled out the following as the primary cause:
 
-`experiments/01-baseline/probe_results/frame000_left_wrist_z_10deg.npz`
+- wrong canonical xyz source
+- Step-17 archive instability
+- manual versus official `smplx==0.1.28` transform implementation
+- chunked versus one-shot evaluation
+- HUGS batched `[1,G,24] @ [1,24,16]` tensor rank versus flat matmul
+- displacement norm implementation or CPU/GPU norm placement
+- TF32
 
-`xyz_canon` SHA256: `61a633d5b2c1fb353d7790cdd176919f17c3f1000ce7e9cb5d03e2751b51d314`
+Historical Step-17B1 output explicitly records `deformation device: cuda`.
 
-## Step 18B1 historical elbow gate BLOCKED
+## Step 18B1G1 current CUDA result
 
-The newly written reconstruction does not reproduce the frozen Step-17B1 elbow learned contralateral sums within the frozen `1e-5` aggregate tolerance across all checkpoints, so shoulder causal metrics remain blocked. No tolerance has been widened.
-
-## Step 18B1A-R / B1B audits
-
-Current versus archived Step-17 elbow fields are spatially nearly identical. Learned Pearson values are `>=0.999999999839`. Full before/after float32 evaluation reduces the learned aggregate mismatch but does not eliminate it. All K6 conditions pass the frozen gate.
-
-## Step 18B1C-R source-exact transform audit COMPLETE
-
-The manual Step-18 transform path is bitwise identical to official `smplx==0.1.28` transforms for all three checkpoints before and after elbow perturbation. Chunked versus one-shot CPU evaluation is also not the cause.
-
-Archived: `research/sessions/2026-09-16-step18b1c-r.md`
-
-Drive artifact: `experiments/08-second-joint-generalization/18B1C_R_namespace_isolated_smplx_audit.json`
-
-## Step 18B1D exact HUGS batched-rank audit COMPLETE
-
-The exact HUGS `lbs_extra` tensor ranks were reproduced on CPU. Batched `[1,G,24] @ [1,24,16]` and flat `[G,24] @ [24,16]` paths were bitwise identical for tested positions/displacements.
-
-| Checkpoint | Learned contra error | Learned gate | K6 contra error | K6 gate |
-|---|---:|---|---:|---|
-| Seattle | `-2.92805305548427e-05` | FAIL | `+4.982352947990876e-07` | PASS |
-| Parkinglot | `+4.781559425737214e-05` | FAIL | `+2.246013536932878e-06` | PASS |
-| Jogging | `+1.115696863962512e-05` | FAIL | `+4.4823536882176995e-08` | PASS |
-
-Therefore tensor rank is not the source of the historical mismatch.
-
-Archived: `research/sessions/2026-09-16-step18b1d.md`
-
-Drive artifact: `experiments/08-second-joint-generalization/18B1D_exact_hugs_batched_lbs_rank_audit.json`
-
-## Step 18B1E backend provenance audit COMPLETE, later corrected by recovered prior output
-
-The Experiment-08 persisted metadata itself contained no CPU/CUDA field, so Step 18B1E correctly classified the backend as unknown **from those persisted artifacts alone**.
-
-A prior saved Step-17B1 execution output was subsequently recovered and explicitly states:
+A100 + PyTorch `2.11.0+cu128`, strict FP32:
 
 ```text
-deformation device: cuda
+Seattle learned: PASS, +6.60e-06
+Parkinglot learned: FAIL, +1.1049e-04
+Jogging learned: PASS, -3.93e-06
+all K6: PASS
+5 / 6 total
 ```
 
-Therefore historical Step-17B1 execution is known to have used CUDA. The exact historical GPU, PyTorch, CUDA and cuBLAS versions remain unresolved.
-
-## Step 18B1G1 direct CUDA elbow regression COMPLETE
-
-Current CUDA runtime:
-
-```text
-GPU: NVIDIA A100-SXM4-40GB
-PyTorch: 2.11.0+cu128
-CUDA: 12.8
-smplx: 0.1.28
-```
-
-Strict FP32 CUDA produced `5/6` frozen gate passes. Seattle and Jogging learned passed, all K6 conditions passed, but Parkinglot learned remained outside tolerance at `+1.104918433156854e-04`. TF32 was much worse and is ruled out.
+TF32 was substantially worse.
 
 Archived: `research/sessions/2026-09-16-step18b1g1.md`
 
-Drive artifact: `experiments/08-second-joint-generalization/18B1G1_cuda_elbow_regression.json`
+## Step 18B1G2 norm-placement result
 
-## Step 18B1G2 CUDA evaluation-placement audit COMPLETE
-
-The same strict-FP32 CUDA before/after positions were evaluated with six norm/subtraction placements:
-
-- CUDA `torch.linalg.vector_norm`
-- CUDA `torch.norm`
-- CUDA `sqrt(sum(delta^2))`
-- CUDA subtraction then NumPy norm
-- CUDA positions then NumPy subtraction + norm
-- CUDA positions then CPU-Torch subtraction + norm
-
-All six produce the same gate outcome:
-
-```text
-Seattle learned: PASS, error about +6.60e-06
-Seattle K6: PASS, error about +1.51e-06
-Parkinglot learned: FAIL, error about +1.1049e-04
-Parkinglot K6: PASS, error about +2.40e-06
-Jogging learned: PASS, error about -3.93e-06
-Jogging K6: PASS, error about +3.70e-07
-
-total gate passes: 5/6
-EVALUATION-PLACEMENT RECOVERY: False
-```
-
-GPU-native norm variants are bitwise identical. CPU/NumPy placement changes fields only at roughly `1e-11` mean absolute scale. Therefore final displacement norm placement is not the source of the Parkinglot mismatch.
-
-A useful consistency check emerged: summing each archived Step-17B1 displacement field with float32 reduction reproduces the historical printed contralateral scalar exactly. The archive and historical printed result are therefore internally consistent, and the remaining mismatch occurs upstream of the final reduction.
+Six CUDA/CPU subtraction and norm placements all produced the same `5/6` outcome. Therefore final norm/reduction placement is not the Parkinglot blocker.
 
 Archived: `research/sessions/2026-09-16-step18b1g2.md`
 
-Drive artifact: `experiments/08-second-joint-generalization/18B1G2_cuda_norm_placement_audit.json`
+## Step 18B1G3 official legacy HUGS software stack COMPLETE
 
-## Official HUGS environment target
-
-The exact released HUGS setup script at commit `86ebe5522a384fc553f07f090b63a76dd4af8d33` specifies Python 3.8, PyTorch `1.13.1`, torchvision `0.14.1`, torchaudio `0.13.1`, and `pytorch-cuda=11.7`. The README states the system was tested on Ubuntu 22.04.3 with a CUDA 11.7-compatible GPU.
-
-This does **not** prove the custom Step-17 diagnostic used that exact package stack, but it gives a concrete source-declared legacy environment to test before changing any frozen regression criterion.
-
-## Step 18B1G3 legacy-environment bootstrap BLOCKED before science
-
-The isolated legacy environment itself successfully initializes:
+Isolated legacy runtime:
 
 ```text
-Python: 3.8.20
-Torch: 1.13.1+cu117
-Torch CUDA build: 11.7
-CUDA available: True
-GPU: NVIDIA A100-SXM4-40GB
-NumPy: 1.24.4
-SciPy: 1.10.1
-SMPLX import: OK
+Python 3.8.20
+NumPy 1.24.4
+PyTorch 1.13.1+cu117
+CUDA build 11.7
+SMPLX 0.1.28
+GPU NVIDIA A100-SXM4-40GB
+TF32 disabled
 ```
 
-The regression subprocess then fails before any elbow computation while loading `SMPL_NEUTRAL_clean.pkl`:
+A temporary NumPy module alias was required only because the clean SMPL pickle was serialized under NumPy 2.x. The SMPL file was not rewritten.
+
+Result:
+
+| Checkpoint | Learned error | Learned gate | K6 error | K6 gate |
+|---|---:|---|---:|---|
+| Seattle | `+7.207062083125493e-06` | PASS | `-2.6971592888003215e-06` | PASS |
+| Parkinglot | `-2.8671978441252577e-05` | FAIL | `+1.9417839212110266e-06` | PASS |
+| Jogging | `+4.058430192799278e-06` | PASS | `-8.393908501602709e-08` | PASS |
 
 ```text
-ModuleNotFoundError: No module named 'numpy._core'
+learned passes: 2/3
+K6 passes: 3/3
+total: 5/6
+kinematics: 3/3
+LEGACY ENV REGRESSION RECOVERY: False
 ```
 
-This is a pickle serialization compatibility issue. The cleaned SMPL pickle was regenerated under NumPy 2.x and references `numpy._core`, while the legacy NumPy 1.24 runtime exposes the corresponding modules under `numpy.core`.
+The official legacy software stack materially changes the tiny mismatch and moves Parkinglot learned from about `+1.10e-4` to `-2.87e-5`, but it still does not restore the frozen `1e-5` gate on the current A100. Field correlations remain effectively `1.0`.
 
-No elbow displacement, shoulder displacement, or scientific metric was produced by this failed G3 attempt. No tolerance changed.
+Archived: `research/sessions/2026-09-16-step18b1g3.md`
 
-Archived: `research/sessions/2026-09-16-step18b1g3-diagnostic-blocker.md`
+Drive artifact: `experiments/08-second-joint-generalization/18B1G3_legacy_torch113_cuda117_regression.json`
+
+## Current interpretation
+
+This is a numerical runtime-equivalence problem, not evidence that the frozen elbow mechanism disappeared. CPU/CUDA selection, source semantics, norm placement, TF32, and software-stack version alone do not explain the remaining Parkinglot aggregate difference.
+
+The strongest remaining provenance variable is GPU architecture / low-level CUDA kernel selection. The historical Step-17 log confirms CUDA but does not identify the GPU model. Therefore a second GPU architecture is the next controlled test. This must not be described as proof that historical Step 17 used that GPU.
 
 ## Exact next action
 
-Patch only the isolated legacy subprocess loader with temporary NumPy module aliases so the NumPy-2-generated clean SMPL pickle can be loaded under NumPy 1.24.4. Validate the loaded SMPL structure before any regression computation. If the compatibility load succeeds, immediately rerun the same Step 18B1G3 elbow frame-2 regression under PyTorch `1.13.1+cu117`.
+Switch Colab from A100 to a **T4 GPU** if available, then run the pinned Step 18B1G4 hardware-sensitivity runner. It recreates Python 3.8 + PyTorch 1.13.1+cu117 in an isolated environment and reruns only the frozen Step-17B1 elbow frame-2 learned/K6 conditions.
+
+Pinned runner added at:
+
+`research/scripts/step18b1g4_t4_legacy_runner.py`
+
+Rules:
 
 - keep TF32 disabled
-- preserve the exact frozen `1e-5` gate
-- do not compute shoulder metrics
-- do not rewrite or replace the licensed original SMPL file
+- preserve frozen `1e-5` gate
+- no shoulder computation yet
+- if T4 restores 6/6, freeze that numerical path before Step 18 shoulder computation
+- if T4 does not restore 6/6, stop treating exact historical bit-level reproduction as a source-code bug and explicitly separate runtime numerical sensitivity from the stable scientific effect before deciding the shoulder reproducibility policy
 
 ## Research-record rule
 
-Preserve failures, reversals, disproven assumptions, implementation problems, accidental inspection leakage, and backend provenance uncertainty rather than rewriting history after later success.
+Preserve failures and disproven assumptions. Do not silently widen the historical gate.
 
 Cumulative ledger: `research/methodology/assumption-failure-ledger.md`
