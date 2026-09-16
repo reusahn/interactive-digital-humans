@@ -288,6 +288,30 @@ Rerun Step 18B1A with exact Step-17B2 frame-2 keys and complete the three-checkp
 
 ---
 
+### A012 — Displacement evaluation order was not sufficient to explain the Step-18B1 elbow regression mismatch
+
+**Assumption before test**
+
+After Step 18B1A-R showed nearly perfect spatial agreement with archived Step-17 arrays, the leading hypothesis was that the remaining aggregate mismatch was caused primarily by computing displacement from `delta-A` directly instead of first computing full float32 before/after positions and subtracting them as in the historical workflow.
+
+**Contradicting observation**
+
+Step 18B1B substantially reduced the learned-condition contralateral-sum error when full before/after positions were used, but the learned condition still failed the frozen `1e-5` regression gate in all three checkpoints. Best full-position learned errors were approximately `2.93e-5` for Seattle, `4.78e-5` for Parkinglot, and `1.12e-5` for Jogging. K6 passed in all three checkpoints. Reconstructed Seattle historical before/after positions still differed from the saved probe at distributed float32 scale, with mean absolute errors around `5e-8` and maxima around `9.54e-7`.
+
+**Corrected interpretation**
+
+Evaluation order contributes materially to the mismatch but does not fully explain it. The remaining discrepancy lies earlier in the exact transform/backend path, likely in manual versus source-exact SMPL transform construction and/or floating-point backend execution order.
+
+**Impact**
+
+The frozen `1e-5` tolerance is not widened. No shoulder causal output is accepted. Step 17 remains unchanged.
+
+**Follow-up**
+
+Compare the current manual `A` transforms directly against transforms produced with the exact `smplx.lbs` functions used by HUGS, then test source-exact one-shot versus chunked float32 skinning before attempting shoulder computation.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
