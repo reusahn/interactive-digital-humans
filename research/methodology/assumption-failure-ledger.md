@@ -360,6 +360,30 @@ Run the same pinned legacy G3 regression on a second GPU architecture, beginning
 
 ---
 
+### A015 — Predeclared third-joint learned-vs-K6 amplification does not generalize to the left shoulder
+
+**Assumption before test**
+
+After wrist and elbow both showed very large reductions in contralateral response when learned HUGS LBS weights were replaced by subject-specific SMPL K6 weights, the predeclared third-joint protocol tested whether the same mechanism generalized to the more proximal left shoulder under unchanged causal criteria.
+
+**Contradicting observation**
+
+Step 18B1H failed at frame 2 in all three checkpoints. Step 18B2 then completed the entire frozen 18-pose schedule and found `0/18` K6 passes under the predeclared `>=95%` reduction criterion and `0/18` overall passes. Seattle K6 reduction ranged from `-32.35%` to `38.89%`. Parkinglot was negative in all four poses, ranging from `-77.67%` to `-44.71%`, so K6 produced more contralateral displacement than learned LBS. Jogging remained positive but ranged only from `42.27%` to `76.39%`, still below criterion in all ten poses. In contrast, selective shoulder-descendant branch ablation produced exactly `100%` contralateral reduction in all 18 poses, and kinematics passed in all 18. Correlation passed in 14/18 poses, with four Jogging poses below `0.90`.
+
+**Corrected interpretation**
+
+The causal response is still mediated through the changed shoulder-descendant branch, but the learned-vs-K6 amplification effect is joint-dependent rather than universal across the tested arm chain. The robust distal wrist/elbow finding does not extend unchanged to the proximal shoulder. A kinematic-depth interpretation is plausible but remains unproven.
+
+**Impact**
+
+The predeclared universal third-joint generalization claim is rejected. No shoulder threshold is changed and the negative result is retained. This does not invalidate the earlier wrist/elbow findings. Instead it bounds their scope to the tested distal perturbations and motivates a joint-dependent model of cross-body LBS behavior.
+
+**Follow-up**
+
+Freeze a three-joint synthesis separating branch-mediated causality from learned-vs-K6 amplification before testing another joint or designing a corrective method. Do not add a new joint merely to seek a passing result.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
