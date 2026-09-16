@@ -240,6 +240,30 @@ Use `Tools > Research VFX > Build ART V2 Scenes` to generate the redesigned scen
 
 ---
 
+### A010 — Step 18B1 manual SMPL/LBS reconstruction did not reproduce the frozen Step-17B1 elbow aggregate within tolerance
+
+**Assumption before test**
+
+The Step-18B1 manual CPU reconstruction of the released HUGS/SMPL pure-LBS path was expected to reproduce the archived Step-17B1 elbow frame-2 aggregate displacement values within the frozen `1e-5` regression tolerance before shoulder metrics were inspected.
+
+**Contradicting observation**
+
+All three checkpoints reproduced the correct changed transform set `[18,20,22]`, exact-zero selective-ablation contralateral response, and nearly identical removed-mass/reduction correlations, but learned contralateral sums differed from the archived values by approximately `3.67e-4` (Seattle), `1.62e-3` (Parkinglot), and `7.59e-5` (Jogging). The strict regression gate therefore failed in all three checkpoints and execution stopped before the shoulder causal section.
+
+**Corrected interpretation**
+
+The manual reimplementation is structurally close but not yet numerically identical to the computation that generated the frozen Step-17 artifacts. This is a pipeline-regression / source-equivalence problem, not a shoulder scientific result. The exact source of the discrepancy remains unresolved.
+
+**Impact**
+
+No Step-18B1 shoulder causal result is accepted. No shoulder thresholds, masks, joint, axis, angle, branch, or pose schedule are changed. The earlier frozen Step-17 benchmark remains unchanged.
+
+**Follow-up**
+
+Compare the newly recomputed elbow per-Gaussian learned/K6/ablated arrays directly against `17B1_left_elbow_frame2_displacements.npz` and the frame-2 slice of `17B2_left_elbow_full_pose_displacements.npz` to isolate whether the mismatch is a global numerical scaling effect or a spatially structured transform/source implementation difference. Do not widen the frozen tolerance after observing the failure.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
