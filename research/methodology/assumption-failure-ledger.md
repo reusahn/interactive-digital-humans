@@ -176,19 +176,43 @@ PATCH1 still resolved VFX editor model classes by exact fully qualified names, i
 
 **Contradicting observation**
 
-The next build reached graph construction but failed with `TypeLoadException: UnityEditor.VFX.VFXQuadOutput`, showing that the user's installed VFX Graph 17.3.x patch did not expose that class under the assumed namespace even though the output model exists in the VFX Graph codebase.
+The next build reached graph construction but failed with `TypeLoadException: UnityEditor.VFX.VFXQuadOutput`, showing that the user's installed VFX Graph 17.3.x patch did not expose that class under the assumed namespace even though the output model exists in older VFX Graph code.
 
 **Corrected interpretation**
 
-Patch-level editor-internal namespace placement is not stable enough to hard-code. PATCH2 resolves exact type names first, then scans loaded assemblies by short class name and prefers `UnityEditor.VFX*` namespaces.
+Patch-level editor-internal namespace placement is not stable enough to hard-code. PATCH2 resolved exact type names first, then scanned loaded assemblies by short class name and preferred `UnityEditor.VFX*` namespaces.
 
 **Impact**
 
-Again, this is a visualization implementation compatibility failure only. It does not modify any research result or causal interpretation.
+This is a visualization implementation compatibility failure only. It does not modify any research result or causal interpretation.
 
 **Follow-up**
 
 Continue testing the visualization builder against the user's exact Unity 6000.3.x / VFX Graph 17.3.x installation and record further compatibility assumptions separately if they fail.
+
+---
+
+### A008 — `VFXQuadOutput` was not merely namespaced differently; the installed VFX Graph uses the modern composed particle output model
+
+**Assumption before test**
+
+PATCH2 assumed the installed package still contained a class whose short name was `VFXQuadOutput`, and that only its namespace had changed.
+
+**Contradicting observation**
+
+PATCH2 still failed with `TypeLoadException: UnityEditor.VFX.VFXQuadOutput` after scanning loaded assemblies by short name. Inspection of the current Unity Graphics source showed that modern VFX Graph registers `VFXComposedParticleOutput` through `VFXLibrary`; its Quad variant initializes a `ParticleTopologyPlanarPrimitive(VFXPrimitiveType.Quad)` and the default VFX shader. Current editor tests also create output contexts from the registered `VFXComposedParticleOutput` variant rather than an old `VFXQuadOutput` class.
+
+**Corrected interpretation**
+
+The visualization builder should not search for a legacy quad-output class at all on current 17.3.x. PATCH3 creates the particle output through the package's own `VFXLibrary.GetContexts()` registry, selects the `VFXComposedParticleOutput` Quad variant, and calls the variant's `CreateInstance()` so topology and default shader initialization follow the package's native path. A legacy `VFXQuadOutput` fallback remains only for older package snapshots.
+
+**Impact**
+
+This affects only Unity visualization authoring compatibility. It has no effect on any frozen HUGS deformation-locality result, benchmark statistic, or causal interpretation.
+
+**Follow-up**
+
+Prefer VFX Graph's registered context variants over direct construction of deprecated editor model classes when generating graphs programmatically.
 
 ---
 
