@@ -1,155 +1,101 @@
 # Latest Research Handoff
 
-Current continuation date: **2026-09-15**.
+Current continuation date: **2026-09-16**.
 
-## Research-record rule
+## Active Colab
 
-Preserve failed assumptions, disproven hypotheses, implementation misunderstandings, and code-delivery failures rather than rewriting history after correction.
+`https://colab.research.google.com/github/reusahn/interactive-digital-humans/blob/main/notebooks/daily/2026-09-16_research.ipynb`
 
-Cumulative ledger:
+Notebook-link registry:
 
-`research/methodology/assumption-failure-ledger.md`
+`research/notebook-links.md`
 
-Structured chat continuity:
+## Frozen prior benchmark
 
-`research/sessions/2026-09-15-chat-continuity.md`
-
-Recent recorded failures/corrections include Seattle validation-frame mapping, ankle locality-target interpretation, the disproved Seattle threshold-comparator hypothesis, the disproved `hugs_triplane -> HUGS_TRIMLP` alias assumption, and the Step 17B2 truncated-cell syntax failure followed by a successful rerun.
-
-## Frozen left-wrist benchmark
-
-```text
-independent checkpoints: 3
-nested wrist pose diagnostics: 18
-checkpoint causal passes: 3 / 3
-global minimum K6 reduction: 99.708575087815%
-global minimum selective-ablation reduction: 100.0%
-global minimum removed-mass correlation: 0.9808287038512752
-global maximum ablated contralateral sum: 0.0
-LEFT-WRIST CROSS-CHECKPOINT BENCHMARK FROZEN: True
-```
-
-## Frozen left-elbow generalization
-
-Predeclared before elbow displacement was inspected:
-
-- left_elbow, SMPL 18
-- z +10 degrees
-- branch channels `[18,20,22]`
-- expected changed transforms `[18,20,22]`
-- Seattle poses `[2,7,12,17]`
-- Parkinglot poses `[2,7,12,17]`
-- Jogging poses `[2,7,12,17,22,27,32,37,42,47]`
-
-Canonical anatomy sources were frozen before perturbation:
-
-```text
-Seattle    saved_dominant + saved_confidence    HC 197778  contra 33072
-Parkinglot dominant_joint + joint_confidence    HC 292095  contra 77622
-Jogging    dominant_joint + joint_confidence    HC 148392  contra 20887
-```
-
-All 18 predeclared elbow pose diagnostics passed:
-
-```text
-ALL FRAME-2 REGRESSIONS PASS: True
-checkpoint pose-robust passes: 3 / 3
-global minimum K6 reduction: 99.81874059431833%
-global minimum ablation reduction: 100.0%
-global minimum removed-mass correlation: 0.9688984153761956
-global maximum ablated contralateral: 0.0
-ALL THREE CHECKPOINTS ELBOW POSE ROBUST: True
-```
-
-## Source/provenance status
-
-Exact HUGS source commit:
-
-`86ebe5522a384fc553f07f090b63a76dd4af8d33`
-
-Step 17B1A established exact released HUGS_TRIMLP reconstruction semantics and zero numerical difference from stored learned-LBS arrays across Seattle, Parkinglot, and Jogging.
-
-Step 17B1B disproved the assumption that an executable `hugs_triplane -> HUGS_TRIMLP` alias exists.
-
-Step 17B1C established:
-
-- released source/config name: `hugs_trimlp`
-- released trainer directly constructs `HUGS_TRIMLP`
-- downloaded pretrained package configs contain `hugs_triplane`
-- released commit contains no executable `hugs_triplane` alias
-- historical cause of the naming mismatch is unknown
-- exact numeric reconstruction means no reconstruction rerun is required
-
-## Step 17C0 — frozen two-joint benchmark
+Step 17C0 established the same learned cross-joint LBS causal mechanism for two tested joints, left wrist and predeclared left elbow, across three independently pretrained HUGS NeuMan checkpoints.
 
 ```text
 independent pretrained checkpoints: 3
 tested joints: 2
 nested pose diagnostics: 36
-joint x checkpoint diagnostic cells passing: 6 / 6
-checkpoints where both joints pass: 3 / 3
+joint x checkpoint cells passing: 6 / 6
 global minimum K6 reduction: 99.708575087815%
 global minimum selective-ablation reduction: 100.0%
 global minimum removed-mass correlation: 0.9688984153761956
-global maximum ablated contralateral: 0.0
+global maximum ablated contralateral response: 0.0
 TWO-JOINT CROSS-CHECKPOINT BENCHMARK FROZEN: True
 ```
 
-### Current strongest bounded result
+Independent model-level unit remains checkpoint, `n=3`. Joint and pose tests are repeated/nested diagnostics rather than additional independent models.
 
-Across three independently pretrained HUGS NeuMan checkpoints, the same learned cross-joint LBS causal mechanism is demonstrated for two tested joints, left wrist and the predeclared left elbow, with robust behavior across all tested base poses. Replacing learned deformation weights with the subject-specific SMPL-derived K6 target removes at least 99.708575% of the tested contralateral response, while selective ablation of the learned perturbed-branch components eliminates the tested contralateral response under all 36 nested pose diagnostics.
+## Step 18 predeclared third-joint protocol
 
-### Statistical guardrails
+Frozen before shoulder causal displacement inspection:
 
-- Independent model-level unit is checkpoint, `n=3`.
-- Two joints are repeated diagnostics within the same checkpoints, not six independent models.
-- Thirty-six pose tests are nested robustness diagnostics, not 36 independent replications.
-- Raw displacement magnitudes are sequence-scale dependent and are not pooled.
+- joint: `left_shoulder`, SMPL 16
+- perturbation: `z +10 degrees`
+- descendant branch: `[16,18,20,22]`
+- expected changed transforms: `[16,18,20,22]`
+- frozen contralateral subset: `{14,17,19,21,23}`
+- Seattle poses: `[2,7,12,17]`
+- Parkinglot poses: `[2,7,12,17]`
+- Jogging poses: `[2,7,12,17,22,27,32,37,42,47]`
+- K6 reduction threshold: `>=95%`
+- selective-ablation reduction threshold: `>=99.999%`
+- maximum/summed ablated contralateral response: `<=1e-8`
+- removed-mass/displacement-reduction Pearson correlation: `>=0.90`
 
-## Public Netflix portfolio update completed
+Protocol:
 
-The portfolio previously submitted for Netflix Video Algorithms Intern, Video Coding (Gaussian Splatting), Fall 2026, JR40251 has been updated.
+`research/protocols/2026-09-16-third-joint-generalization.md`
 
-Live URL:
+No joint, branch, mask, threshold, pose schedule, axis, or perturbation angle may be tuned after inspecting shoulder-related results.
 
-`https://jonghoonahn.com/Video_Algorithms.html`
+## Step 18A descriptive precursor COMPLETE
 
-Portfolio repository:
+Step 18A inspected only frozen contralateral branch-support mass. It did **not** compute shoulder perturbed displacement and therefore is not the causal result.
 
-`reusahn/Portfolio`
+| Checkpoint | Learned branch mean | K6 branch mean | Learned/K6 ratio | Fraction rows learned>K6 | Mean ordering |
+|---|---:|---:|---:|---:|---|
+| Seattle | 0.000444904676 | 0.000282223295 | 1.576427900 | 0.801463474 | learned>K6 |
+| Parkinglot | 0.000332070101 | 0.000396310050 | 0.837904818 | 0.763121280 | **learned<K6** |
+| Jogging | 0.000710532339 | 0.000127892362 | 5.555705804 | 0.920668358 | learned>K6 |
 
-Changes:
+### Important observation
 
-- updated `Video_Algorithms.html` from four to five research stages: Representation → Training → Delivery → Execution → Control
-- added 4D Human Deformation Locality to hero metrics, research journey, results table, technical scope, and About section
-- created `Projects29/human-deformation-locality.html`
-- public page includes 3 checkpoints, 2 tested joints, 36 nested pose diagnostics, 6/6 joint × checkpoint cells passed, minimum K6 reduction 99.7086%, 100% selective-ablation reduction, minimum correlation 0.9689
-- public wording explicitly preserves checkpoint `n=3` as the independent model-level unit
-- selected failed assumptions/corrections are included as evidence of failure-aware research practice
-- no future novel locality-preserving method/loss/architecture was disclosed
+The descriptive expectation `mean learned branch support > mean K6 branch support` does not hold uniformly. Parkinglot reverses the mean ordering. This must be retained rather than tuned away.
 
-Portfolio commits:
+The reversal does **not** itself fail the causal shoulder protocol because support mass is not the causal displacement metric. Notably, 76.31% of Parkinglot contralateral rows still have learned branch mass greater than K6, indicating a distributional/tail effect rather than majority-row reversal.
 
-- detail page: `b25d22d07c7d6f50c6c36f4953a14c7cca62ba2c`
-- main submitted portfolio: `e0f4fb7ceab6d02b134196041f17daa486d4d399`
+Integrity checks passed:
 
-Disclosure record:
+- frozen HC/contralateral counts exactly matched Step 17A2
+- learned and K6 row sums within approximately `3e-7` of 1
+- zero NaNs
 
-`research/sessions/2026-09-15-portfolio-public-update.md`
+Archived artifacts:
 
-GitHub Pages/custom-domain deployment may lag the repository commit briefly.
+- `research/sessions/2026-09-16-step18a.md`
+- `experiments/08-second-joint-generalization/analysis/18A_left_shoulder_branch_support_precursor.csv`
+- `experiments/08-second-joint-generalization/analysis/18A_left_shoulder_branch_support_precursor.json`
 
-## End-of-day decision
+Drive artifacts also saved by Colab:
 
-The planned research block is complete at Step 17C0.
+- `experiments/08-second-joint-generalization/18A_left_shoulder_branch_support_precursor.csv`
+- `experiments/08-second-joint-generalization/18A_left_shoulder_branch_support_precursor.json`
 
-Do **not** automatically start a third joint today. Next research session should decide whether another joint adds meaningful evidence or whether the project should transition into locality-preserving method/loss design.
+## Exact next action
 
-## Continuity files
+Do **not** change the predeclared shoulder protocol.
 
-- `research/sessions/2026-09-15-chat-continuity.md`
-- `research/sessions/2026-09-15-step17c0.md`
-- `research/sessions/2026-09-15-portfolio-public-update.md`
-- `experiments/08-second-joint-generalization/analysis/17C0_two_joint_cross_checkpoint_benchmark.csv`
-- `experiments/08-second-joint-generalization/analysis/17C0_two_joint_cross_checkpoint_benchmark.json`
-- `research/methodology/assumption-failure-ledger.md`
+Next run a CPU-only Step 18B0 artifact/key inventory to recover the exact stored Step-17 deformation inputs and pose/SMPL artifact keys before constructing the shoulder frame-2 causal test. This avoids guessing file names or array keys and does not inspect shoulder causal displacement.
+
+After that inventory, run Step 18B1 shoulder frame-2 causal diagnostic unchanged across Seattle, Parkinglot, and Jogging.
+
+## Research-record rule
+
+Preserve failures, reversals, disproven assumptions, and implementation problems rather than rewriting history after later success.
+
+Cumulative ledger:
+
+`research/methodology/assumption-failure-ledger.md`
