@@ -96,49 +96,107 @@ All checkpoints reproduced the expected changed transforms `[16,18,20,22]`.
 ALL THREE FRAME-2 SHOULDER CELLS PASS: False
 ```
 
-Key scientific interpretation:
+## Step 18B2 full-pose shoulder characterization COMPLETE
 
-- The predeclared `>=95%` K6-reduction criterion fails in all three checkpoints.
-- Parkinglot K6 produces **more** contralateral shoulder displacement than learned LBS.
-- Selective removal of learned shoulder-branch weights produces exactly zero contralateral response in all three checkpoints.
-- Thus shoulder response is mediated through the changed branch, but the distal wrist/elbow result that K6 almost eliminates contralateral response does not generalize to shoulder at frame 2.
-- Jogging also narrowly fails the predeclared correlation threshold (`0.8946 < 0.90`).
+The frame-2 values reproduced Step 18B1H exactly in all three checkpoints, confirming deterministic continuation under the frozen runtime.
 
-This is a genuine shoulder scientific result, not the earlier runtime-regression blocker.
+### Seattle
+
+```text
+poses: 4
+kinematic passes: 4/4
+K6 passes: 0/4
+selective-ablation passes: 4/4
+corr passes: 4/4
+overall passes: 0/4
+negative K6 reductions: 1
+K6 reduction min/median/max: -32.350004161443465 / 29.517250805666034 / 38.89051396025266
+corr min/median/max: 0.9458241700212214 / 0.9593022501720412 / 0.9616736739083002
+```
+
+### Parkinglot
+
+```text
+poses: 4
+kinematic passes: 4/4
+K6 passes: 0/4
+selective-ablation passes: 4/4
+corr passes: 4/4
+overall passes: 0/4
+negative K6 reductions: 4
+K6 reduction min/median/max: -77.67114518499558 / -52.50598349082395 / -44.71030074854638
+corr min/median/max: 0.9486500565287279 / 0.9732314511023251 / 0.9812400568052309
+```
+
+### Jogging
+
+```text
+poses: 10
+kinematic passes: 10/10
+K6 passes: 0/10
+selective-ablation passes: 10/10
+corr passes: 6/10
+overall passes: 0/10
+negative K6 reductions: 0
+K6 reduction min/median/max: 42.273608581426544 / 71.45910159816793 / 76.38981785068806
+corr min/median/max: 0.7985830691231263 / 0.9085679698778099 / 0.9759407417520358
+```
+
+### Global shoulder synthesis
+
+```text
+nested_pose_count: 18
+kinematic_pass_count: 18
+k6_pass_count: 0
+selective_ablation_pass_count: 18
+corr_pass_count: 14
+overall_pass_count: 0
+negative_k6_reduction_count: 5
+global_k6_reduction_min: -77.67114518499558
+global_k6_reduction_max: 76.38981785068806
+global_corr_min: 0.7985830691231263
+global_corr_max: 0.9812400568052309
+predeclared_third_joint_universal_pass: False
+```
+
+The 18 pose diagnostics are nested within 3 pretrained checkpoints and are not independent model-level replications.
+
+## Current scientific interpretation
+
+The third-joint universal generalization hypothesis is rejected under its frozen shoulder protocol.
+
+The result is not that contralateral shoulder response disappears. Rather:
+
+1. The shoulder perturbation always changes the expected branch `[16,18,20,22]`.
+2. Selective removal of learned shoulder-descendant branch mass from frozen contralateral rows eliminates the tested contralateral response in all 18 poses.
+3. Therefore branch-mediated causality persists through the shoulder.
+4. However, the wrist/elbow result that SMPL K6 nearly abolishes learned contralateral response does not generalize proximally. K6 reduction is below 95% in all 18 shoulder poses.
+5. Parkinglot reverses the comparison in all four shoulder poses, with K6 producing more contralateral displacement than learned LBS.
+6. Seattle is mixed, while Jogging retains learned > K6 but only at 42.3% to 76.4% reduction.
+7. Removed-mass/displacement-reduction correlation is strong in Seattle and Parkinglot but less pose-stable in Jogging, with 4/10 poses below the frozen 0.90 threshold.
+
+The strongest bounded claim is therefore **joint-dependent cross-body LBS behavior**: branch-mediated causality is robust across wrist, elbow, and shoulder, but learned-vs-K6 amplification is robust only for the tested distal wrist/elbow perturbations and fails for the proximal shoulder.
+
+A kinematic-depth explanation is plausible but remains a hypothesis, not an established mechanism.
 
 Archived:
 
-- `research/sessions/2026-09-16-step18b1h.md`
-- Drive `experiments/08-second-joint-generalization/18B1H_left_shoulder_frame2_cross_checkpoint.json`
-- Drive `experiments/08-second-joint-generalization/18B1H_left_shoulder_frame2_displacements.npz`
-
-## Interpretation boundary
-
-Frame 2 already prevents a universal third-joint pass under the predeclared protocol. Later poses cannot rescue that confirmatory criterion. The remaining frozen pose schedule is still scientifically useful to characterize whether the shoulder failure is stable or pose-dependent.
-
-A plausible but not yet established explanation is **kinematic-depth dependence**: learned-vs-SMPL locality amplification may be strong for distal wrist/elbow perturbations but weaker or qualitatively different for proximal shoulder perturbations, where standard SMPL K6 already carries substantial arm-branch influence.
+- `research/sessions/2026-09-16-step18b2.md`
+- Drive `experiments/08-second-joint-generalization/18B2_left_shoulder_full_pose_metadata.json`
+- Drive `experiments/08-second-joint-generalization/18B2_left_shoulder_full_pose_displacements.npz`
 
 ## Exact next action
 
-Run **Step 18B2 — Frozen left-shoulder full-pose failure characterization** under the same T4 legacy runtime and unchanged protocol.
+Freeze a three-joint synthesis before any new perturbation or corrective-method design.
 
-Pinned script:
+The next step should compare wrist, elbow, and shoulder at the correct checkpoint-level nesting and explicitly separate:
 
-`research/scripts/step18b2_shoulder_full_pose_legacy.py`
+- branch-mediated causality
+- learned-vs-K6 amplification
+- pose stability of removed-mass correlation
 
-Commit containing script: `b20fe372ea77628ebbb964d4fbdaaff43d459491`
-
-It runs all predeclared schedules, including frame 2 as a deterministic regression anchor, and reports per-pose:
-
-- changed transforms
-- learned/K6/ablated contralateral sums
-- K6 reduction
-- selective-ablation reduction
-- removed-mass/displacement-reduction correlation
-- original pass/fail flags
-
-Interpret all 18 pose diagnostics as nested within 3 pretrained checkpoints, not as 18 independent model replicates.
+Do not add another joint simply to seek a passing result and do not alter the frozen shoulder thresholds.
 
 ## Research-record rule
 
-Preserve failures, reversals, and negative generalization results. Do not tune the shoulder protocol or widen thresholds after seeing Step 18B1H.
+Preserve failures, reversals, and negative generalization results. Do not tune the shoulder protocol after seeing Step 18B1H/B2.
