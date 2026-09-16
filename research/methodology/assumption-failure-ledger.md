@@ -144,6 +144,54 @@ Rerun Step 17B2 from a shorter, self-contained replacement cell. Record the synt
 
 ---
 
+### A006 — Unity VFX 17.3 visualization builder assumed a `GetGraph` helper that was unavailable in the installed patch
+
+**Assumption before test**
+
+The first ResearchViz Unity builder assumed that the installed VFX Graph 17.3.x editor assembly exposed `UnityEditor.VFX.VisualEffectResourceExtensions.GetGraph` through reflection.
+
+**Contradicting observation**
+
+Running `Tools > Research VFX > Build / Repair Demo` failed before scene generation with `MissingMethodException: Method 'UnityEditor.VFX.VisualEffectResourceExtensions.GetGraph' not found.`
+
+**Corrected interpretation**
+
+The visualization toolchain must not rely on that editor-internal extension method as a stable 17.3.x API. PATCH1 changed graph discovery to locate the serialized `VFXGraph` subasset through `AssetDatabase`, with optional reflection fallbacks.
+
+**Impact**
+
+This affected only the experimental visualization bootstrap. It has no effect on HUGS research measurements, frozen masks, causal tests, or benchmark conclusions.
+
+**Follow-up**
+
+Treat VFX Graph editor-authoring APIs as patch-sensitive implementation details and keep compatibility failures separate from scientific failures.
+
+---
+
+### A007 — Unity VFX 17.3 visualization builder assumed `VFXQuadOutput` lived in a fixed namespace
+
+**Assumption before test**
+
+PATCH1 still resolved VFX editor model classes by exact fully qualified names, including `UnityEditor.VFX.VFXQuadOutput`.
+
+**Contradicting observation**
+
+The next build reached graph construction but failed with `TypeLoadException: UnityEditor.VFX.VFXQuadOutput`, showing that the user's installed VFX Graph 17.3.x patch did not expose that class under the assumed namespace even though the output model exists in the VFX Graph codebase.
+
+**Corrected interpretation**
+
+Patch-level editor-internal namespace placement is not stable enough to hard-code. PATCH2 resolves exact type names first, then scans loaded assemblies by short class name and prefers `UnityEditor.VFX*` namespaces.
+
+**Impact**
+
+Again, this is a visualization implementation compatibility failure only. It does not modify any research result or causal interpretation.
+
+**Follow-up**
+
+Continue testing the visualization builder against the user's exact Unity 6000.3.x / VFX Graph 17.3.x installation and record further compatibility assumptions separately if they fail.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
