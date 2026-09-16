@@ -63,47 +63,17 @@ Step 18A inspected only frozen contralateral branch-support mass. It did **not**
 
 Parkinglot reverses the mean support ordering. This remains part of the record and is not grounds for changing the frozen shoulder protocol.
 
-## Step 18B0 artifact/key inventory COMPLETE
+## Step 18B0 / B0A / B0B provenance block COMPLETE
 
-Step 18B0 established the exact learned-LBS, K6, mask, pose, and prior causal artifact locations for Seattle, Parkinglot, and Jogging.
+Seattle canonical source was recovered and exactly validated.
 
-Important asymmetry:
-
-- Parkinglot and Jogging learned-LBS artifacts contain `xyz_canon`
-- Seattle `13E_learned_lbs_weights.npz` does not
-
-Corrected historical Drive directories:
-
-- `experiments/05-counterfactual-lbs-ablation`
-- `experiments/06-frame-replication`
-
-Archived record:
-
-`research/sessions/2026-09-16-step18b0.md`
-
-## Step 18B0A Seattle canonical-XYZ provenance recovery COMPLETE
-
-The corrected provenance search found the original Seattle baseline probe artifact family under `experiments/01-baseline/probe_results/` and the historical duplicate under `experiment-01/20260914_003959/`.
-
-B0A also unintentionally printed aggregate summaries for `xyz_after`, including an already-existing shoulder probe. It did not compute the frozen Step-18 causal endpoints. This inspection leakage is preserved in the record and the protocol remains unchanged.
-
-Archived record:
-
-`research/sessions/2026-09-16-step18b0a.md`
-
-## Step 18B0B exact Seattle canonical-XYZ identity validation COMPLETE
-
-Authoritative Seattle reference fixed to:
+Authoritative Seattle canonical reference:
 
 `experiments/01-baseline/probe_results/frame000_left_wrist_z_10deg.npz`
 
-Thirty-seven persistent copies were validated: all 36 current baseline probes plus the historical duplicate.
+Across 37 persistent baseline/historical copies:
 
 ```text
-xyz_canon shape: (472958,3)
-xyz_canon dtype: float32
-xyz_canon SHA256: 61a633d5b2c1fb353d7790cdd176919f17c3f1000ce7e9cb5d03e2751b51d314
-xyz_before SHA256: 291a1fcb5818b35ed0ecf6acdb461d2532fd4ce0323be3b10e3d12f67c075c73
 all shape OK: True
 all dtype OK: True
 all finite: True
@@ -114,29 +84,66 @@ all xyz_before SHA256 match: True
 SEATTLE CANONICAL XYZ EXACTLY VALIDATED: True
 ```
 
-Every candidate had maximum absolute difference `0.0` from the reference for both `xyz_canon` and `xyz_before`.
+`xyz_canon` SHA256:
 
-Archived record:
+`61a633d5b2c1fb353d7790cdd176919f17c3f1000ce7e9cb5d03e2751b51d314`
 
-`research/sessions/2026-09-16-step18b0b.md`
+`xyz_before` SHA256:
 
-Drive artifact:
+`291a1fcb5818b35ed0ecf6acdb461d2532fd4ce0323be3b10e3d12f67c075c73`
 
-`experiments/08-second-joint-generalization/18B0B_seattle_xyz_exact_validation.json`
+Archived records:
+
+- `research/sessions/2026-09-16-step18b0.md`
+- `research/sessions/2026-09-16-step18b0a.md`
+- `research/sessions/2026-09-16-step18b0b.md`
+
+## Step 18B1 BLOCKED by historical elbow regression gate
+
+Step 18B1 was designed to reproduce Step-17B1 elbow frame-2 before interpreting any shoulder output.
+
+The gate failed in all three checkpoints, so execution stopped before the shoulder causal section.
+
+| Checkpoint | Current learned contra | Frozen learned contra | Learned abs diff | Current K6 contra | Frozen K6 contra | K6 abs diff | Current corr | Frozen corr | Regression pass |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
+| Seattle | 2.650197376676 | 2.650563955300 | 0.000366578624 | 0.004803800226 | 0.004804401660 | 0.000000601434 | 0.970826263032 | 0.970823696400 | False |
+| Parkinglot | 11.092557772695 | 11.094181060800 | 0.001623288105 | 0.011602326001 | 0.011603050900 | 0.000000724899 | 0.995891130849 | 0.995891100000 | False |
+| Jogging | 1.226277361622 | 1.226353287700 | 0.000075926078 | 0.000953316052 | 0.000950972300 | 0.000002343752 | 0.986356606925 | 0.986354500000 | False |
+
+Still correct in all three checkpoints:
+
+- changed transforms exactly `[18,20,22]`
+- selective-ablation contralateral response exactly `0.0`
+- correlation nearly identical to the frozen result
+
+The frozen aggregate regression tolerance was `1e-5`, so the learned sums fail. Do **not** widen the tolerance after seeing this output.
+
+Interpretation:
+
+- pipeline/source-equivalence blocker only
+- not a shoulder result
+- not evidence against the frozen shoulder hypothesis
+- no Step-18B1 shoulder causal metric is accepted
+- prior Step-17 benchmark remains unchanged
+
+Archived:
+
+- `research/sessions/2026-09-16-step18b1-regression-blocker.md`
+- failure ledger entry `A010`
 
 ## Exact next action
 
-Run **Step 18B1** on CPU using the frozen third-joint protocol.
+Run **Step 18B1A**, with no shoulder computation.
 
-Guardrail before shoulder interpretation:
+1. load archived `17B1_left_elbow_frame2_displacements.npz`
+2. load frame-2 arrays from `17B2_left_elbow_full_pose_displacements.npz`
+3. recompute the elbow frame-2 learned/K6/ablated arrays with the currently defined Step-18B1 functions
+4. compare per-Gaussian arrays against the archived arrays
+5. report mean, p99, max, sum, relative-sum error, Pearson agreement, and exact-zero structure
+6. determine whether the discrepancy is global/proportional or spatially structured
+7. do not inspect or interpret shoulder causal metrics
 
-1. reconstruct the source-exact SMPL/HUGS pure-LBS frame-2 computation
-2. first reproduce the archived Step-17 elbow frame-2 aggregate results across Seattle, Parkinglot, and Jogging within the frozen numerical tolerance
-3. if that regression fails, stop before interpreting shoulder output
-4. if it passes, evaluate left shoulder SMPL 16, z +10 degrees, branch `[16,18,20,22]`
-5. evaluate learned, K6, and frozen-contralateral selective branch ablation conditions
-6. preserve the Parkinglot Step-18A mean-support reversal regardless of causal outcome
-7. save raw per-Gaussian arrays only to Drive and archive compact results to GitHub after review
+Only after the numerical source of the regression is isolated should Step 18B1 be repaired and rerun with the frozen shoulder protocol unchanged.
 
 ## Research-record rule
 
