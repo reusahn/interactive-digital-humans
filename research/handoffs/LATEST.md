@@ -69,11 +69,9 @@ The newly written CPU reconstruction did not reproduce the frozen Step-17B1 elbo
 
 Current versus archived Step-17 elbow fields are spatially nearly identical. Learned Pearson values are `>=0.999999999839`. Full before/after float32 evaluation reduces the learned aggregate mismatch but does not eliminate it. All K6 conditions pass the frozen gate.
 
-## Step 18B1C-R namespace-isolated source-exact audit COMPLETE
+## Step 18B1C-R source-exact transform audit COMPLETE
 
-The manual Step-18 transform path is bitwise identical to the official `smplx==0.1.28` transform path for all three checkpoints before and after elbow perturbation.
-
-Chunked versus one-shot CPU evaluation is also not the cause. Source-exact CPU evaluation remains at `3/6` aggregate gate passes. Every K6 condition passes and every dense learned condition remains slightly outside `1e-5`.
+The manual Step-18 transform path is bitwise identical to official `smplx==0.1.28` transforms for all three checkpoints before and after elbow perturbation. Chunked versus one-shot CPU evaluation is also not the cause.
 
 Archived: `research/sessions/2026-09-16-step18b1c-r.md`
 
@@ -81,9 +79,7 @@ Drive artifact: `experiments/08-second-joint-generalization/18B1C_R_namespace_is
 
 ## Step 18B1D exact HUGS batched-rank audit COMPLETE
 
-The exact released-HUGS `lbs_extra` batch-rank structure was reproduced on CPU with `W=[1,G,24]`, `A=[1,24,16]`, and batched `torch.matmul`.
-
-Result: the exact HUGS batched path is bitwise identical to the previous flat 2-D CPU path for every tested before position, after position, and displacement field.
+The exact HUGS `lbs_extra` tensor ranks were reproduced on CPU. Batched `[1,G,24] @ [1,24,16]` and flat `[G,24] @ [24,16]` paths were bitwise identical for tested positions/displacements.
 
 | Checkpoint | Learned contra error | Learned gate | K6 contra error | K6 gate |
 |---|---:|---|---:|---|
@@ -91,31 +87,56 @@ Result: the exact HUGS batched path is bitwise identical to the previous flat 2-
 | Parkinglot | `+4.781559425737214e-05` | FAIL | `+2.246013536932878e-06` | PASS |
 | Jogging | `+1.115696863962512e-05` | FAIL | `+4.4823536882176995e-08` | PASS |
 
-```text
-exact HUGS batched gate passes: 3/6
-previous flat 2-D gate passes: 3/6
-ALL THREE LEARNED CONDITIONS PASS WITH EXACT HUGS RANK: False
-```
-
-Therefore tensor rank / batched-versus-flat CPU matmul is not the source of the historical mismatch.
+Therefore tensor rank is not the source of the historical mismatch.
 
 Archived: `research/sessions/2026-09-16-step18b1d.md`
 
 Drive artifact: `experiments/08-second-joint-generalization/18B1D_exact_hugs_batched_lbs_rank_audit.json`
 
+## Step 18B1E backend provenance audit COMPLETE
+
+Current runtime is CPU-only:
+
+```text
+Python 3.13.15
+NumPy 2.1.3
+PyTorch 2.11.0+cpu
+torch.version.cuda: None
+cuda_available: False
+smplx: 0.1.28
+torch_num_threads: 1
+```
+
+Persisted historical Step-17 artifacts provide no backend evidence:
+
+```text
+Step-17 text/metadata files inspected: 8
+textual backend hints: 0
+structured device/backend fields: 0
+strong CUDA evidence: 0
+strong CPU evidence: 0
+HISTORICAL BACKEND CONCLUSION: UNKNOWN_FROM_PERSISTED_EVIDENCE
+```
+
+No CPU/CUDA claim is justified yet. No elbow recomputation, shoulder computation, or tolerance change occurred.
+
+Archived: `research/sessions/2026-09-16-step18b1e.md`
+
+Drive artifact: `experiments/08-second-joint-generalization/18B1E_backend_provenance_audit.json`
+
 ## Exact next action
 
-Run **Step 18B1E backend-provenance audit**, elbow only, before any shoulder computation.
+Run **Step 18B1F historical execution-source recovery audit**, still without shoulder computation.
 
-1. record the current Python, Torch, CPU/CUDA environment
-2. search persisted Experiment-08 and Step-17 metadata/text artifacts for backend evidence such as `cuda`, `device`, `torch`, GPU model, and version strings
-3. inspect relevant JSON/MD/TXT metadata only, plus NPZ keys/dtypes where useful
-4. conclude historical CPU or CUDA only if persisted evidence supports it
-5. otherwise record backend provenance as unknown
-6. preserve the frozen `1e-5` regression tolerance
+1. search persisted notebooks, Python/text files, and JSON under the project root for exact Step-17B1/B2 artifact names and code fragments
+2. inspect current IPython history and `history.sqlite` for the exact Step-17 execution cell if still available
+3. print matched source excerpts with file/session provenance
+4. treat device-selection code as evidence only if it belongs to the exact historical Step-17 execution source
+5. do not infer CUDA from generic HUGS support code
+6. do not change the frozen `1e-5` regression tolerance
 7. do not compute shoulder metrics yet
 
-If historical CUDA execution is positively established, reproduce the exact elbow path on CUDA in the next audit. If provenance is unknown, keep that uncertainty explicit rather than assuming CUDA.
+If exact historical execution code still cannot be recovered, backend provenance remains unknown and the next decision must distinguish reproducibility policy from scientific effect size rather than silently widening the historical gate.
 
 ## Research-record rule
 
