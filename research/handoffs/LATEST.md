@@ -53,139 +53,88 @@ No joint, branch, mask, threshold, pose schedule, axis, or perturbation angle ma
 
 ## Step 18A descriptive precursor COMPLETE
 
-Step 18A inspected only frozen contralateral branch-support mass. It did **not** compute shoulder perturbed displacement and therefore is not the causal result.
+Step 18A inspected only frozen contralateral branch-support mass. It did not compute shoulder causal displacement.
 
-| Checkpoint | Learned branch mean | K6 branch mean | Learned/K6 ratio | Fraction rows learned>K6 | Mean ordering |
-|---|---:|---:|---:|---:|---|
-| Seattle | 0.000444904676 | 0.000282223295 | 1.576427900 | 0.801463474 | learned>K6 |
-| Parkinglot | 0.000332070101 | 0.000396310050 | 0.837904818 | 0.763121280 | **learned<K6** |
-| Jogging | 0.000710532339 | 0.000127892362 | 5.555705804 | 0.920668358 | learned>K6 |
-
-Parkinglot reverses the mean support ordering. This remains part of the record and is not grounds for changing the frozen shoulder protocol.
+Parkinglot reverses the mean learned/K6 branch-support ordering (`0.8379x`) and that reversal remains part of the record.
 
 ## Step 18B0 / B0A / B0B provenance block COMPLETE
 
-Seattle canonical source was recovered and exactly validated.
+Seattle canonical source was recovered and exactly validated across 37 persistent copies.
 
 Authoritative Seattle canonical reference:
 
 `experiments/01-baseline/probe_results/frame000_left_wrist_z_10deg.npz`
 
-Across 37 persistent baseline/historical copies:
-
-```text
-all shape OK: True
-all dtype OK: True
-all finite: True
-all xyz_canon elementwise exact: True
-all xyz_canon SHA256 match: True
-all xyz_before elementwise exact: True
-all xyz_before SHA256 match: True
-SEATTLE CANONICAL XYZ EXACTLY VALIDATED: True
-```
-
 `xyz_canon` SHA256:
 
 `61a633d5b2c1fb353d7790cdd176919f17c3f1000ce7e9cb5d03e2751b51d314`
 
-`xyz_before` SHA256:
+## Step 18B1 historical elbow gate BLOCKED
 
-`291a1fcb5818b35ed0ecf6acdb461d2532fd4ce0323be3b10e3d12f67c075c73`
+The newly written CPU/manual SMPL-LBS reconstruction did not reproduce the frozen Step-17B1 elbow contralateral learned sums within the frozen `1e-5` aggregate tolerance, so execution stopped before shoulder causal metrics were accepted.
 
-Archived records:
+This remains a pipeline/source-equivalence blocker, not a shoulder result.
 
-- `research/sessions/2026-09-16-step18b0.md`
-- `research/sessions/2026-09-16-step18b0a.md`
-- `research/sessions/2026-09-16-step18b0b.md`
+## Step 18B1A-R completed per-Gaussian audit
 
-## Step 18B1 BLOCKED by historical elbow regression gate
+Across all three checkpoints, current versus archived Step-17 elbow fields are spatially nearly identical:
 
-Step 18B1 was designed to reproduce Step-17B1 elbow frame-2 before interpreting any shoulder output.
+- learned Pearson values: `>= 0.999999999839`
+- learned mean per-Gaussian absolute differences: about `7e-8` to `1.1e-7`
+- K6 agreement is even closer
+- Step-17B1 and Step-17B2 frame-2 arrays are exact for Parkinglot/Jogging and near-exact for Seattle
 
-The gate failed in all three checkpoints, so execution stopped before the shoulder causal section.
-
-| Checkpoint | Current learned contra | Frozen learned contra | Learned abs diff | Current K6 contra | Frozen K6 contra | K6 abs diff | Current corr | Frozen corr | Regression pass |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---|
-| Seattle | 2.650197376676 | 2.650563955300 | 0.000366578624 | 0.004803800226 | 0.004804401660 | 0.000000601434 | 0.970826263032 | 0.970823696400 | False |
-| Parkinglot | 11.092557772695 | 11.094181060800 | 0.001623288105 | 0.011602326001 | 0.011603050900 | 0.000000724899 | 0.995891130849 | 0.995891100000 | False |
-| Jogging | 1.226277361622 | 1.226353287700 | 0.000075926078 | 0.000953316052 | 0.000950972300 | 0.000002343752 | 0.986356606925 | 0.986354500000 | False |
-
-Still correct in all three checkpoints:
-
-- changed transforms exactly `[18,20,22]`
-- selective-ablation contralateral response exactly `0.0`
-- correlation nearly identical to the frozen result
-
-The frozen aggregate regression tolerance was `1e-5`, so the learned sums fail. Do **not** widen the tolerance after seeing this output.
-
-Interpretation:
-
-- pipeline/source-equivalence blocker only
-- not a shoulder result
-- not evidence against the frozen shoulder hypothesis
-- no Step-18B1 shoulder causal metric is accepted
-- prior Step-17 benchmark remains unchanged
+No tolerance was changed.
 
 Archived:
 
-- `research/sessions/2026-09-16-step18b1-regression-blocker.md`
-- failure ledger entry `A010`
+`research/sessions/2026-09-16-step18b1a-r.md`
 
-## Step 18B1A key-resolution failure recorded
+## Step 18B1B evaluation-order audit COMPLETE
 
-The first per-Gaussian audit completed Seattle and Parkinglot but the generic token `frame2` also matched Jogging `frame22` and `frame27`, causing a key-resolution error. This is an implementation bug only.
+The hypothesis that displacement evaluation order alone caused the blocker was disproved.
 
-Archived:
+Switching from direct `delta-A` displacement to full float32 before/after position evaluation greatly reduces learned-condition contralateral-sum error, but learned still fails the frozen `1e-5` regression gate in all three checkpoints:
 
-- `research/sessions/2026-09-16-step18b1a-key-resolution-blocker.md`
-- failure ledger entry `A011`
+| Checkpoint | direct delta-A learned error | best full-position learned error | gate |
+|---|---:|---:|---|
+| Seattle | `-3.667395e-4` | `-2.927389e-5` | FAIL |
+| Parkinglot | `-1.622576e-3` | `+4.781559e-5` | FAIL |
+| Jogging | `-7.595423e-5` | `+1.115697e-5` | FAIL |
 
-## Step 18B1A-R exact-key per-Gaussian audit COMPLETE
+K6 passes the aggregate `1e-5` gate in all three checkpoints.
 
-Exact Step-17B1 and Step-17B2 frame-02 keys were used across all three checkpoints.
+Seattle historical elbow before/after positions are also only slightly different from the current reconstruction at float32 scale:
 
-The current manual Step-18B1 reconstruction is spatially almost identical to the historical Step-17 elbow fields:
+- before mean abs: `5.063156e-08`
+- before max abs: `9.536743e-07`
+- after mean abs: `4.979415e-08`
+- after max abs: `9.536743e-07`
 
-| Checkpoint | Learned relative whole-array sum error | Learned mean abs per-Gaussian diff | Learned max abs diff | Learned Pearson | Optimal global scale | Scaled residual L2 fraction |
-|---|---:|---:|---:|---:|---:|---:|
-| Seattle | -0.000575924729% | 7.884706e-08 | 7.179369e-07 | 0.999999999928 | 1.000000267806 | 1.178276e-05 |
-| Parkinglot | -0.000344996869% | 1.124316e-07 | 1.308632e-06 | 0.999999999979 | 1.000000288787 | 6.333825e-06 |
-| Jogging | -0.000889985277% | 7.080164e-08 | 6.406544e-07 | 0.999999999839 | 1.000000071249 | 1.776511e-05 |
-
-K6 differences are smaller still. Ablated fields show the same tiny distributed discrepancy pattern as learned fields.
-
-Step-17 internal consistency is strong:
-
-- Parkinglot B1 vs B2 frame-02 arrays: bitwise exact for learned/K6/ablated
-- Jogging B1 vs B2 frame-02 arrays: bitwise exact for learned/K6/ablated
-- Seattle B1 vs B2 frame-02 arrays: not bitwise exact but near-exact with mean abs differences <=1e-9
-
-Interpretation: the Step-17 archive is internally consistent. The mismatch is specific to the new manual Step-18B1 reconstruction path. It is not a different spatial field, but the frozen aggregate tolerance still must not be widened.
-
-Leading untested hypothesis: floating-point evaluation order. Step-18B1 currently computes displacement directly from `delta_A = A_after - A_before`; the historical pipeline may have generated full float32 before/after posed positions and then subtracted/normed them. Algebraic equivalence does not guarantee bitwise equality in float32.
+Interpretation: evaluation order contributes but does not fully explain the mismatch. The next likely source is manual versus source-exact SMPL transform construction and/or backend floating-point execution order.
 
 Archived:
 
-- `research/sessions/2026-09-16-step18b1a-r.md`
+- `research/sessions/2026-09-16-step18b1b.md`
+- failure ledger `A012`
 
 Drive artifact:
 
-`experiments/08-second-joint-generalization/18B1A_R_elbow_per_gaussian_regression_audit.json`
-
-No shoulder computation has been accepted or interpreted.
+`experiments/08-second-joint-generalization/18B1B_elbow_evaluation_order_audit.json`
 
 ## Exact next action
 
-Run **Step 18B1B**, elbow only.
+Run **Step 18B1C**, elbow only, on CPU:
 
-1. reconstruct full float32 before and after posed positions with the current A matrices
-2. compute displacement from posed-position subtraction using NumPy float32 and Torch float32 variants
-3. compare those variants directly against archived Step-17B1 per-Gaussian arrays
-4. test whether evaluation order explains the aggregate regression blocker
-5. do not compute shoulder metrics
-6. do not alter the frozen `1e-5` historical regression tolerance
+1. import the exact `smplx.lbs` functions used by HUGS
+2. construct T-pose-to-pose `A` with source-exact `batch_rodrigues`, `blend_shapes`, `vertices2joints`, and `batch_rigid_transform`
+3. compare source-exact `A` elementwise against the current manual `compute_A`
+4. build source-exact vitruvian inverse transforms
+5. recompute frame-2 learned/K6 displacement
+6. compare chunked and one-shot float32 skinning to the archived Step-17 arrays
+7. do not compute shoulder metrics yet
 
-Only after the historical elbow regression path is reproduced should Step 18B1 be repaired and rerun with the frozen shoulder protocol unchanged.
+Do not widen the frozen regression tolerance.
 
 ## Research-record rule
 
