@@ -1,0 +1,37 @@
+{
+  "date": "2026-09-16",
+  "step": "18B0",
+  "status": "precausal_artifact_inventory_complete",
+  "shoulder_displacement_inspected": false,
+  "critical_assets_exist": true,
+  "smpl_original_exists": true,
+  "smpl_clean_exists": true,
+  "frozen_masks_exist": true,
+  "pose_assets_exist": {
+    "seattle": true,
+    "parkinglot": true,
+    "jogging": true
+  },
+  "learned_lbs_shapes": {
+    "seattle": [472958, 24],
+    "parkinglot": [614157, 24],
+    "jogging": [311723, 24]
+  },
+  "k6_lbs_shapes": {
+    "seattle": [472958, 24],
+    "parkinglot": [614157, 24],
+    "jogging": [311723, 24]
+  },
+  "learned_artifact_has_xyz_canon": {
+    "seattle": false,
+    "parkinglot": true,
+    "jogging": true
+  },
+  "prior_elbow_frame2_keys_confirmed": true,
+  "prior_elbow_full_pose_keys_confirmed": true,
+  "incorrect_search_roots": {
+    "experiments/05-causal-counterfactual": "experiments/05-counterfactual-lbs-ablation",
+    "experiments/06-pose-robustness": "experiments/06-frame-replication"
+  },
+  "next_action": "Recover exact Seattle canonical Gaussian XYZ source from corrected Experiment 04/05/06 persistent artifacts before constructing Step 18B1."
+}
