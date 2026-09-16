@@ -122,27 +122,39 @@ Drive artifact:
 
 `experiments/08-second-joint-generalization/18B1B_elbow_evaluation_order_audit.json`
 
-## Step 18B1C dependency blocker
+## Step 18B1C dependency recovery COMPLETE
 
-The first Step 18B1C attempt stopped immediately with:
+The first Step 18B1C attempt stopped immediately because `smplx` was not installed in the current Colab runtime. No scientific computation ran in that failed attempt.
+
+The HUGS-pinned dependency was then installed and verified exactly:
 
 ```text
-ModuleNotFoundError: No module named 'smplx'
+smplx version: 0.1.28
+smplx module: /usr/local/lib/python3.13/dist-packages/smplx/__init__.py
+SMPLX 0.1.28 EXACT DEPENDENCY PASS: True
 ```
 
-No source-exact transform audit and no shoulder computation ran. This is an environment/dependency blocker only.
+The exact `smplx.lbs` functions required for the audit now import successfully:
 
-The released HUGS requirements pin `smplx==0.1.28`, so recovery must install that exact version rather than an arbitrary current SMPLX release.
+- `batch_rodrigues`
+- `blend_shapes`
+- `vertices2joints`
+- `batch_rigid_transform`
 
 Archived:
 
-`research/sessions/2026-09-16-step18b1c-dependency-blocker.md`
+`research/sessions/2026-09-16-step18b1c-dependency-recovery.md`
 
 ## Exact next action
 
-Install and verify **`smplx==0.1.28`** in the current CPU Colab runtime. Confirm that `smplx.lbs.batch_rodrigues`, `blend_shapes`, `vertices2joints`, and `batch_rigid_transform` import successfully. Then rerun Step 18B1C unchanged.
+Rerun **Step 18B1C** in the same CPU runtime now that `smplx==0.1.28` is available.
 
-Do not widen the frozen regression tolerance and do not compute shoulder metrics yet.
+The audit remains elbow-only:
+
+1. compare current manual `A` transforms against source-exact SMPLX transforms
+2. test source-exact chunked and one-shot float32 skinning against the archived Step-17B1 arrays
+3. preserve the frozen `1e-5` regression tolerance
+4. do not compute or interpret shoulder causal metrics yet
 
 ## Research-record rule
 
