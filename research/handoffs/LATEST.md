@@ -131,19 +131,39 @@ Archived:
 - `research/sessions/2026-09-16-step18b1-regression-blocker.md`
 - failure ledger entry `A010`
 
+## Step 18B1A partial per-Gaussian audit
+
+Seattle and Parkinglot completed before a key-resolution implementation error stopped the Jogging comparison.
+
+The current manual fields are spatially almost identical to the archived Step-17 fields:
+
+- Seattle learned Pearson: `0.9999999999284204`
+- Seattle learned mean abs per-Gaussian diff: `7.884706e-08`
+- Seattle learned relative whole-array sum error: `-0.000575924729%`
+- Parkinglot learned Pearson: `0.9999999999793191`
+- Parkinglot learned mean abs per-Gaussian diff: `1.124316e-07`
+- Parkinglot learned relative whole-array sum error: `-0.000344996869%`
+
+K6 agreement is even closer. Step-17B1 and Step-17B2 frame-2 arrays are exactly equal for Parkinglot and effectively identical for Seattle.
+
+Interpretation so far: the Step-18B1 blocker is a tiny distributed numerical/source-path discrepancy, not a different spatial causal pattern. It still exceeds the frozen aggregate tolerance, so the tolerance remains unchanged.
+
+The audit then failed because the generic token `frame2` also matched Jogging keys `frame22` and `frame27`. This is an implementation bug, not a scientific result.
+
+Archived:
+
+- `research/sessions/2026-09-16-step18b1a-key-resolution-blocker.md`
+- failure ledger entry `A011`
+
+No shoulder computation was performed in Step 18B1A.
+
 ## Exact next action
 
-Run **Step 18B1A**, with no shoulder computation.
+Rerun the elbow-only per-Gaussian audit as **Step 18B1A-R** with exact Step-17B2 keys:
 
-1. load archived `17B1_left_elbow_frame2_displacements.npz`
-2. load frame-2 arrays from `17B2_left_elbow_full_pose_displacements.npz`
-3. recompute the elbow frame-2 learned/K6/ablated arrays with the currently defined Step-18B1 functions
-4. compare per-Gaussian arrays against the archived arrays
-5. report mean, p99, max, sum, relative-sum error, Pearson agreement, and exact-zero structure
-6. determine whether the discrepancy is global/proportional or spatially structured
-7. do not inspect or interpret shoulder causal metrics
+`{sequence}_frame02_{condition}`
 
-Only after the numerical source of the regression is isolated should Step 18B1 be repaired and rerun with the frozen shoulder protocol unchanged.
+Complete Seattle, Parkinglot, and Jogging comparisons and save the audit JSON. Do not compute shoulder metrics yet. Only after the three-checkpoint audit is complete should the exact source of the tiny numerical mismatch be isolated or the Step-18B1 computation be repaired.
 
 ## Research-record rule
 
