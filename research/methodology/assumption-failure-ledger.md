@@ -216,6 +216,30 @@ Prefer VFX Graph's registered context variants over direct construction of depre
 
 ---
 
+### A009 — First Unity visualization passed technical generation but failed the intended visual/art direction
+
+**Assumption before test**
+
+The first generated `Paper_LeakageAtlas` scene was treated as an acceptable first visual prototype once the VFX Graph generation path compiled and rendered.
+
+**Contradicting observation**
+
+The rendered scene was technically functional but visually unsuitable: the body read as a rigid T-pose mannequin assembled from generic point volumes, the intended cyan/red semantic separation was weak, world-space typography was oversized and clipped by the camera frame, and the composition looked like a debug visualization rather than the desired artistic/scientific image.
+
+**Corrected interpretation**
+
+Successful VFX Graph generation is only a technical milestone, not evidence that the visualization language is acceptable. The first scene should be classified as a compatibility/debug scaffold. ART V2 was redesigned around a relaxed A-pose, dark holographic body core, emissive cyan perturbed branch, red contralateral ghost echo, HDRP bloom/ACES/vignette, screen-space typography, and tighter cinematic framing.
+
+**Impact**
+
+No scientific result changes. The failure concerns only the translation of the validated research into visual form.
+
+**Follow-up**
+
+Use `Tools > Research VFX > Build ART V2 Scenes` to generate the redesigned scenes. Continue treating the procedural body as illustrative until the saved Seattle per-Gaussian coordinates and displacement arrays are bound directly into the visualization.
+
+---
+
 ## Status
 
 This ledger is cumulative. Future failed assumptions and material implementation failures should be appended rather than replacing earlier entries.
