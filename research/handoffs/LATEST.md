@@ -96,11 +96,9 @@ Drive: `experiments/08-second-joint-generalization/18C0_three_joint_synthesis.js
 
 ## Step 18C1-C4 exploratory shoulder mechanism decomposition
 
-C1: aggregate shoulder branch-support direction matches majority displacement direction in `3/3` checkpoints. Per-Gaussian delta-support/delta-displacement correlation is high overall.
+C1: aggregate shoulder branch-support direction matches majority displacement direction in `3/3` checkpoints.
 
-C2: match each learned contralateral row's total shoulder-descendant branch mass to K6 while preserving learned within-branch composition.
-
-Median full-field MAE-gap reduction:
+C2 per-row shoulder branch-mass matching median full-field MAE-gap reduction:
 
 ```text
 Seattle:    94.495471%
@@ -108,9 +106,7 @@ Parkinglot: 83.846952%
 Jogging:    93.517130%
 ```
 
-C3: preserve learned total branch mass and replace only within-branch allocation with K6 composition where defined.
-
-Median full-field MAE-gap reduction:
+C3 composition-only matching median full-field MAE-gap reduction:
 
 ```text
 Seattle:    -0.104023%
@@ -126,7 +122,7 @@ Parkinglot: 73.85%
 Jogging:    91.45%
 ```
 
-Step 18C4 therefore freezes the exploratory shoulder mechanism as:
+Step 18C4 exploratory mechanism freeze:
 
 - support topology + per-row magnitude: `DOMINANT_EXPLORATORY_FACTOR`
 - within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
@@ -137,7 +133,7 @@ Archived through `research/sessions/2026-09-16-step18c4.md`.
 
 ## Step 18D0 arm-chain branch-support topology COMPLETE
 
-No new perturbation or deformation was computed. Existing learned/K6 weights and frozen contralateral masks were compared for nested descendant branches:
+Nested descendant branches:
 
 ```text
 wrist    [20,22]
@@ -171,41 +167,70 @@ Parkinglot: wrist 404.35 | elbow 1108.68 | shoulder 0.8379
 Jogging:    wrist 725.56 | elbow 1355.29 | shoulder 5.5557
 ```
 
-All `3/3` checkpoints satisfy:
+All `3/3` checkpoints show nondecreasing K6 support coverage from distal to proximal and nonincreasing learned-positive/K6-zero topology mismatch.
 
-- K6 support sets are nested along wrist -> elbow -> shoulder
-- K6 positive-support fraction is nondecreasing distally to proximally
-- learned-positive/K6-zero topology mismatch is nonincreasing
+Archived: `research/sessions/2026-09-16-step18d0.md`.
 
-The structural transition is concentrated at the shoulder: K6 support exists on only about `0.20%-0.63%` of frozen contralateral rows for wrist/elbow but expands to about `8.55%-26.15%` at shoulder.
+## Step 18D1 FINAL ARM-CHAIN MECHANISM SYNTHESIS FROZEN
 
-### Bounded interpretation
+Drive artifact:
 
-This topology transition is strongly aligned with the deformation results. Distal K6 support is nearly absent where K6 replacement suppresses learned contralateral response by roughly `99.7%+`; proximal shoulder K6 support becomes much more available where that suppression disappears or reverses.
+`experiments/08-second-joint-generalization/18D1_final_arm_chain_mechanism_synthesis.json`
 
-Together with C2, the best bounded mechanism description is **branch-support topology plus per-row support magnitude**. Do not replace this with a claim that kinematic depth itself has been proven causal. Branch nesting and LBS support mechanically participate in the response.
+Archived session:
 
-Artifacts:
+`research/sessions/2026-09-16-step18d1.md`
 
-- `research/sessions/2026-09-16-step18d0.md`
-- Drive `experiments/08-second-joint-generalization/18D0_arm_chain_support_topology.json`
-- Drive `experiments/08-second-joint-generalization/18D0_arm_chain_support_topology.csv`
+Quantitative transition:
 
-## Exact next action
+```text
+shoulder/elbow K6-support expansion min/median/max:
+34.763285 / 43.536585 / 117.341040x
 
-Run **Step 18D1 — arm-chain mechanism synthesis freeze** using only C0, C4, and D0 artifacts. No new perturbation or deformation.
+shoulder/wrist K6-support expansion min/median/max:
+43.536585 / 47.032680 / 117.341040x
 
-D1 should freeze the final bounded evidence chain before method design:
+wrist-to-shoulder learned-only topology-gap contraction min/median/max:
+0.083497 / 0.212960 / 0.259295
 
-1. branch-mediated causality is supported across wrist/elbow/shoulder
-2. learned-vs-K6 amplification is distal-joint specific in the tested arm chain
-3. K6 contralateral branch-support topology is almost absent distally and expands sharply at shoulder
-4. shoulder counterfactual evidence identifies per-row support topology/magnitude as the dominant exploratory explanation
-5. within-branch composition has a small effect on defined overlap rows
-6. kinematic depth remains hypothesis-only
+shoulder C2 mass-match median MAE reduction min/median/max:
+83.846952 / 93.517130 / 94.495471%
 
-After D1, corrective-method design may begin under a separately frozen protocol.
+shoulder C3 composition-match median MAE reduction min/median/max:
+-2.195192 / -0.104023 / 0.203295%
+```
+
+Final bounded evidence chain:
+
+1. branch-mediated causality: `SUPPORTED_FOR_ALL_THREE_TESTED_JOINTS`
+2. learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
+3. K6 support-topology transition: `CONSISTENT_ACROSS_ALL_THREE_CHECKPOINTS`
+4. support topology + per-row magnitude mechanism: `STRONGLY_IMPLICATED`
+5. within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
+6. kinematic depth: `NOT_ESTABLISHED_AS_CAUSAL`
+7. scope: three independently pretrained HUGS NeuMan checkpoints, tested left-arm chain, frozen perturbations, nested pose diagnostics
+
+Best bounded mechanism description:
+
+`DESCENDANT_SUPPORT_TOPOLOGY_AND_PER_ROW_MAGNITUDE`
+
+Distal wrist/elbow contralateral regions have almost no subject-specific K6 descendant-branch support, whereas shoulder K6 support expands sharply. This aligns with strong distal K6 suppression and the proximal disappearance/reversal of learned-vs-K6 amplification. The C2 counterfactual strongly implicates per-row support existence and magnitude. Kinematic depth remains unresolved because it is confounded with nested branch topology.
+
+### Stop point
+
+Step 18 is closed for the current research day. Corrective-method implementation has **not** started.
+
+The next research day should begin with a separate **Step 19 preregistration** that freezes:
+
+- the corrective-method hypothesis
+- what quantity will be regularized or constrained
+- training/evaluation protocol
+- primary metrics and thresholds
+- held-out/generalization logic
+- ablation plan
+
+Only after that preregistration should locality-preserving method implementation begin.
 
 ## Research-record rule
 
-Preserve the failed shoulder generalization. C1-D1 are exploratory synthesis and cannot alter predeclared pass/fail outcomes. Do not add joints merely to seek a passing result or retune thresholds after inspection.
+Preserve the failed shoulder generalization. C1-D1 exploratory synthesis cannot alter predeclared pass/fail outcomes. Do not tune historical thresholds, add joints merely to seek a passing result, or begin method implementation before Step 19 is separately frozen.
