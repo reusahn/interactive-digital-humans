@@ -1,0 +1,20 @@
+{
+  "date": "2026-09-16",
+  "step": "18A",
+  "status": "descriptive_precausal_precursor",
+  "joint": "left_shoulder",
+  "smpl_joint": 16,
+  "axis": "z",
+  "degrees": 10.0,
+  "predeclared_branch": [16, 18, 20, 22],
+  "independent_checkpoints": 3,
+  "contralateral_mask_source": "Step 17A2 frozen canonical anatomy masks",
+  "learned_mean_gt_k6_all_checkpoints": false,
+  "checkpoint_ordering": {
+    "seattle": true,
+    "parkinglot": false,
+    "jogging": true
+  },
+  "key_observation": "Parkinglot reverses the mean learned-vs-K6 shoulder-branch support ordering even though 76.31% of individual contralateral rows still have learned branch mass greater than K6.",
+  "guardrail": "Step 18A is descriptive only. No perturbed displacement was inspected. No threshold, mask, joint, branch, pose schedule, axis, or angle may be changed because of this result."
+}
