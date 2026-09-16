@@ -72,7 +72,7 @@ Important asymmetry:
 - Parkinglot and Jogging learned-LBS artifacts contain `xyz_canon`
 - Seattle `13E_learned_lbs_weights.npz` does not
 
-The initial B0 search also guessed two old directory names incorrectly. The corrected names are:
+Corrected historical Drive directories:
 
 - `experiments/05-counterfactual-lbs-ablation`
 - `experiments/06-frame-replication`
@@ -83,59 +83,60 @@ Archived record:
 
 ## Step 18B0A Seattle canonical-XYZ provenance recovery COMPLETE
 
-The corrected provenance search found the original Seattle baseline probe artifact family under
+The corrected provenance search found the original Seattle baseline probe artifact family under `experiments/01-baseline/probe_results/` and the historical duplicate under `experiment-01/20260914_003959/`.
 
-`experiments/01-baseline/probe_results/`
-
-with exact `(472958,3)` float32 arrays:
-
-- `xyz_before`
-- `xyz_after`
-- `xyz_canon`
-
-A historical duplicate also exists under
-
-`experiment-01/20260914_003959/frame000_left_wrist_z_10deg.npz`.
-
-All reported `xyz_canon` candidates shared the same summary statistics:
-
-```text
-min:      -0.8927599191665649
-max:       0.8819881677627563
-mean xyz: [-0.023014819249510765,
-           -0.12770146131515503,
-            0.013593386858701706]
-```
-
-This resolves the source family, but summary equality is not yet elementwise proof. Fix one authoritative Seattle source only after exact equality validation.
-
-### Methodological note
-
-B0A was intended as provenance-only inspection, but the generic candidate printer also emitted aggregate min/max/mean summaries for `xyz_after`, including the already-existing Seattle `left_shoulder z +10°` probe. It did **not** compute or display the frozen Step-18 causal metrics such as contralateral displacement, K6 reduction, selective-ablation reduction, removed-mass correlation, or pass/fail status.
-
-The shoulder protocol remains frozen and unchanged. No tuning is permitted.
+B0A also unintentionally printed aggregate summaries for `xyz_after`, including an already-existing shoulder probe. It did not compute the frozen Step-18 causal endpoints. This inspection leakage is preserved in the record and the protocol remains unchanged.
 
 Archived record:
 
 `research/sessions/2026-09-16-step18b0a.md`
 
+## Step 18B0B exact Seattle canonical-XYZ identity validation COMPLETE
+
+Authoritative Seattle reference fixed to:
+
+`experiments/01-baseline/probe_results/frame000_left_wrist_z_10deg.npz`
+
+Thirty-seven persistent copies were validated: all 36 current baseline probes plus the historical duplicate.
+
+```text
+xyz_canon shape: (472958,3)
+xyz_canon dtype: float32
+xyz_canon SHA256: 61a633d5b2c1fb353d7790cdd176919f17c3f1000ce7e9cb5d03e2751b51d314
+xyz_before SHA256: 291a1fcb5818b35ed0ecf6acdb461d2532fd4ce0323be3b10e3d12f67c075c73
+all shape OK: True
+all dtype OK: True
+all finite: True
+all xyz_canon elementwise exact: True
+all xyz_canon SHA256 match: True
+all xyz_before elementwise exact: True
+all xyz_before SHA256 match: True
+SEATTLE CANONICAL XYZ EXACTLY VALIDATED: True
+```
+
+Every candidate had maximum absolute difference `0.0` from the reference for both `xyz_canon` and `xyz_before`.
+
+Archived record:
+
+`research/sessions/2026-09-16-step18b0b.md`
+
 Drive artifact:
 
-`experiments/08-second-joint-generalization/18B0A_seattle_xyz_source_inventory.json`
+`experiments/08-second-joint-generalization/18B0B_seattle_xyz_exact_validation.json`
 
 ## Exact next action
 
-Run **Step 18B0B** on CPU only.
+Run **Step 18B1** on CPU using the frozen third-joint protocol.
 
-Purpose:
+Guardrail before shoulder interpretation:
 
-1. choose the Seattle baseline wrist-z +10 probe as the provisional canonical-source reference
-2. verify `xyz_canon` elementwise across all baseline probe copies and the historical duplicate
-3. verify the common `xyz_before` base state elementwise across baseline probes
-4. do not read or summarize `xyz_after`
-5. save a compact validation JSON
-
-If exact equality passes, fix the Seattle canonical source path and immediately proceed next to Step 18B1 with the frozen shoulder protocol and an explicit regression against the Step-17 elbow frame-2 computation.
+1. reconstruct the source-exact SMPL/HUGS pure-LBS frame-2 computation
+2. first reproduce the archived Step-17 elbow frame-2 aggregate results across Seattle, Parkinglot, and Jogging within the frozen numerical tolerance
+3. if that regression fails, stop before interpreting shoulder output
+4. if it passes, evaluate left shoulder SMPL 16, z +10 degrees, branch `[16,18,20,22]`
+5. evaluate learned, K6, and frozen-contralateral selective branch ablation conditions
+6. preserve the Parkinglot Step-18A mean-support reversal regardless of causal outcome
+7. save raw per-Gaussian arrays only to Drive and archive compact results to GitHub after review
 
 ## Research-record rule
 
