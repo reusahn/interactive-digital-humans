@@ -1,6 +1,100 @@
 # Latest Research Handoff
 
-Current continuation date: **2026-09-16**.
+Current continuation date: **2026-09-17**.
+
+## ACTIVE PRIORITY — A100 Step-18 canonical revalidation
+
+The user clarified that the intended canonical research runtime through Step 17 was A100 and requested that the scientific Step-18 work performed after the T4 hardware-sensitivity diagnostic be re-run on A100 rather than treating T4 as the continuing primary runtime.
+
+Canonical revalidation runtime:
+
+```text
+GPU: NVIDIA A100-SXM4-40GB
+Python: 3.8.20
+NumPy: 1.24.4
+PyTorch: 1.13.1+cu117
+CUDA: 11.7
+SMPLX: 0.1.28
+TF32: off
+```
+
+Important provenance distinction:
+
+- archival Step-17 files explicitly establish CUDA use but did not themselves identify the GPU model;
+- the A100-through-Step-17 provenance is user-supplied project provenance and is now being preserved explicitly;
+- the prior T4 Step-18 files must remain preserved as historical hardware-sensitivity/scientific artifacts and must not be overwritten.
+
+### Step 18R0A/R0B environment and input recovery
+
+A fresh Colab A100 session was rebuilt and verified at the exact pinned legacy stack above. Google Drive was mounted, all frozen Step-18 inputs were found, and `SMPL_NEUTRAL_clean.pkl` loaded successfully under NumPy 1.24 compatibility aliases.
+
+SMPL fingerprint:
+
+```text
+SHA256: f12586bb4b97761b1d401996832a3eb5f8e28f99d0ddb108d58dad5ae82f2fc0
+```
+
+No scientific computation occurred during R0A/R0B.
+
+### Step 18R1 A100 frame-2 shoulder rerun COMPLETE
+
+Frozen scientific protocol and thresholds were unchanged from historical Step 18B1H.
+
+A100 results:
+
+```text
+Seattle
+K6 reduction: 38.89052698499022%      FAIL
+selective ablation: 100.0%            PASS
+correlation: 0.9616730744322076       PASS
+overall: False
+
+Parkinglot
+K6 reduction: -49.15654343505103%     FAIL
+selective ablation: 100.0%             PASS
+correlation: 0.9769195553081134        PASS
+overall: False
+
+Jogging
+K6 reduction: 59.774070438714524%     FAIL
+selective ablation: 100.0%             PASS
+correlation: 0.8946040920942271        FAIL
+overall: False
+```
+
+All 3 checkpoints reproduced changed transforms `[16,18,20,22]` exactly.
+
+Cross-checkpoint R1 synthesis:
+
+```text
+all kinematic pass: True
+all K6 pass: False
+all selective-ablation pass: True
+all correlation pass: False
+all three frame-2 shoulder cells pass: False
+threshold-level status same as historical T4: True
+```
+
+A100-vs-T4 scalar changes were small and changed no threshold-level classification. Thus the frame-2 shoulder failure is not a T4 artifact.
+
+Archived session:
+
+`research/sessions/2026-09-17-step18r1-a100-frame2-rerun.md`
+
+Session commit:
+
+`73800170c03d5c9065fbeeaa713534038b84f8d6`
+
+Drive artifacts:
+
+- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_cross_checkpoint.json`
+- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_displacements.npz`
+
+### Exact next action
+
+Run Step 18R2: the complete frozen 18-pose shoulder schedule on the same A100 legacy runtime, using new A100-specific filenames and preserving historical T4 Step 18B2 artifacts.
+
+Only after R2 should the exploratory C1/C2/C3 synthesis be recomputed on A100. Step 19 remains paused until the Step-18 A100 revalidation and continuity reconciliation are complete.
 
 ## Statistical hierarchy
 
@@ -35,7 +129,9 @@ Combined wrist + elbow: `6/6` joint x checkpoint cells pass across `36` nested p
 
 Historical elbow exact-number reproduction under reconstructed runtimes is `5/6` within the old `1e-5` aggregate gate on modern A100, legacy-stack A100, and legacy-stack T4. Field correlations remain effectively `1.0`; the historical gate was not widened.
 
-## Frozen primary Step-18 runtime
+## Historical Step-18 T4 continuation runtime
+
+Historical Step-18 scientific artifacts from B1H onward were produced under:
 
 ```text
 GPU: Tesla T4
@@ -47,9 +143,9 @@ SMPLX: 0.1.28
 TF32: off
 ```
 
-This is a continuation choice, not a claim that historical Step 17 used T4.
+These files remain preserved. T4 is no longer the intended canonical continuation runtime for the active revalidation.
 
-## Frozen shoulder protocol and negative result
+## Frozen shoulder protocol and historical T4 negative result
 
 Protocol: `research/protocols/2026-09-16-third-joint-generalization.md`
 
@@ -63,7 +159,7 @@ selective-ablation threshold: >=99.999%
 correlation threshold: >=0.90
 ```
 
-Step 18B2 full schedule:
+Historical T4 Step 18B2 full schedule:
 
 ```text
 nested poses: 18
@@ -76,9 +172,9 @@ negative K6 reductions: 5
 K6 reduction range: -77.671145% to 76.389818%
 ```
 
-The predeclared shoulder universal generalization is **FAIL** and remains unchanged.
+The predeclared shoulder universal generalization is historically **FAIL**. A100 R1 already preserves the same frame-2 threshold classifications; R2 will determine the complete A100 full-schedule numbers.
 
-## Step 18C0 three-joint synthesis FROZEN
+## Historical Step 18C0 three-joint synthesis
 
 | Joint | Predeclared status | Branch-mediated causality | Learned-vs-K6 amplification | Global min K6 reduction |
 |---|---|---|---|---:|
@@ -86,7 +182,7 @@ The predeclared shoulder universal generalization is **FAIL** and remains unchan
 | elbow | PASS | supported | supported | `99.818741%` |
 | shoulder | FAIL | supported | not supported | `-77.671145%` |
 
-Frozen claims:
+Historical frozen claims pending A100 Step-18 numeric reconciliation:
 
 - branch-mediated contralateral causality: `SUPPORTED_ACROSS_ALL_THREE_TESTED_JOINTS`
 - learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
@@ -94,7 +190,7 @@ Frozen claims:
 
 Drive: `experiments/08-second-joint-generalization/18C0_three_joint_synthesis.json`
 
-## Step 18C1-C4 exploratory shoulder mechanism decomposition
+## Historical Step 18C1-C4 exploratory shoulder mechanism decomposition
 
 C1: aggregate shoulder branch-support direction matches majority displacement direction in `3/3` checkpoints.
 
@@ -122,16 +218,16 @@ Parkinglot: 73.85%
 Jogging:    91.45%
 ```
 
-Step 18C4 exploratory mechanism freeze:
+Historical Step 18C4 exploratory mechanism freeze:
 
 - support topology + per-row magnitude: `DOMINANT_EXPLORATORY_FACTOR`
 - within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
 - pose geometry: `RESIDUAL_MODULATOR_PLAUSIBLE`
 - kinematic depth: `HYPOTHESIS_ONLY`
 
-Archived through `research/sessions/2026-09-16-step18c4.md`.
+These exploratory deformation-dependent analyses must be recomputed/reconciled after A100 R2 rather than silently retained as canonical A100 numbers.
 
-## Step 18D0 arm-chain branch-support topology COMPLETE
+## Step 18D0 arm-chain branch-support topology
 
 Nested descendant branches:
 
@@ -167,70 +263,24 @@ Parkinglot: wrist 404.35 | elbow 1108.68 | shoulder 0.8379
 Jogging:    wrist 725.56 | elbow 1355.29 | shoulder 5.5557
 ```
 
-All `3/3` checkpoints show nondecreasing K6 support coverage from distal to proximal and nonincreasing learned-positive/K6-zero topology mismatch.
+D0 is weight-topology descriptive analysis and did not require new deformation computation. It can be retained as structural input while the deformation-dependent A100 synthesis is recomputed.
 
-Archived: `research/sessions/2026-09-16-step18d0.md`.
+## Historical Step 18D1 arm-chain synthesis
 
-## Step 18D1 FINAL ARM-CHAIN MECHANISM SYNTHESIS FROZEN
-
-Drive artifact:
-
-`experiments/08-second-joint-generalization/18D1_final_arm_chain_mechanism_synthesis.json`
-
-Archived session:
-
-`research/sessions/2026-09-16-step18d1.md`
-
-Quantitative transition:
-
-```text
-shoulder/elbow K6-support expansion min/median/max:
-34.763285 / 43.536585 / 117.341040x
-
-shoulder/wrist K6-support expansion min/median/max:
-43.536585 / 47.032680 / 117.341040x
-
-wrist-to-shoulder learned-only topology-gap contraction min/median/max:
-0.083497 / 0.212960 / 0.259295
-
-shoulder C2 mass-match median MAE reduction min/median/max:
-83.846952 / 93.517130 / 94.495471%
-
-shoulder C3 composition-match median MAE reduction min/median/max:
--2.195192 / -0.104023 / 0.203295%
-```
-
-Final bounded evidence chain:
-
-1. branch-mediated causality: `SUPPORTED_FOR_ALL_THREE_TESTED_JOINTS`
-2. learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
-3. K6 support-topology transition: `CONSISTENT_ACROSS_ALL_THREE_CHECKPOINTS`
-4. support topology + per-row magnitude mechanism: `STRONGLY_IMPLICATED`
-5. within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
-6. kinematic depth: `NOT_ESTABLISHED_AS_CAUSAL`
-7. scope: three independently pretrained HUGS NeuMan checkpoints, tested left-arm chain, frozen perturbations, nested pose diagnostics
-
-Best bounded mechanism description:
+Historical T4 synthesis described the bounded mechanism as:
 
 `DESCENDANT_SUPPORT_TOPOLOGY_AND_PER_ROW_MAGNITUDE`
 
-Distal wrist/elbow contralateral regions have almost no subject-specific K6 descendant-branch support, whereas shoulder K6 support expands sharply. This aligns with strong distal K6 suppression and the proximal disappearance/reversal of learned-vs-K6 amplification. The C2 counterfactual strongly implicates per-row support existence and magnitude. Kinematic depth remains unresolved because it is confounded with nested branch topology.
+The scientific interpretation is not currently contradicted by A100 R1, but deformation-dependent C/D numbers should not be promoted as canonical A100 results until the active rerun sequence is complete.
 
-### Stop point
+## Current stop point
 
-Step 18 is closed for the current research day. Corrective-method implementation has **not** started.
+Do **not** begin Step 19 yet.
 
-The next research day should begin with a separate **Step 19 preregistration** that freezes:
+Current sequence:
 
-- the corrective-method hypothesis
-- what quantity will be regularized or constrained
-- training/evaluation protocol
-- primary metrics and thresholds
-- held-out/generalization logic
-- ablation plan
-
-Only after that preregistration should locality-preserving method implementation begin.
+`18R1 A100 frame2 complete -> 18R2 A100 full pose -> recompute A100 C1/C2/C3 -> reconcile C0/C4/D synthesis -> update MASTER_CONTEXT and CLAIM_LEDGER if needed -> only then Step 19 preregistration`
 
 ## Research-record rule
 
-Preserve the failed shoulder generalization. C1-D1 exploratory synthesis cannot alter predeclared pass/fail outcomes. Do not tune historical thresholds, add joints merely to seek a passing result, or begin method implementation before Step 19 is separately frozen.
+Preserve both historical T4 artifacts and new A100 artifacts. Never overwrite failed results, never widen historical thresholds, and never silently replace old numbers without recording runtime provenance. Nested poses remain diagnostics rather than independent model-level replications.
