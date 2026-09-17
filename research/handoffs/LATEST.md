@@ -2,174 +2,27 @@
 
 Current continuation date: **2026-09-17**.
 
-## CURRENT STATE — Step 18 A100 reconciliation COMPLETE
+## CURRENT STATE — Step 19 preregistration FROZEN
 
-Step 18 is closed again after full canonical A100 provenance reconciliation.
+Step 18 remains closed after canonical A100 reconciliation.
 
-No additional Step-18 deformation rerun is currently required unless a new provenance issue is discovered.
+Step 19 protocol design is now complete. Corrective-method scientific training has **not** started and no Step-19 method outcome has been observed.
 
-Historical Tesla T4 artifacts remain preserved. They are historical provenance/sensitivity records and must not be overwritten.
+The next allowed phase is implementation smoke/unit validation only.
 
-## Canonical runtime
+## Canonical Step-18 result retained
 
-```text
-GPU: NVIDIA A100-SXM4-40GB
-Python: 3.8.20
-NumPy: 1.24.4
-PyTorch: 1.13.1+cu117
-CUDA: 11.7
-SMPLX: 0.1.28
-TF32: off
-```
+Independent pretrained model unit: checkpoint, `n=3`.
 
-SMPL fingerprint:
+Checkpoints:
 
-```text
-SHA256: f12586bb4b97761b1d401996832a3eb5f8e28f99d0ddb108d58dad5ae82f2fc0
-```
+- Seattle
+- Parkinglot
+- Jogging
 
-User-supplied project provenance states that the intended runtime through Step 17 was A100. Historical Step-17 archives themselves establish CUDA use but do not independently identify the GPU model. Preserve this distinction.
+Pose/frame diagnostics remain nested within checkpoints.
 
-## Statistical hierarchy
-
-- independent pretrained model unit: checkpoint, `n=3`
-- checkpoints: Seattle, Parkinglot, Jogging
-- pose/frame diagnostics are nested within checkpoints
-- wrist, elbow, shoulder are repeated joint diagnostics within the same checkpoints
-
-Never count nested pose diagnostics as independent replications.
-
-## Frozen distal benchmark
-
-Left wrist Step 16E0:
-
-```text
-checkpoint passes: 3/3
-nested poses: 18
-global min K6 reduction: 99.708575087815%
-global min selective-ablation reduction: 100.0%
-global min removed-mass correlation: 0.9808287038512752
-```
-
-Left elbow Step 17C0:
-
-```text
-checkpoint passes: 3/3
-nested poses: 18
-global min K6 reduction: 99.81874059431833%
-global min selective-ablation reduction: 100.0%
-global min removed-mass correlation: 0.9688984153761956
-```
-
-Combined wrist + elbow: `6/6` joint x checkpoint cells pass across `36` nested pose diagnostics.
-
-Historical Step-17 exact-number reconstruction recovered only 5/6 aggregates within the old `1e-5` scalar gate on tested replacement runtimes; displacement fields remained essentially perfectly correlated. The historical gate was not widened.
-
-## Step 18R1 — A100 frame-2 shoulder rerun COMPLETE
-
-All three checkpoints reproduced changed transforms `[16,18,20,22]` exactly.
-
-```text
-Seattle:    K6 reduction 38.89052698499022%  FAIL | ablation 100% PASS | corr 0.9616730744322076 PASS
-Parkinglot: K6 reduction -49.15654343505103% FAIL | ablation 100% PASS | corr 0.9769195553081134 PASS
-Jogging:    K6 reduction 59.774070438714524% FAIL | ablation 100% PASS | corr 0.8946040920942271 FAIL
-```
-
-Threshold-level status matched historical T4 B1H exactly.
-
-## Step 18R2 — A100 full 18-pose shoulder rerun COMPLETE
-
-Canonical A100 global result:
-
-```text
-nested poses: 18
-kinematic passes: 18/18
-K6 passes: 0/18
-selective-ablation passes: 18/18
-correlation passes: 14/18
-overall passes: 0/18
-negative K6 reductions: 5
-K6 reduction min/median/max:
--77.67225758078598 / 42.390431156682965 / 76.3901059303657 %
-correlation min/median/max:
-0.7985822327394099 / 0.9436557686954412 / 0.9812400880684837
-```
-
-Reproducibility:
-
-```text
-FRAME-2 THRESHOLD STATUS SAME AS R1: True
-AGGREGATE THRESHOLD COUNTS SAME AS HISTORICAL T4: True
-PER-POSE THRESHOLD STATUS SAME AS HISTORICAL T4: True
-```
-
-The preregistered shoulder generalization remains `FAIL_UNCHANGED`. The historical T4 failure is not a hardware-specific scientific artifact.
-
-## Step 18R3 — A100 C1 support-mass reconciliation COMPLETE
-
-Analysis class: `EXPLORATORY_POST_HOC`.
-
-```text
-Seattle:    learned/K6 support ratio 1.5764279015288012 | support learned | majority displacement learned | direction matches 3/4
-Parkinglot: learned/K6 support ratio 0.8379048191221863 | support K6      | majority displacement K6      | direction matches 4/4
-Jogging:    learned/K6 support ratio 5.5557058081619255 | support learned | majority displacement learned | direction matches 10/10
-```
-
-Checkpoint support-majority direction matches remain `3/3`; all A100/T4 direction classifications are unchanged.
-
-## Step 18R4 — A100 C2 total branch-mass matching COMPLETE
-
-Analysis class: `EXPLORATORY_POST_HOC`.
-
-All checkpoints had zero fallback rows and pure learned-composition fraction `1.0`.
-
-Canonical A100 median full-field MAE-gap reduction:
-
-```text
-Seattle:    94.49566207250349%
-Parkinglot: 83.84751353605428%
-Jogging:    93.51752945582919%
-```
-
-Historical T4 medians were `94.49547062277841%`, `83.84695205957038%`, and `93.51712996485506%`. Differences are sub-0.001 percentage point.
-
-Interpretation preserved: per-row descendant-branch support existence/topology and total magnitude are strongly implicated as major explanatory factors for the shoulder learned-vs-K6 field difference.
-
-## Step 18R5 — A100 C3 within-branch composition matching COMPLETE
-
-Analysis class: `EXPLORATORY_POST_HOC`.
-
-Composition-defined coverage reproduced historical topology exactly:
-
-```text
-Seattle:    7196 / 33072 = 0.21758587324625062
-Parkinglot: 20300 / 77622 = 0.2615237948004432
-Jogging:    1785 / 20887 = 0.08545985541245751
-```
-
-Canonical A100 median full-field MAE-gap reduction:
-
-```text
-Seattle:    -0.10397201493190789%
-Parkinglot: -2.195179260385338%
-Jogging:     0.20347135731436095%
-```
-
-Historical T4 medians were `-0.10402258952364463%`, `-2.1951923116722116%`, and `0.20329469100371367%`.
-
-Canonical A100 C2 minus C3 median contrasts:
-
-```text
-Seattle:    94.5996340874354 percentage points
-Parkinglot: 86.04269279643962 percentage points
-Jogging:    93.31405809851483 percentage points
-```
-
-All historical composition-coverage counts reproduced exactly; all C3 median signs matched historical T4.
-
-## Reconciled Step 18 synthesis
-
-Three-joint confirmatory interpretation:
+Three-joint frozen interpretation:
 
 | Joint | Predeclared status | Branch-mediated causality | Learned-vs-K6 amplification |
 |---|---|---|---|
@@ -177,88 +30,246 @@ Three-joint confirmatory interpretation:
 | elbow | PASS | supported | supported |
 | shoulder | FAIL | supported | not supported |
 
-Bounded claims:
-
-- branch-mediated contralateral causality: `SUPPORTED_ACROSS_ALL_THREE_TESTED_JOINTS`
-- learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
-- K6 arm-chain support-topology transition: `CONSISTENT_ACROSS_ALL_THREE_CHECKPOINTS`
-- support topology + per-row total magnitude: `STRONGLY_IMPLICATED`
-- within-branch composition: `SMALL_EFFECT_ON_DEFINED_OVERLAP`
-- kinematic depth: `NOT_ESTABLISHED_AS_CAUSAL`
-
-Final bounded deformation-mechanism label:
+Final bounded Step-18 mechanism label:
 
 `DESCENDANT_SUPPORT_TOPOLOGY_AND_PER_ROW_MAGNITUDE`
 
-This is not a training-level causal explanation.
+Shoulder confirmatory failure remains `FAIL_UNCHANGED`.
 
-## D0 structural topology remains valid
+Canonical A100 shoulder R2:
 
-D0 uses frozen weights and masks, not newly computed deformation fields. No GPU-specific recomputation was needed.
+- K6 pass `0/18`
+- selective-ablation pass `18/18`
+- correlation pass `14/18`
+- K6 reduction min/median/max `-77.67225758078598 / 42.390431156682965 / 76.3901059303657%`
 
-K6 positive descendant-support fractions:
+Canonical A100 C2 median MAE-gap reduction:
 
-```text
-Seattle:    wrist 0.004626269956458636 | elbow 0.006259071117561683 | shoulder 0.21758587324625062
-Parkinglot: wrist 0.0022287495813042694 | elbow 0.0022287495813042694 | shoulder 0.2615237948004432
-Jogging:    wrist 0.0019629434576530855 | elbow 0.0019629434576530855 | shoulder 0.08545985541245751
-```
+- Seattle `94.49566207250349%`
+- Parkinglot `83.84751353605428%`
+- Jogging `93.51752945582919%`
 
-Learned support is positive on 100% of frozen contralateral rows in all tested joint/checkpoint cells.
+Canonical A100 C3 median MAE-gap reduction:
 
-## Canonical records
+- Seattle `-0.10397201493190789%`
+- Parkinglot `-2.195179260385338%`
+- Jogging `0.20347135731436095%`
 
-GitHub sessions:
+Do not reinterpret these exploratory analyses as a training-level cause.
 
-- `research/sessions/2026-09-17-step18r1-a100-frame2-rerun.md`
-- `research/sessions/2026-09-17-step18r2-a100-full-pose-rerun.md`
-- `research/sessions/2026-09-17-step18r3-a100-c1-reconciliation.md`
-- `research/sessions/2026-09-17-step18r4-a100-c2-reconciliation.md`
-- `research/sessions/2026-09-17-step18r5-a100-c3-reconciliation.md`
-- `research/sessions/2026-09-17-step18-a100-final-reconciliation.md`
-
-Drive artifacts:
-
-- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_cross_checkpoint.json`
-- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_displacements.npz`
-- `experiments/08-second-joint-generalization/18R2_A100_left_shoulder_full_pose_metadata.json`
-- `experiments/08-second-joint-generalization/18R2_A100_left_shoulder_full_pose_displacements.npz`
-- `experiments/08-second-joint-generalization/18R3_A100_shoulder_support_mass_exploratory.json`
-- `experiments/08-second-joint-generalization/18R3_A100_shoulder_support_mass_exploratory.csv`
-- `experiments/08-second-joint-generalization/18R4_A100_shoulder_support_match_counterfactual.json`
-- `experiments/08-second-joint-generalization/18R4_A100_shoulder_support_match_counterfactual_displacements.npz`
-- `experiments/08-second-joint-generalization/18R5_A100_shoulder_composition_match_counterfactual.json`
-- `experiments/08-second-joint-generalization/18R5_A100_shoulder_composition_match_counterfactual_displacements.npz`
-
-Continuity files now use canonical A100 numeric anchors. Historical T4 files remain preserved.
-
-## Exact next action — Step 19 preregistration
-
-Step 19 is now **unpaused for protocol design only**. Corrective-method implementation must not begin until the evaluation protocol is frozen.
-
-Step 19 research question:
+## Step 19 research question
 
 > Can anatomical locality be enforced without sacrificing reconstruction quality?
 
-Before implementation, freeze:
+## Frozen Step-19 source provenance
 
-1. corrective-method hypothesis
-2. exact learned quantity to regularize or constrain
-3. anatomical-locality metric
-4. reconstruction-quality metric
-5. baseline and comparison conditions
-6. success/failure thresholds
-7. training/held-out/generalization protocol
-8. ablation plan
-9. datasets / subjects / body regions
-10. cross-method generalization plan
+Official HUGS source:
 
-Do not tune these criteria after observing method results.
+`https://github.com/apple/ml-hugs.git`
 
-A later cross-method question remains:
+Exact audited source commit:
 
-> Is anatomical nonlocality specific to HUGS, or does it emerge across learned human deformation representations?
+`86ebe5522a384fc553f07f090b63a76dd4af8d33`
+
+Step 19E0 initially found no local HUGS checkout and is preserved as a failed source-discovery audit.
+
+Step 19E0R recovered the exact audited commit from the official repository with a clean working tree and confirmed the integration path.
+
+E0R audit Drive artifact:
+
+`private_research/2026-09-17_step19e0r_hugs_source_recovery_audit.json`
+
+SHA256:
+
+`1f81177e924b956e6c8455faad8a0e386d3dcba8ceeee5d1b2fffcfd47725dbb`
+
+## Frozen primary method — A1
+
+Method label:
+
+`99%-support-envelope locality regularizer`
+
+Reference:
+
+- subject-specific canonical SMPL-derived K6 effective mapping
+- explicit `K = 6`
+- support-envelope threshold `rho = 0.99`
+- K6 reference and envelope built under `torch.no_grad()`
+- no gradient through reference or envelope membership
+
+Learned quantity:
+
+- post-softmax normalized HUGS LBS weights
+- original softmax temperature remains `0.1`
+
+For Gaussian `g`, let detached binary mask `M[g,j]` indicate the smallest K6-reference joint set whose cumulative reference mass reaches 99%.
+
+Per-Gaussian nonlocal support mass:
+
+`NSM_g = sum_j w[g,j] * (1 - M[g,j])`
+
+Primary locality loss:
+
+`L_local = mean_g NSM_g`
+
+Training objective:
+
+`L_total = L_original_HUGS + lambda_local * L_local`
+
+IRDR is not optimized directly. It remains the primary behavioral locality evaluation metric.
+
+Original HUGS full-vector LBS MSE remains OFF in primary A1 (`lbs_w = 0`).
+
+## Frozen development protocol
+
+Development sequence: `Seattle` only.
+
+Frozen split:
+
+- train count `33`
+- val `[22,27,32,37]`
+- test `[2,7,12,17]`
+
+Lambda candidates:
+
+`[1e-4, 1e-3, 1e-2, 1e-1, 1.0]`
+
+Paired seeds:
+
+`[0,1,2]`
+
+Select the **smallest** nonzero lambda passing every frozen Seattle-validation criterion.
+
+Locality criteria:
+
+- median paired relative macro-IRDR reduction `>= 50%`
+- median paired IRDR difference `<= 0` separately for shoulder, elbow, wrist
+
+Human-crop reconstruction non-inferiority:
+
+- mean paired delta PSNR `>= -0.5 dB`
+- mean paired delta SSIM `>= -0.01`
+- mean paired delta LPIPS `<= +0.02`
+
+If no lambda passes, A1 fails development. Do not expand the lambda grid or relax thresholds inside this protocol.
+
+Seattle test is locked during lambda selection.
+
+## Frozen confirmatory protocol
+
+Held-out sequences:
+
+- Parkinglot
+- Jogging
+
+Frozen test frames:
+
+- Parkinglot `[2,7,12,17]`
+- Jogging `[2,7,12,17,22,27,32,37,42,47]`
+
+The Seattle-selected method and lambda transfer unchanged. No per-sequence tuning.
+
+Both Parkinglot and Jogging must independently pass all locality and quality criteria for primary Step-19 success.
+
+## Frozen quality metrics
+
+Primary human-crop metrics:
+
+- PSNR
+- SSIM
+- LPIPS
+
+Full-frame versions are secondary.
+
+## Frozen ablations
+
+A0 — matched HUGS baseline
+
+- `lambda_local = 0`
+- `lbs_w = 0`
+
+A1 — proposed 99%-support-envelope locality regularizer
+
+A2 — direct full-vector K6 MSE matching
+
+A2 uses the same Seattle-only coefficient grid and seeds as A1. It is secondary and does not determine primary Step-19 success.
+
+## Frozen implementation contract
+
+Audited integration path:
+
+- normalized learned LBS is produced in `hugs/models/hugs_trimlp.py` by `F.softmax(lbs_weights / 0.1, dim=-1)`
+- existing deformation path consumes these normalized weights
+- existing `hugs/losses/loss.py` receives `human_gs_out['lbs_weights']`
+- locality term is added as `loss_dict['locality'] = lambda_local * L_local`
+- existing loss aggregation remains unchanged
+- existing trainer `loss.backward()` and human optimizer step remain unchanged
+
+Primary A1 must NOT:
+
+- change softmax temperature
+- modify SMPL kinematics or transform semantics
+- hard-zero learned weights
+- mask/renormalize learned LBS after softmax
+- optimize IRDR directly
+- combine A1 with direct K6 full-vector MSE
+- tune using Parkinglot/Jogging
+
+The selected lambda is constant for the full 30,000-step run. No warmup or annealing.
+
+## Required smoke/unit checks before scientific training
+
+1. envelope rows are nonempty
+2. envelope mask is binary
+3. K6 reference rows sum approximately to 1
+4. learned normalized LBS rows sum approximately to 1
+5. `L_local >= 0`
+6. `lambda_local = 0` contributes exactly zero locality loss
+7. K6 reference and mask require no gradient
+8. locality loss produces gradient in learned deformation parameters
+9. baseline forward outputs remain unchanged when locality is disabled
+10. no Seattle validation/test or held-out scientific metric is used during smoke checks
+
+## Frozen preregistration artifacts
+
+Drive final preregistration:
+
+`private_research/2026-09-17_step19_preregistration_draft.md`
+
+SHA256:
+
+`6c1f464f36dd3a567464fc091329abf605b2d37e12800a126a55ec35dd0a9b33`
+
+Drive implementation contract:
+
+`private_research/2026-09-17_step19_frozen_implementation_contract.json`
+
+SHA256:
+
+`255c216f5bc17d8efa0101e3b11fafe5562e2d4d1c18bcbb271fed953d23191c`
+
+GitHub freeze record:
+
+`research/sessions/2026-09-17-step19e1-preregistration-frozen.md`
+
+## Claim status
+
+No scientific claim status changed at preregistration freeze.
+
+`CL-13` remains `UNTESTED`:
+
+> Anatomical locality can be enforced without sacrificing reconstruction quality.
+
+Do not describe the method as successful until the frozen Step-19 scientific protocol is executed.
+
+## Exact next action
+
+Create an isolated implementation working copy/branch from HUGS commit `86ebe552...` and implement only the frozen A1 locality primitive plus non-scientific smoke/unit tests.
+
+Do not launch 30,000-step scientific training yet.
+
+Do not inspect Seattle validation/test method outcomes, Parkinglot outcomes, or Jogging outcomes during implementation validation.
 
 ## Research-record rule
 
-Preserve both historical T4 artifacts and canonical A100 artifacts. Never overwrite failed results, never widen historical thresholds, never silently replace provenance, and never use exploratory analyses to rewrite confirmatory outcomes.
+Preserve failed and successful audits, frozen protocol hashes, source provenance, and all negative scientific outcomes. Never alter the frozen Step-19 thresholds or lambda grid after method outcomes are observed.
