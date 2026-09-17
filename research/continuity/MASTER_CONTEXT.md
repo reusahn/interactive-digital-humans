@@ -2,7 +2,7 @@
 
 Last updated: 2026-09-17
 
-This file is the durable source of truth for continuing the Interactive Digital Humans research across new ChatGPT conversations. Read this before answering research-continuity questions.
+This file is the durable source of truth for continuing the Interactive Digital Humans research across new ChatGPT conversations.
 
 ## Research identity
 
@@ -32,7 +32,7 @@ Alternative wording:
 
 > When and how does anatomical locality fail in learned animatable-human deformation, and what learned skinning structure mediates anatomically nonlocal motion?
 
-Important scope boundary: Paper 1 currently does **not** explain why training learns the nonlocal support topology. Training-level causes remain unresolved hypotheses.
+Important scope boundary: Paper 1 does **not** yet explain why training learns the nonlocal support topology. Training-level causes remain unresolved hypotheses.
 
 The paper currently addresses:
 
@@ -72,13 +72,17 @@ A Gaussian with positive support on a joint or descendant branch can therefore r
 
 For the observed contralateral response, the opposite-side joint itself is not rotating. The contralateral Gaussian moves because learned HUGS assigns it positive support on the perturbed side's descendant branch, which enters its blended transform.
 
-## Step 18 frozen scientific result
+## Step 18 canonical scientific result
 
-Step 18 is complete and frozen at Step 18D1.
+Step 18 is complete and frozen after canonical A100 reconciliation.
+
+Final reconciliation session:
+
+`research/sessions/2026-09-17-step18-a100-final-reconciliation.md`
 
 Research progression:
 
-`discovery -> replication -> K6 replacement -> selective causal ablation -> second-joint generalization -> third-joint preregistered negative result -> counterfactual mechanism decomposition -> arm-chain support-topology synthesis -> final mechanism freeze`
+`discovery -> replication -> K6 replacement -> selective causal ablation -> second-joint generalization -> third-joint preregistered negative result -> counterfactual mechanism decomposition -> arm-chain support-topology synthesis -> A100 provenance reconciliation -> final mechanism freeze`
 
 ### Wrist
 
@@ -107,7 +111,7 @@ Combined wrist + elbow:
 - 36 nested pose diagnostics
 - 6/6 joint x checkpoint cells pass
 
-### Shoulder preregistered generalization
+### Shoulder preregistered generalization — canonical A100 R2
 
 Frozen setup:
 
@@ -126,7 +130,7 @@ Predeclared thresholds:
 - removed-mass/displacement-reduction correlation `>=0.90`
 - max/summed ablated contralateral response `<=1e-8`
 
-Shoulder result:
+Canonical A100 shoulder result:
 
 - 18 nested poses
 - kinematic pass: 18/18
@@ -135,11 +139,14 @@ Shoulder result:
 - correlation pass: 14/18
 - overall pass: 0/18
 - negative K6 reductions: 5
-- K6 reduction range: `-77.671145% to 76.389818%`
+- K6 reduction min/median/max: `-77.67225758078598 / 42.390431156682965 / 76.3901059303657%`
+- correlation min/median/max: `0.7985822327394099 / 0.9436557686954412 / 0.9812400880684837`
 
-The preregistered shoulder generalization is **FAIL** and remains unchanged.
+Every corresponding A100 pose retained the same threshold-level classification as historical T4 Step 18B2.
 
-Three-joint frozen conclusion:
+Therefore the preregistered shoulder generalization is **FAIL** and remains unchanged.
+
+Three-joint conclusion:
 
 | Joint | Predeclared status | Branch-mediated causality | Learned-vs-K6 amplification |
 |---|---|---|---|
@@ -147,17 +154,17 @@ Three-joint frozen conclusion:
 | elbow | PASS | supported | supported |
 | shoulder | FAIL | supported | not supported |
 
-Official frozen claims:
+Official bounded claims:
 
 - branch-mediated causality: `SUPPORTED_ACROSS_ALL_THREE_TESTED_JOINTS`
 - learned-vs-K6 amplification: `JOINT_DEPENDENT_NOT_UNIVERSAL`
 - kinematic-depth explanation: `HYPOTHESIS_ONLY`
 
-## Shoulder exploratory mechanism decomposition
+## Shoulder exploratory mechanism decomposition — canonical A100
 
 All analyses after the preregistered shoulder result are exploratory/post-hoc and cannot rescue or alter the confirmatory failure.
 
-### C1 support-mass analysis
+### C1 / R3 support-mass analysis
 
 Learned/K6 aggregate shoulder branch-support ratio:
 
@@ -165,45 +172,99 @@ Learned/K6 aggregate shoulder branch-support ratio:
 - Parkinglot: `0.8379048191221863`
 - Jogging: `5.5557058081619255`
 
-Checkpoint-level aggregate support direction and majority displacement direction agree in 3/3 checkpoints.
+Checkpoint-level aggregate support direction and majority displacement direction agree in 3/3 checkpoints on A100, identical to historical T4.
 
-### C2 total branch-mass matching counterfactual
+A100 delta-support/delta-displacement correlation min/median/max:
+
+```text
+Seattle:    0.9362278422766451 / 0.9664406965256402 / 0.9672864525651061
+Parkinglot: 0.9497614357282316 / 0.9738199257592272 / 0.9816398111085524
+Jogging:    0.802178029451637  / 0.9193445080163702 / 0.9743405354392872
+```
+
+### C2 / R4 total branch-mass matching counterfactual
 
 Counterfactual:
 
 - preserve learned within-branch composition
 - replace total shoulder-descendant branch mass per contralateral Gaussian with K6 mass
+- rescale learned nonbranch weights proportionally to preserve row sum
 
-Median full-field MAE-gap reduction:
+All checkpoints had zero fallback rows; pure learned-composition fraction was `1.0`.
 
-- Seattle: `94.49547062277841%`
-- Parkinglot: `83.84695205957038%`
-- Jogging: `93.51712996485506%`
+Canonical A100 median full-field MAE-gap reduction:
 
-Interpretation: per-Gaussian branch-support amount/topology explains most of the shoulder learned-vs-K6 field difference under this exploratory counterfactual.
+- Seattle: `94.49566207250349%`
+- Parkinglot: `83.84751353605428%`
+- Jogging: `93.51752945582919%`
 
-### C3 within-branch composition matching counterfactual
+Historical T4 medians were `94.49547062277841%`, `83.84695205957038%`, and `93.51712996485506%`; A100 differences are sub-0.001 percentage point.
+
+Interpretation: per-Gaussian branch-support existence/topology and total amount explain most of the shoulder learned-vs-K6 field difference under this exploratory counterfactual.
+
+### C3 / R5 within-branch composition matching counterfactual
 
 Counterfactual:
 
 - preserve learned total shoulder-branch mass
-- replace only within-branch joint allocation with K6 composition where K6 composition is defined
+- replace only within-branch allocation with K6 composition where K6 branch mass is positive
+- when K6 branch mass is zero, composition is undefined and learned composition remains unchanged
 
-Median full-field MAE-gap reduction:
+Canonical A100 composition-defined coverage:
 
-- Seattle: `-0.10402258952364463%`
-- Parkinglot: `-2.1951923116722116%`
-- Jogging: `0.20329469100371367%`
+- Seattle: `7196 / 33072 = 0.21758587324625062`
+- Parkinglot: `20300 / 77622 = 0.2615237948004432`
+- Jogging: `1785 / 20887 = 0.08545985541245751`
+
+Thus K6 shoulder-branch mass is zero on about:
+
+- Seattle: `78.24%`
+- Parkinglot: `73.85%`
+- Jogging: `91.45%`
+
+Learned HUGS has positive shoulder-branch support on all tested contralateral rows in all three checkpoints.
+
+Canonical A100 median full-field MAE-gap reduction:
+
+- Seattle: `-0.10397201493190789%`
+- Parkinglot: `-2.195179260385338%`
+- Jogging: `0.20347135731436095%`
 
 Effect is essentially zero or slightly negative.
 
-K6 shoulder-branch mass is exactly zero on most contralateral rows:
+Canonical A100 C2 minus C3 median contrasts:
 
-- Seattle: about `78.24%`
-- Parkinglot: about `73.85%`
-- Jogging: about `91.45%`
+- Seattle: `94.5996340874354` percentage points
+- Parkinglot: `86.04269279643962` percentage points
+- Jogging: `93.31405809851483` percentage points
 
-Learned HUGS has positive shoulder-branch support on all tested contralateral rows in all three checkpoints.
+Composition-matched counterfactual-vs-K6 field correlations remain near zero.
+
+### Reconciled C4 mechanism synthesis
+
+Confirmatory shoulder status:
+
+`FAIL_UNCHANGED`
+
+Branch-mediated causality:
+
+`SUPPORTED_IN_FROZEN_TEST`
+
+Support topology and magnitude:
+
+`DOMINANT_EXPLORATORY_FACTOR`
+
+Within-branch composition:
+
+`SMALL_EFFECT_ON_DEFINED_OVERLAP`
+
+Pose geometry:
+
+`RESIDUAL_MODULATOR_PLAUSIBLE`
+
+Kinematic depth:
+
+`HYPOTHESIS_ONLY`
 
 Frozen exploratory mechanism label:
 
@@ -217,6 +278,8 @@ Do not call this the training-level cause.
 
 ## Arm-chain support-topology synthesis
 
+D0 is a frozen weight-topology analysis and is independent of the deformation GPU rerun.
+
 Nested branches:
 
 - wrist `[20,22]`
@@ -228,61 +291,61 @@ Learned HUGS positive-support fraction on frozen contralateral rows is `1.0` for
 K6 positive-support fractions:
 
 Seattle:
-- wrist `0.0046263`
-- elbow `0.0062591`
-- shoulder `0.2175859`
+- wrist `0.004626269956458636`
+- elbow `0.006259071117561683`
+- shoulder `0.21758587324625062`
 
 Parkinglot:
-- wrist `0.0022287`
-- elbow `0.0022287`
-- shoulder `0.2615238`
+- wrist `0.0022287495813042694`
+- elbow `0.0022287495813042694`
+- shoulder `0.2615237948004432`
 
 Jogging:
-- wrist `0.0019629`
-- elbow `0.0019629`
-- shoulder `0.0854599`
+- wrist `0.0019629434576530855`
+- elbow `0.0019629434576530855`
+- shoulder `0.08545985541245751`
 
 Shoulder / elbow K6-support expansion:
 
-- Seattle `34.7633x`
-- Parkinglot `117.3410x`
-- Jogging `43.5366x`
+- Seattle `34.76328502415459x`
+- Parkinglot `117.34104046242776x`
+- Jogging `43.53658536585366x`
 
 Learned-positive/K6-zero topology-gap fractions:
 
 Seattle:
-- wrist `0.9953737`
-- elbow `0.9937409`
-- shoulder `0.7824141`
+- wrist `0.9953737300435413`
+- elbow `0.9937409288824384`
+- shoulder `0.7824141267537494`
 
 Parkinglot:
-- wrist `0.9977713`
-- elbow `0.9977713`
-- shoulder `0.7384762`
+- wrist `0.9977712504186957`
+- elbow `0.9977712504186957`
+- shoulder `0.7384762051995568`
 
 Jogging:
-- wrist `0.9980371`
-- elbow `0.9980371`
-- shoulder `0.9145401`
+- wrist `0.9980370565423469`
+- elbow `0.9980370565423469`
+- shoulder `0.9145401445875425`
 
 Aggregate learned/K6 support ratios:
 
 Seattle:
-- wrist `650.22`
-- elbow `708.93`
-- shoulder `1.5764`
+- wrist `650.2177430271481`
+- elbow `708.9307441125728`
+- shoulder `1.5764279015288012`
 
 Parkinglot:
-- wrist `404.35`
-- elbow `1108.68`
-- shoulder `0.8379`
+- wrist `404.35482465513775`
+- elbow `1108.6841037038305`
+- shoulder `0.8379048191221863`
 
 Jogging:
-- wrist `725.56`
-- elbow `1355.29`
-- shoulder `5.5557`
+- wrist `725.5585181759392`
+- elbow `1355.289424308762`
+- shoulder `5.5557058081619255`
 
-Bounded interpretation: distal wrist/elbow K6 support is nearly absent on frozen contralateral rows, while shoulder support expands sharply. This structural transition aligns strongly with the deformation results. Do not convert this into a causal claim about kinematic depth because depth and nested branch topology are confounded.
+Bounded interpretation: distal wrist/elbow K6 support is nearly absent on frozen contralateral rows, while shoulder support expands sharply. This structural transition aligns with the deformation results. Do not convert this into a causal claim about kinematic depth because depth and nested branch topology are confounded.
 
 ## Evidence classes
 
@@ -354,7 +417,7 @@ Do not write these as established findings:
 
 ## Step 19 direction
 
-Step 18 is complete. Corrective-method implementation has not started.
+Step 18 is now closed again after A100 canonical reconciliation. Corrective-method implementation has not started.
 
 Step 19 research question:
 
@@ -396,9 +459,9 @@ Future scope should include additional animatable Gaussian-human methods, datase
 
 ## Runtime and provenance
 
-Frozen primary Step-18 runtime:
+Canonical Step-18 reconciliation runtime:
 
-- GPU: Tesla T4
+- GPU: NVIDIA A100-SXM4-40GB
 - Python: 3.8.20
 - NumPy: 1.24.4
 - PyTorch: 1.13.1+cu117
@@ -406,9 +469,15 @@ Frozen primary Step-18 runtime:
 - SMPLX: 0.1.28
 - TF32: off
 
-This runtime is a continuation choice and is not proof that historical Step 17 used T4.
+SMPL fingerprint:
 
-Historical exact-number reconstruction of the Step-17 elbow archive recovered only 5/6 within the original `1e-5` aggregate tolerance on tested modern/legacy replacement runtimes. Field correlations remained effectively 1.0. The historical gate was not widened.
+`f12586bb4b97761b1d401996832a3eb5f8e28f99d0ddb108d58dad5ae82f2fc0`
+
+User-supplied project provenance states that the intended runtime through Step 17 was A100. Historical Step-17 archives themselves establish CUDA use but do not independently identify the GPU model.
+
+Historical Step-18 B1H/B2/C1/C2/C3/C4/D1 artifacts produced on Tesla T4 remain preserved as historical provenance. Their scientific threshold-level conclusions were not overwritten. A100 R1-R5 reconciled the deformation-dependent shoulder evidence and retained the same bounded conclusions.
+
+Historical exact-number reconstruction of the Step-17 elbow archive recovered only 5/6 within the original `1e-5` aggregate tolerance on tested replacement runtimes. Field correlations remained effectively 1.0. The historical gate was not widened.
 
 ## Key repository artifacts
 
@@ -421,7 +490,7 @@ Primary continuity files:
 - `research/continuity/BOOTSTRAP.md`
 - `research/handoffs/LATEST.md`
 
-Frozen Step-18 session records:
+Historical Step-18 synthesis records:
 
 - `research/sessions/2026-09-16-step18c2.md`
 - `research/sessions/2026-09-16-step18c3.md`
@@ -429,13 +498,29 @@ Frozen Step-18 session records:
 - `research/sessions/2026-09-16-step18d0.md`
 - `research/sessions/2026-09-16-step18d1.md`
 
-Step 18D1 session commit: `3501a54805c6e59495289bd939873144c5f65704`
+Canonical A100 reconciliation records:
 
-Latest end-of-Step-18 handoff commit: `8262228c2272808e9e257ae3ad38d869cff801e5`
+- `research/sessions/2026-09-17-step18r1-a100-frame2-rerun.md`
+- `research/sessions/2026-09-17-step18r2-a100-full-pose-rerun.md`
+- `research/sessions/2026-09-17-step18r3-a100-c1-reconciliation.md`
+- `research/sessions/2026-09-17-step18r4-a100-c2-reconciliation.md`
+- `research/sessions/2026-09-17-step18r5-a100-c3-reconciliation.md`
+- `research/sessions/2026-09-17-step18-a100-final-reconciliation.md`
 
-Drive final Step-18 synthesis:
+Canonical Drive artifacts:
 
-`experiments/08-second-joint-generalization/18D1_final_arm_chain_mechanism_synthesis.json`
+- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_cross_checkpoint.json`
+- `experiments/08-second-joint-generalization/18R1_A100_left_shoulder_frame2_displacements.npz`
+- `experiments/08-second-joint-generalization/18R2_A100_left_shoulder_full_pose_metadata.json`
+- `experiments/08-second-joint-generalization/18R2_A100_left_shoulder_full_pose_displacements.npz`
+- `experiments/08-second-joint-generalization/18R3_A100_shoulder_support_mass_exploratory.json`
+- `experiments/08-second-joint-generalization/18R3_A100_shoulder_support_mass_exploratory.csv`
+- `experiments/08-second-joint-generalization/18R4_A100_shoulder_support_match_counterfactual.json`
+- `experiments/08-second-joint-generalization/18R4_A100_shoulder_support_match_counterfactual_displacements.npz`
+- `experiments/08-second-joint-generalization/18R5_A100_shoulder_composition_match_counterfactual.json`
+- `experiments/08-second-joint-generalization/18R5_A100_shoulder_composition_match_counterfactual_displacements.npz`
+
+Historical T4 artifacts remain preserved and must not be overwritten.
 
 ## Continuity policy
 
@@ -446,7 +531,7 @@ At the end of every substantial research session:
 1. archive the session under `research/sessions/`
 2. update `research/handoffs/LATEST.md`
 3. update this `MASTER_CONTEXT.md` only when durable research understanding changes
-4. update `CLAIM_LEDGER.md` when claim status changes
-5. keep raw large arrays/checkpoints on Drive and store compact provenance/results in GitHub
+4. update `CLAIM_LEDGER.md` when claim status or canonical numeric anchors change
+5. keep raw large arrays/checkpoints on Drive and store compact Markdown/CSV/JSON/scripts/provenance in GitHub
 
 If a future conversation lacks context, load `BOOTSTRAP.md`, `MASTER_CONTEXT.md`, `CLAIM_LEDGER.md`, and `LATEST.md` before doing research work.
