@@ -6,11 +6,13 @@ Current continuation date: **2026-09-17**.
 
 Step 18 is closed after canonical A100 reconciliation.
 
-Step 19 protocol design has been completed privately, and implementation validation is in progress. **No Step-19 scientific training result or method outcome has been observed yet.**
+Step 19 has completed its **pre-science execution-stack closure** privately. The audited HUGS runtime, required CUDA extensions, full import path, output naming, and output-blind scientific launcher have been verified and frozen.
 
-Because this repository is public, exact Step-19 corrective-method, loss, training, threshold, and implementation details are intentionally not stored here before advisor/lab/IP alignment.
+**No Step-19 scientific training has been performed. No Step-19 scientific outcome has been observed.**
 
-Private Step-19 protocol, provenance, implementation patches, and smoke-test records are stored under the project's Google Drive `private_research` area.
+Because this repository is public, exact Step-19 corrective-method, loss, training, threshold, split, and implementation details are intentionally not stored here before advisor/lab/IP alignment.
+
+Private Step-19 protocol, provenance, implementation patches, runtime receipts, launchers, and closure records are stored under the project's Google Drive `private_research` area.
 
 ## Step 18 canonical result
 
@@ -38,42 +40,26 @@ Final bounded Step-18 mechanism label:
 
 Shoulder confirmatory failure remains `FAIL_UNCHANGED`.
 
-Canonical A100 shoulder R2:
-
-- K6 pass `0/18`
-- selective-ablation pass `18/18`
-- correlation pass `14/18`
-- K6 reduction min/median/max `-77.67225758078598 / 42.390431156682965 / 76.3901059303657%`
-
-Canonical A100 C2 median MAE-gap reduction:
-
-- Seattle `94.49566207250349%`
-- Parkinglot `83.84751353605428%`
-- Jogging `93.51752945582919%`
-
-Canonical A100 C3 median MAE-gap reduction:
-
-- Seattle `-0.10397201493190789%`
-- Parkinglot `-2.195179260385338%`
-- Jogging `0.20347135731436095%`
-
 Do not reinterpret exploratory Step-18 mechanism analyses as training-level causes.
 
 ## Step 19 research question
 
 > Can anatomical locality be enforced without sacrificing reconstruction quality?
 
-Exact corrective-method and evaluation details are private until disclosure alignment.
+Exact corrective-method and evaluation details remain private until disclosure alignment.
 
 ## Step 19 scientific status
 
-- preregistration: completed privately before scientific training
-- source provenance audit: completed privately
-- implementation primitive smoke validation: completed
-- source integration / gradient smoke validation: completed
+- private preregistration: frozen before scientific training
+- source provenance audit: complete
+- implementation validation: complete for pre-science closure
+- canonical runtime reconstruction: complete
+- required CUDA extension recovery: complete
+- full HUGS import: PASS
+- output-path audit: PASS
+- output-blind scientific launcher: frozen
 - scientific model training: **not started**
 - scientific method outcome: **not observed**
-- confirmatory sequences: **not inspected for Step-19 outcomes**
 
 No Step-19 claim status has changed.
 
@@ -81,29 +67,34 @@ No Step-19 claim status has changed.
 
 > Anatomical locality can be enforced without sacrificing reconstruction quality.
 
-## Blocking pre-outcome provenance correction
+## 2026-09-17 recovery/closure note
 
-Before the first scientific training run, a mismatch was found between an earlier private protocol description and the exact audited released NeuMan training configuration.
+An interrupted Colab runtime required reconstruction of the frozen source and legacy execution environment. Recovery was performed without changing the frozen Step-19 scientific source or starting scientific training.
 
-This was discovered **before any Step-19 scientific outcome**. Scientific training remains blocked until a non-destructive private preregistration erratum is frozen.
+The recovered environment was verified on the canonical A100 stack, including actual CUDA-extension execution and the complete HUGS import chain.
 
-Do not treat this as post-result retuning.
+A final private closure receipt and environment freeze were written after all checks passed.
 
 ## Exact next action
 
-1. Create and freeze the private pre-outcome protocol/provenance erratum.
-2. Preserve the original frozen private preregistration and hashes unchanged.
-3. After the erratum is frozen, resume implementation validation using only the permitted development training data.
-4. Do not inspect locked evaluation or confirmatory method outcomes during implementation validation.
+Begin the first frozen Step-19 release-baseline scientific runs on the permitted development sequence using the output-blind launcher.
+
+Do not modify the frozen protocol, implementation, threshold, or selection logic in response to scientific outcomes.
 
 ## Public-disclosure rule
 
-Do not publish novel Step-19 loss, architecture, training, hyperparameter, threshold, or implementation details to this public repository before advisor/lab/IP alignment.
+Do not publish novel Step-19 loss, architecture, training, hyperparameter, split, threshold, or implementation details to this public repository before advisor/lab/IP alignment.
 
 ## Continuity policy
 
-For Step 18 and other public-safe research history, this repository remains the continuity source.
+For Step 18 and public-safe research history, this repository remains the continuity source.
 
 For private Step-19 corrective-method work, use the private Drive records and their hashes as the authoritative detailed source until public disclosure is approved.
+
+Public session archive:
+
+- `research/sessions/2026-09-17-step19-i1d-pre-science-closure.md`
+- `research/handoffs/2026-09-17.md`
+- `notebooks/daily/2026-09-17_research.ipynb`
 
 Preserve negative results, failed audits, source provenance, frozen protocol hashes, and the distinction between confirmatory, exploratory, and unresolved evidence.
