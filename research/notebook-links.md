@@ -1,6 +1,22 @@
 # Research Notebook Entry Points
 
-This file exists so the exact Colab entry URLs are recoverable when a chat fills up or a new chat starts.
+This file exists so notebook entry points remain recoverable when a chat fills up or a new chat starts.
+
+## Current public continuity notebook
+
+### Daily Research Notebook — 2026-09-17
+
+GitHub notebook:
+
+`notebooks/daily/2026-09-17_research.ipynb`
+
+Direct Google Colab URL:
+
+`https://colab.research.google.com/github/reusahn/interactive-digital-humans/blob/main/notebooks/daily/2026-09-17_research.ipynb`
+
+This is a **public continuity copy only**. Exact Step-19 corrective-method, loss, threshold, split, training, implementation, and private closure details are intentionally not embedded in the public notebook.
+
+Use the private Google Drive `private_research` records as the authoritative detailed continuation source.
 
 ## Current HUGS / locality research notebook
 
@@ -14,7 +30,7 @@ Direct Google Colab URL:
 
 `https://colab.research.google.com/github/reusahn/interactive-digital-humans/blob/main/notebooks/02_spatial_leakage_localization.ipynb`
 
-This is the notebook to reopen for the continuing HUGS locality / causal leakage research stream.
+Historical public notebook for the earlier HUGS locality / causal leakage research stream.
 
 ## Baseline notebook
 
@@ -30,4 +46,6 @@ Direct Google Colab URL:
 
 ## Continuity rule
 
-When a notebook is used as the active research environment, preserve its exact GitHub path and direct Colab URL in this file and reference this file from handoff/session records.
+When a notebook is used as the active research environment, preserve its exact GitHub path and direct Colab URL here.
+
+For private Step-19 work, public notebook links are continuity markers only. Do not reconstruct or publish private method details from public records.
